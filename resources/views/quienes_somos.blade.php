@@ -34,10 +34,10 @@
                 <div class="collapse navbar-collapse h5" id="navbarSupportedContent">
                     <ul class=" mr-auto"></ul>
                     <ul class="navbar-nav">
-                        <li class="nav-item active">
+                        <li class="nav-item ">
                             <a class="nav-link" href="{{url("/")}}">Inicio</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item active">
                             <a class="nav-link" href="{{url("/quienes-somos")}}">Quienes Somos</a>
                         </li>
                         <li class="nav-item">
@@ -49,91 +49,23 @@
         </nav>
         <!-- / parte superior de la pagina -->
 
+        <!-- Contenido Principal -->
 
-        <!-- Carrusel -->
-        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-            <ol class="carousel-indicators">
-                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-            </ol>
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img class="d-block w-100" src="{{asset('images/banner/artesanias-mochilas-tejido.jpg')}}" alt="First slide">
-                </div>
-                <div class="carousel-item">
-                    <img class="d-block w-100" src="{{asset('images/banner/mochilas-wayuu-pintadas.jpg')}}" alt="First slide">
-                </div>
-                <div class="carousel-item">
-                    <img class="d-block w-100" src="{{asset('images/banner/mochilas-wayuu.jpg')}}" alt="First slide">
-                </div>
-            </div>
-            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>
-        <!-- / Carrusel -->
         <div class="container">
-            <div class="row contenido-medio">
-                <div class="col-md-6 text-center imagenes-portada">
-                    <img src="{{asset('images/portafolio-productos-wayuu.png')}}">
-                </div>
-                <div class="col-md-6 text-center imagenes-portada">
-                    <img src="{{asset('images/catalogo-productos.png')}}">
-                </div>
-            </div>
-            <hr/>
-            <div class="row text-center">
-                <div class="col-md-6 text-left">
-                    <div>
-                        <span class="h3">
-                            Mochilas Wayu
-                        </span>
-                    </div>
-                    <div class="articulo-principal-contenido">
-                        <p>
-
-                        </p>
-                        <img class="d-block w-100" src="{{asset('images/carteras-mochilas-wayuu-arhucos.jpg')}}">
-                    </div>
-                </div>
-                <div class="col-md-6 text-left">
-                    <div>
-                        <span class="h3">
-                            Mantas Wayu
-                        </span>
-                    </div>
-                    <div class="articulo-principal-contenido">
-                        <p>
-
-                        </p>
-                        <img class="d-block w-100" src="{{asset('images/mantas-guajiras.jpg')}}">
-                    </div>
-                </div>
-            </div>
             <div class="row">
-                <div class="col text-center" style="background-image: url('{{asset('images/rafastore-cartagena-atersanias.jpg')}}');background-repeat: no-repeat">
+                <div class="col">
+                    <h1 class="h1">
+                        Quienes Somos
+                    </h1>
 
-                    <br/>
-                    <span class="h3">
-                        Los mejores productos Wayuú
-                    </span>
                     <p>
-                        En un solo lugar de Colombia
+                        Somos una empresa que busca promocionar el arte de la cultura Wayuú hacia el interior y exterior del pais.
                     </p>
-
-                    <br/>
-                    <br/>
-
                 </div>
             </div>
         </div>
-        <!-- Liks para el portafolio y la revista-->
+
+        <!-- Contenido Principal -->
 
         <!-- Footer -->
 
