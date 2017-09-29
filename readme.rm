@@ -1,0 +1,7 @@
+instalar virtualbox
+Instalar vagrant
+instalar ngrok
+
+vagrant up
+
+vagrant share --http 192.168.33.10:80
