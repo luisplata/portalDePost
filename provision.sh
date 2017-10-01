@@ -2,8 +2,15 @@
 
 apt-get update
 
-apt-get install -y apache2 ansible
-if ! [ -L /var/www ]; then
-	rm -rf /var/www
-	ln -fs /vagrant /var/www
-fi
+#Este es el script para cuando se inicialice una maquina virtual cree todo
+##instalamos todas las dependencias de laravel
+#vamos al directorio del proyecto
+cd /vagrant
+#Instalamos las dependiencias
+composer install
+#copiamos el .env-example a .env
+cp .env-example .env
+#cambiamos la key app
+php artisan key:generate
+#corremos las migraciones
+php artisan migrate
