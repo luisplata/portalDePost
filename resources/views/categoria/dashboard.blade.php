@@ -3,18 +3,18 @@
 @section("contenido")
 <div class="col-md-12 col-sm-12 col-xs-12 text-right">
     <ul class="pagination pagination-split">
-        <li><a href="{{url('admin/create')}}"><i class="fa fa-plus"></i> Crear</a></li>
+        <li><a href="{{url('categoria/create')}}"><i class="fa fa-plus"></i> Crear</a></li>
     </ul>
 </div>
-@foreach($admins as $admin)
+@foreach($categorias as $categoria)
 <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
     <div class="well profile_view">
         <div class="col-sm-12">
             <div class="left col-xs-7">
-                <h2>{{$admin->nombre}}</h2>
+                <h2>{{$categoria->nombre}}</h2>
                 <ul class="list-unstyled">
-                    <li><i class="fa fa-envelope"></i> Email: {{$admin->email}}</li>
-                    <li><i class="fa fa-phone"></i> Telefono #: {{$admin->telefono}}</li>
+                    <li><i class="fa fa-envelope"></i> {{$categoria->descripcion}}</li>
+                    <li><i class="fa fa-phone"></i> {{$categoria->categoria->nombre}}</li>
                 </ul>
             </div>
             <div class="right col-xs-5 text-center">
@@ -33,9 +33,9 @@
                 </p>
             </div>
             <div class="col-xs-12 col-sm-12 emphasis">
-                <a class="btn btn-primary" href="{{url("admin/1")}}"><i class="fa fa-eye"></i> Ver</a>
-                <a class="btn btn-primary" href="{{url("admin/$admin->id/edit")}}"><i class="fa fa-edit"></i> Editar</a>
-                {{Form::open(["url"=>"admin/$admin->id","method"=>"DELETE"])}}
+                <a class="btn btn-primary" href="{{url("categoria/$categoria->id")}}"><i class="fa fa-eye"></i> Ver</a>
+                <a class="btn btn-primary" href="{{url("categoria/$categoria->id/edit")}}"><i class="fa fa-edit"></i> Editar</a>
+                {{Form::open(["url"=>"categoria/$categoria->id","method"=>"DELETE"])}}
                 <button type="submit" class="btn btn-primary"><i class="fa fa-ellipsis-h"></i> Eliminar</button>
                 {{Form::close()}}
             </div>

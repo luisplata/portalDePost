@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
+use App\Usuario;
 
 class AdminController extends Controller {
 
@@ -13,12 +15,12 @@ class AdminController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        //
+        //listado
         $datos = array(
             "admins" => \App\Usuario::all(),
-            "mensajes"=> \App\Mensaje::where("leido",0)->get()
+            "mensajes" => \App\Mensaje::where("leido", 0)->get()
         );
-        return view("admin.dashboard",$datos);
+        return view("admin.dashboard", $datos);
     }
 
     /**
@@ -28,6 +30,7 @@ class AdminController extends Controller {
      */
     public function create() {
         //
+        return view("admin.create");
     }
 
     /**
@@ -37,7 +40,26 @@ class AdminController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
-        //
+        try {
+            DB::beginTransaction();
+            //creamos al administrador
+            $admin = new \App\Usuario();
+            $admin->nombre = $request->nombre;
+            $admin->email = $request->email;
+            $admin->telefono = $request->telefono;
+            if ($request->pass1 != $request->pass2) {
+                return redirect("admin/create?mensaje=Las contraseñas no coisiden&tipo=warning");
+            }
+            $admin->pass = sha1($request->pass1);
+            if (!$admin->save()) {
+                return redirect("admin/create?mensaje=Ocurrio un error al crear el admin&tipo=error");
+            }
+            DB::commit();
+            return redirect("admin?mensaje=Se creo correctamente el administradort&tipo=seccess");
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return redirect("admin?mensaje=Ocurrio un error al crear el admin, puede que el email ya esta registrado&tipo=error");
+        }
     }
 
     /**
@@ -47,7 +69,12 @@ class AdminController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        //
+        //buscamos al admin para mostrarlo
+         $datos = array(
+            "admin"=> \App\Usuario::find($id)
+        );
+        //dd($datos);
+        return view("admin.view",$datos);
     }
 
     /**
@@ -57,7 +84,12 @@ class AdminController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit($id) {
-        //
+        //buscamos al admin para cargar sus datos
+        $datos = array(
+            "admin"=> \App\Usuario::find($id)
+        );
+        //dd($datos);
+        return view("admin.edit",$datos);
     }
 
     /**
@@ -68,7 +100,29 @@ class AdminController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id) {
-        //
+        try{
+            //actualizando el admin con la pass
+            //buscamos al admin con la ID
+            $admin = Usuario::find($id);
+            if(!is_object($admin)){
+                return redirect("admin?mensaje=no existe el admin");
+            }
+            $admin->nombre = $request->nombre;
+            $admin->telefono=$request->telefono;
+            $admin->email = $request->email;
+            //validamos la pass
+            if($request->pass1 != $request->pass2){
+                return redirect("admin/$admin->id/edit?mensaje=contraseñas no coinsiden");   
+            }
+            $admin->pass = sha1($request->pass2);
+            if(!$admin->save()){
+                return redirect("admin/$admin->id/edit?mensaje=No se guardo el admin");   
+            }
+            return redirect("admin?mensaje=Se edito el admin&tipo=success");
+
+        }catch(\Exception $ex){
+            return redirect("admin?mensaje=Ocurrio un error, puede que el email ya este registrado&tipo=error");
+        }
     }
 
     /**
@@ -78,7 +132,17 @@ class AdminController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
-        //
+        //buscamos al admin y lo eliminamos
+        try{
+            $admin = Usuario::find($id);
+            if($admin->delete()){
+                return redirect("admin?mensaje=se elimino con exito&tipo=success");
+            }else{
+                return redirect("admin?mensaje=no se elimino con exito&tipo=warining");
+            }
+        }catch(\Exception $ex){
+            return redirect("admin?mensaje=no se elimino con exito&tipo=error");
+        }
     }
 
 }

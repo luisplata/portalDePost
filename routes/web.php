@@ -22,7 +22,9 @@ Route::get('/portafolio/{filtro?}', function ($filtro = null) {
 //mandará un dato que sera el nombre del fintro y retornará los productos
 //con esa categoria
     $datos = array(
-        "filtro" => $filtro
+        "filtro" => $filtro,
+        "productos" => $filtro == null ? App\Producto::all() : App\Producto::where("categorias_id", $filtro)->get(),
+        "categorias" => \App\Categoria::all()
     );
     return view('portafolio', $datos);
 });
@@ -36,6 +38,27 @@ Route::get("/logout", function() {
 });
 Route::post("/login", "LoginController@login");
 
-Route::prefix('admin')->middleware('logeado')->group(function () {
-    Route::resource("/", "AdminController");
+Route::middleware('logeado')->group(function () {
+    //para el admin
+    Route::prefix('admin')->group(function () {
+        Route::resource("/", "AdminController");
+        Route::get("/{id}", "AdminController@show");
+        Route::get("/{id}/edit", "AdminController@edit");
+        Route::put("/{id}", "AdminController@update");
+        Route::delete("/{id}", "AdminController@destroy");
+    });
+    Route::prefix('categoria')->group(function () {
+        Route::resource("/", "CategoriaController");
+        Route::get("/{id}", "CategoriaController@show");
+        Route::get("/{id}/edit", "CategoriaController@edit");
+        Route::put("/{id}", "CategoriaController@update");
+        Route::delete("/{id}", "CategoriaController@destroy");
+    });
+    Route::prefix('producto')->group(function () {
+        Route::resource("/", "ProductoController");
+        Route::get("/{id}", "ProductoController@show");
+        Route::get("/{id}/edit", "ProductoController@edit");
+        Route::put("/{id}", "ProductoController@update");
+        Route::delete("/{id}", "ProductoController@destroy");
+    });
 });

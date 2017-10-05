@@ -10,12 +10,12 @@
         <title>Administrador</title>
 
         <!-- Bootstrap -->
-        <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{asset('vendors/bootstrap/dist/css/bootstrap.min.css')}}" rel="stylesheet">
         <!-- Font Awesome -->
-        <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link href="{{asset('vendors/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet">
 
         <!-- Custom Theme Style -->
-        <link href="../build/css/custom.min.css" rel="stylesheet">
+        <link href="{{asset('build/css/custom.min.css')}}" rel="stylesheet">
 
         @yield('plugins-css')
     </head>
@@ -51,7 +51,9 @@
                                 <ul class="nav side-menu">
                                     <li><a><i class="fa fa-home"></i> Inicio <span class="fa fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
-                                            <li><a href="#">menu 1</a></li>
+                                            <li><a href="{{url('admin')}}">Administradores</a></li>
+                                            <li><a href="{{url('categoria')}}">Categorias</a></li>
+                                            <li><a href="{{url('producto')}}">Productos</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -198,11 +200,11 @@
         </div>
 
         <!-- jQuery -->
-        <script src="../vendors/jquery/dist/jquery.min.js"></script>
+        <script src="{{asset('vendors/jquery/dist/jquery.min.js')}}"></script>
         <!-- Bootstrap -->
-        <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="{{asset('vendors/bootstrap/dist/js/bootstrap.min.js')}}"></script>
         <!-- Custom Theme Scripts -->
-        <script src="../build/js/custom.min.js"></script>
+        <script src="{{asset('build/js/custom.min.js')}}"></script>
 
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <script>
