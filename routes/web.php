@@ -32,6 +32,9 @@ Route::get('/portafolio/{filtro?}', function ($filtro = null) {
 Route::get("/login", function() {
     return view("login");
 });
+Route::get("/revista", function() {
+    return view("revista");
+});
 Route::get("/logout", function() {
     session()->flush();
     return redirect("/login");
