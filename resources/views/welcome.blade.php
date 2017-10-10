@@ -43,6 +43,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{url("/portafolio")}}">Portafolio</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url("/faqs")}}">Preguntas Frecuentes</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -95,25 +98,29 @@
                             Mochilas Wayu
                         </span>
                     </div>
-                    <div class="articulo-principal-contenido">
-                        <p>
+                    <a href="{{url('/portafolio')}}">
+                        <div class="articulo-principal-contenido">
+                            <p>
 
-                        </p>
-                        <img class="d-block w-100" src="{{asset('images/carteras-mochilas-wayuu-arhucos.jpg')}}">
-                    </div>
+                            </p>
+                            <img class="d-block w-100" src="{{asset('images/carteras-mochilas-wayuu-arhucos.jpg')}}">
+                        </div>
+                    </a>
                 </div>
                 <div class="col-md-6 text-left">
+
                     <div>
                         <span class="h3">
-                            Mantas Wayu
+                            Cultura Wayu
                         </span>
                     </div>
-                    <div class="articulo-principal-contenido">
-                        <p>
-
-                        </p>
-                        <img class="d-block w-100" src="{{asset('images/mantas-guajiras.jpg')}}">
-                    </div>
+                    <a href="{{url('/quienes-somos')}}">
+                        <div class="articulo-principal-contenido">
+                            <p>
+                            </p>
+                            <img class="d-block w-100" src="{{asset('images/mantas-guajiras.jpg')}}">
+                        </div>
+                    </a>
                 </div>
             </div>
             <div class="row">

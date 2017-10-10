@@ -19,7 +19,7 @@ class CreatePostsTable extends Migration
             $table->string("titulo");
             $table->text("contenido");
             $table->integer("categorias_id")->unsigned();
-            $table->foreign('categorias_id')->references('id')->on('categorias');
+            $table->foreign('categorias_id')->references('id')->on('categorias_post')->onDelete('cascade');
         });
     }
 

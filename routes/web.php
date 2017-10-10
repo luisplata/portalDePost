@@ -14,6 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/faqs', function () {
+    return view('faqs');
+});
 Route::get('/quienes-somos', function () {
     return view('quienes_somos');
 });

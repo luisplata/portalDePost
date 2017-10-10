@@ -47,6 +47,9 @@
                         <li class="nav-item active">
                             <a class="nav-link" href="{{url("/portafolio")}}">Portafolio</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url("/faqs")}}">Preguntas Frecuentes</a>
+                        </li>
                     </ul>
                 </div>
             </div>

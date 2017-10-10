@@ -19,6 +19,7 @@ class CategoriaController extends Controller {
         $datos = array(
             "categorias" => Categoria::all()
         );
+        //dd($datos);
         return view("categoria.dashboard", $datos);
     }
 

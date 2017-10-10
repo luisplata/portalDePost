@@ -20,7 +20,7 @@ class CreateProductosTable extends Migration {
             $table->string("imagen");
             $table->string("url");
             $table->integer("categorias_id")->unsigned();
-            $table->foreign('categorias_id')->references('id')->on('categorias');
+            $table->foreign('categorias_id')->references('id')->on('categorias')->onDelete('cascade');
         });
     }
 

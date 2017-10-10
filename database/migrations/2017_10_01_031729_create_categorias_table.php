@@ -20,6 +20,13 @@ class CreateCategoriasTable extends Migration
             $table->text("descripcion");
             $table->integer("padre");
         });
+        Schema::create('categorias_post', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+            $table->string("nombre");
+            $table->text("descripcion");
+            $table->integer("padre");
+        });
     }
 
     /**
@@ -30,5 +37,6 @@ class CreateCategoriasTable extends Migration
     public function down()
     {
         Schema::dropIfExists('categorias');
+        Schema::dropIfExists('categorias_post');
     }
 }

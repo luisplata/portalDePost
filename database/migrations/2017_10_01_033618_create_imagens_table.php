@@ -17,7 +17,7 @@ class CreateImagensTable extends Migration {
             $table->timestamps();
             $table->string("url");
             $table->integer("posts_id")->unsigned();
-            $table->foreign('posts_id')->references('id')->on('posts');
+            $table->foreign('posts_id')->references('id')->on('posts')->onDelete('cascade');
         });
     }
 
