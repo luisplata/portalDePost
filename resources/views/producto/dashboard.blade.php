@@ -12,7 +12,7 @@
         <div class="col-sm-12">
             <div class="left col-xs-7">
                 <h2>{{$producto->nombre}}</h2>
-                <img src="{{url('').$producto->imagen}}" />
+                <img  class="img-thumbnail"  src="{{url('').$producto->imagen}}" />
                 <ul class="list-unstyled">
                     <li><i class="fa fa-envelope"></i> {{$producto->descripcion}}</li>
                     <li><i class="fa fa-phone"></i> {{$producto->categoria->nombre}}</li>
