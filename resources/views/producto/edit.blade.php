@@ -12,10 +12,24 @@
 </div>
 <div class="clearfix"></div>
 <div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">
+        Estado <span class="required">*</span>
+    </label>
+    <div class="form-checks form-check-inline col-md-6 col-sm-6 col-xs-12">
+        <label class="form-check-label">
+            <input class="form-check-input" type="radio" name="estado" id="inlineRadio1" value="1"  {{$producto->estado==1?'checked':''}}> Si
+        </label>
+        <label class="form-check-label">
+            <input class="form-check-input" type="radio" name="estado"  id="inlineRadio2" value="0" {{$producto->estado==0?"checked":""}}> No
+        </label>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="form-group hidden">
     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Descripción <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
-        <input value="{{$producto->descripcion}}" type="text" id="last-name" name="descripcion" required="required" class="form-control col-md-7 col-xs-12">
+        <input value="{{$producto->descripcion}}" type="text" id="last-name" name="descripcion" class="form-control col-md-7 col-xs-12">
     </div>
 </div>
 <div class="clearfix"></div>

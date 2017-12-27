@@ -97,6 +97,9 @@
                     </div>
                 </div>
                 @endforeach
+                <nav aria-label="Page navigation example">
+                    {{ $productos->links()  }}
+                </nav>
             </div>
         </div>
 

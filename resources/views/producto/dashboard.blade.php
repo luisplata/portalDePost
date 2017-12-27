@@ -14,7 +14,7 @@
                 <h2>{{$producto->nombre}}</h2>
                 <img  class="img-thumbnail"  src="{{url('').$producto->imagen}}" />
                 <ul class="list-unstyled">
-                    <li><i class="fa fa-envelope"></i> {{$producto->descripcion}}</li>
+                    <li><i class="fa fa-check"></i> Estado: {{$producto->estado == 1 ? "Activo":"Inactivo"}}</li>
                     <li><i class="fa fa-phone"></i> {{$producto->categoria->nombre}}</li>
                 </ul>
             </div>
@@ -44,4 +44,5 @@
     </div>
 </div>
 @endforeach
+{{ $productos->links() }}
 @endsection

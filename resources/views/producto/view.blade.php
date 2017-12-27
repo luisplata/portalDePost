@@ -9,7 +9,15 @@
     </div>
 </div>
 <div class="clearfix"></div>
-<div class="form-group">
+<div class="form-group ">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Estado <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="email" id="last-name" name="email" required="required" class="form-control col-md-7 col-xs-12" value="{{$producto->estado==1?"Activo":"Inactivo"}}" readonly="readonly">
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="form-group hidden">
     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Descripción <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">

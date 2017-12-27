@@ -15,7 +15,7 @@ class ProductoController extends Controller {
     public function index() {
         //
         $datos = array(
-            "productos" => \App\Producto::all()
+            "productos" => \App\Producto::simplePaginate(15)
         );
         return view("producto.dashboard", $datos);
     }
@@ -112,6 +112,8 @@ class ProductoController extends Controller {
             $producto->descripcion = $request->descripcion;
             $producto->url = $request->url;
             $producto->categorias_id = $request->categoria_id;
+            //clocando estado al producto
+            $producto->estado = $request->estado;
             //validamos si modificamos la imagen
             if ($request->file("imagen")) {
                 //si tiene la imagen

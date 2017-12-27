@@ -19,11 +19,19 @@
     </div>
 </div>
 <div class="clearfix"></div>
-<div class="form-group">
+<div class="form-group hidden">
     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Descripción <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
-        <textarea class="form-control col-md-7 col-xs-12" name="descripcion" required></textarea>
+        <textarea class="form-control col-md-7 col-xs-12" name="descripcion"></textarea>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="form-group hidden">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Descripción <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <textarea class="form-control col-md-7 col-xs-12" name="descripcion"></textarea>
     </div>
 </div>
 <div class="clearfix"></div>
