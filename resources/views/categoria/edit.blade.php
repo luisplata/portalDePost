@@ -15,7 +15,7 @@
     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Descripción <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
-        <input value="{{$categoria->descripcion}}" type="text" id="last-name" name="descripcion" required="required" class="form-control col-md-7 col-xs-12">
+        <textarea id="last-name" name="descripcion" required="required" class="form-control col-md-7 col-xs-12">{{$categoria->descripcion}}</textarea>
     </div>
 </div>
 <div class="clearfix"></div>

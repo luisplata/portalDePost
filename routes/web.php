@@ -26,7 +26,7 @@ Route::get('/portafolio/{filtro?}', function ($filtro = null) {
 //con esa categoria
     $datos = array(
         "filtro" => $filtro,
-        "productos" => $filtro == null ? App\Producto::simplePaginate(9) : App\Producto::where("categorias_id", $filtro)->simplePaginate(9),
+        "productos" => $filtro == null ? App\Producto::where("estado",1)->simplePaginate(9) : App\Producto::where("categorias_id", $filtro)->where("estado",1)->simplePaginate(9),
         "categorias" => \App\Categoria::all()
     );
     return view('portafolio', $datos);

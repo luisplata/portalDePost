@@ -61,6 +61,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
+                    <img src="http://via.placeholder.com/1400x200?text=Todo viene con el Kid Caribean" style="width: 100%;margin-top: 1em;">
+                </div>
+                <div class="col-12">
                     <br/>
                     <h1 class="h1 text-center">
                         Portafolio
@@ -71,8 +74,10 @@
                             <p>
                                 <select class="form-control" id="filtroPortafolio" name="filtro">
                                     <option value=""></option>
+                                    {{$c = NULL}}
                                     @foreach($categorias as $categoria)
                                     @if($categoria->id == $filtro)
+                                    {{$c = $categoria}}
                                     <option selected value="{{$categoria->id}}">{{$categoria->nombre}}</option>
                                     @else
                                     <option value="{{$categoria->id}}">{{$categoria->nombre}}</option>
@@ -81,6 +86,15 @@
                                 </select>
                             </p>
                         </div>
+                        @if(is_object($c))
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card-body bg-white text-center">
+                                    {{$c->descripcion}}
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -89,15 +103,16 @@
                 <div class="col-md-4">
                     <div class="card">
                         <img class="card-img-top" src="{{$producto->imagen}}" alt="Card image cap">
-                        <div class="card-body">
+                        <div class="card-body text-center">
                             <h4 class="card-title">{{$producto->nombre}}</h4>
-                            <p class="card-text">{{$producto->descripcion}}</p>
                             <a href="{{$producto->url}}" class="btn btn-primary" target="_blank">Comprar</a>
                         </div>
                     </div>
                 </div>
                 @endforeach
-                <nav aria-label="Page navigation example">
+            </div>
+            <div class="">
+                <nav aria-label="Page navigation example ">
                     {{ $productos->links()  }}
                 </nav>
             </div>
@@ -146,6 +161,18 @@
 $("#filtroPortafolio").on("change", function () {
     //swal(this.value);
     location.href = "{{url('/portafolio/')}}/" + this.value;
+});
+$(document).ready(function () {
+    var ul = $(".pagination");
+    ul.addClass("justify-content-center");
+    $.each(ul.children("li"), function (key, value) {
+        console.log(value);
+        value.classList.add("page-item");
+        console.log($(value).children());
+        var hijo = $(value).children();
+        console.log(hijo);
+        hijo.addClass("page-link");
+    });
 });
         </script>
     </body>
