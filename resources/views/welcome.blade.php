@@ -84,6 +84,7 @@
         <div class="container">
             <div class="row contenido-medio">
                 <div class="col-md-6 text-center imagenes-portada">
+
                     <a href="{{ url('portafolio') }}">
                         <img src="{{asset('images/portafolio-productos-wayuu.png')}}">
                     </a>
@@ -92,6 +93,12 @@
                     <a href="{{ url('catalogo/catalogo.html') }}">
                         <img src="{{asset('images/catalogo-productos.png')}}">
                     </a>
+
+                    <img src="{{asset('images/portafolio-productos-wayuu.png')}}">
+                </div>
+                <div class="col-md-6 text-center imagenes-portada">
+                    <img src="{{asset('images/catalogo-productos.png')}}">
+
                 </div>
             </div>
             <hr/>

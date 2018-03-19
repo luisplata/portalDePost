@@ -60,11 +60,15 @@
 
         <div class="container">
             <div class="row">
+
                 {{-- <div class="col-12">
                     <img src="http://via.placeholder.com/1400x200?text=Todo viene con el Kit Caribean" style="width: 100%;margin-top: 1em;">
                 </div> --}}
                 <div class="col-12">
                     <img class="d-block w-100" src="{{asset('images/banner/bannerplata1.png')}}" alt="First slide">
+
+            
+
                 </div>
                 <div class="col-12">
                     <br/>
@@ -89,11 +93,13 @@
                                 </select>
                             </p>
                         </div>
+
                         </div>
                         <br>
                         @if(is_object($c))
                         <div class="row">
                             <div class="col-12">
+
 
                                 <div class="card-body bg-white text-center">
                                     {{$c->descripcion}}

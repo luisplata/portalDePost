@@ -20,13 +20,15 @@ class UsuarioInicial extends Seeder {
         $userRoot->save();
 
 
-           $userRoot = new App\Usuario();
+
+        $userRoot = new App\Usuario();
         $userRoot->id = 2;
         $userRoot->nombre = "Root";
         $userRoot->email = "danielprz501@gmail.com";
         $userRoot->telefono = "3005698386";
         $userRoot->pass = sha1("daniel123");
         $userRoot->save();
+
     }
 
 }
