@@ -73,14 +73,14 @@
                 <div class="col-12">
                     <br/>
                     <h1 class="h1 text-center">
-                        Portafolio
+                        Categorías
                     </h1>
                     <div class="row">
                         <div class="col-md-4"><br/></div>
                         <div class="col-md-4">
                             <p>
                                 <select class="form-control" id="filtroPortafolio" name="filtro">
-                                    <option value=""></option>
+                                    <option value="" disabled selected>Productos</option>
                                     {{$c = NULL}}
                                     @foreach($categorias as $categoria)
                                     @if($categoria->id == $filtro)

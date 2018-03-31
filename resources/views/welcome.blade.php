@@ -90,15 +90,9 @@
                     </a>
                 </div>
                 <div class="col-md-6 text-center imagenes-portada">
-                    <a href="{{ url('catalogo/catalogo.html') }}">
+                    <a target="_blank" href="http://www.rafastienda.com/portafolio/rafastienda.html">
                         <img src="{{asset('images/catalogo-productos.png')}}">
                     </a>
-
-                    <img src="{{asset('images/portafolio-productos-wayuu.png')}}">
-                </div>
-                <div class="col-md-6 text-center imagenes-portada">
-                    <img src="{{asset('images/catalogo-productos.png')}}">
-
                 </div>
             </div>
             <hr/>
@@ -161,11 +155,11 @@
                     <p class="h4">Contactenos:</p>
                     <p>Aquiere todos tus productos wayu</p>
                     <p>
-                        <span>Telefono:</span> <span>tel</span>
+                        <span>Telefono:</span> <span>{{env("APP_TEL")}}</span>
                         <br/>
-                        <span>Email:</span> <span>tel</span>
+                        <span>Email:</span> <span>{{env("APP_MAIL")}}</span>
                         <br/>
-                        <span>Dirección:</span> <span>tel</span>
+                        <span>Dirección:</span> <span>{{env("APP_DIRECCION")}}</span>
                         <br/>
                     </p>
                 </div>
