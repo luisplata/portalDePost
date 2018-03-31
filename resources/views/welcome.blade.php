@@ -35,16 +35,16 @@
                     <ul class=" mr-auto"></ul>
                     <ul class="navbar-nav">
                         <li class="nav-item active">
-                            <a class="nav-link" href="{{url("/")}}">Inicio</a>
+                            <a class="nav-link" href="{{url('/')}}">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{url("/quienes-somos")}}">Quienes Somos</a>
+                            <a class="nav-link" href="{{url('/quienes-somos')}}">Quienes Somos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{url("/portafolio")}}">Portafolio</a>
+                            <a class="nav-link" href="{{url('/portafolio')}}">Portafolio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{url("/faqs")}}">Preguntas Frecuentes</a>
+                            <a class="nav-link" href="{{url('/faqs')}}">Preguntas Frecuentes</a>
                         </li>
                     </ul>
                 </div>
@@ -146,33 +146,7 @@
             </div>
         </div>
         <!-- Liks para el portafolio y la revista-->
-
-        <!-- Footer -->
-
-        <nav class="navbar navbar-dark sticky-button" style="background-color: #c90000; color: white;">
-            <div class="container">
-                <div class="col-md-4">
-                    <p class="h4">Contactenos:</p>
-                    <p>Aquiere todos tus productos wayu</p>
-                    <p>
-                        <span>Telefono:</span> <span>{{env("APP_TEL")}}</span>
-                        <br/>
-                        <span>Email:</span> <span>{{env("APP_MAIL")}}</span>
-                        <br/>
-                        <span>Dirección:</span> <span>{{env("APP_DIRECCION")}}</span>
-                        <br/>
-                    </p>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="text-center list-group">
-                    <a class="badge" href="https://luisplata.github.io" target="_blank"><span>Creado Por: </span><span>Luis Enrique Plata Osorio</span></a>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Footer -->
-
+		@include("plantilla.app")
 
 
 
