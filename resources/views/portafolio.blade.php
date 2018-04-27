@@ -21,6 +21,10 @@
             .card{
                 margin-bottom: 2rem;
                 margin-top: 2rem;
+
+            }
+            .card-img-top {
+                height: 600px;
             }
         </style>
     </head>
@@ -75,7 +79,7 @@
                     <h1 class="h1 text-center">
                         Categorías
                     </h1>
-                    <div class="row">
+                    <div class="row" >
                         <div class="col-md-4"><br/></div>
                         <div class="col-md-4">
                             <p>
