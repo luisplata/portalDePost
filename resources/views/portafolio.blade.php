@@ -120,7 +120,7 @@
                     <div class="card">
                         <img class="card-img-top" src="{{$producto->imagen}}" alt="Card image cap">
                         <div class="card-body text-center">
-                            <h4 class="card-title">{{$producto->nombre}}</h4>
+                            {{-- <h4 class="card-title">{{$producto->nombre}}</h4> --}}
                             <a href="{{$producto->url}}" class="btn btn-primary" target="_blank">Comprar</a>
                         </div>
                     </div>
