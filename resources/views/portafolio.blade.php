@@ -69,7 +69,7 @@
                     <img src="http://via.placeholder.com/1400x200?text=Todo viene con el Kit Caribean" style="width: 100%;margin-top: 1em;">
                 </div> --}}
                 <div class="col-12">
-                    <img class="d-block w-100" src="{{asset('images/banner/bannerplata1.png')}}" alt="First slide">
+                    <img class="d-block w-100" src="{{asset('images/banner/bannerprueba3.png')}}" alt="First slide">
 
             
 
