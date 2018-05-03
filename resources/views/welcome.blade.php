@@ -31,7 +31,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse h5" id="navbarSupportedContent">
+                <di v class="collapse navbar-collapse h5" id="navbarSupportedContent">
                     <ul class=" mr-auto"></ul>
                     <ul class="navbar-nav">
                         <li class="nav-item active">
@@ -44,7 +44,7 @@
                             <a class="nav-link" href="{{url('/portafolio')}}">Portafolio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{url('/faqs')}}">Preguntas Frecuentes</a>
+                            <a class="nav-link" href="{{url('/faqs')}}">Contacto</a>
                         </li>
                     </ul>
                 </div>

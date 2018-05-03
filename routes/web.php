@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Http\Request;
 
 /*
   |--------------------------------------------------------------------------
@@ -67,4 +68,26 @@ Route::middleware('logeado')->group(function () {
         Route::put("/{id}", "ProductoController@update");
         Route::delete("/{id}", "ProductoController@destroy");
     });
+});
+Route::post('faqs',function(Request $request){
+
+    //dd($request);
+    $datos= array(
+        'name'=>$request->nombre,
+        'descripcion' =>$request->descripcion,
+        'telefono' => $request->telefono,
+        'ciudad'=>$request->ciudad,
+        'email' =>$request->email,
+
+    );
+
+    Mail::send('email',$datos, function($message){
+
+        $message->from('fkudany1@gmail.com','Prueba1');
+        $message->to('info@rafastienda.com')->subject('Faqs Rafastienda');
+
+    });
+
+    return view('faqs');
+
 });
