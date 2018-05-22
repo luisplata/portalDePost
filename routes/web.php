@@ -77,14 +77,14 @@ Route::post('faqs',function(Request $request){
         'descripcion' =>$request->descripcion,
         'telefono' => $request->telefono,
         'ciudad'=>$request->ciudad,
-        'email' =>$request->email,
+        'email' =>$request->mail,
 
     );
 
     Mail::send('email',$datos, function($message){
 
-        $message->from('fkudany1@gmail.com','Prueba1');
-        $message->to('info@rafastienda.com')->subject('Faqs Rafastienda');
+        $message->from('fkudany1@gmail.com','Rafastienda');
+        $message->to(['info@rafacaribe.es', 'comercial@rafacaribe.es'])->subject('Faqs Rafastienda');
 
     });
 
