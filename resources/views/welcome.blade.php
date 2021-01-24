@@ -147,7 +147,7 @@
 
                 <!-- Section -->
                 <section class="row">
-                    <div class="posts col-10">
+                    <div class="posts">
                         <article class="text-center">
                             <a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
                             <a href="#" class="">
