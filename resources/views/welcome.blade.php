@@ -28,11 +28,11 @@
                 <header id="header">
                     <h1><a href="#" class="logo"><strong>{{ env('APP_NAME') }}</strong>.com</a></h1>
                     <ul class="icons">
-                        <li><a href="{{ env('TELEGRAM', '#') }}" class="icon brands fa-telegram"><span
+                        <li><a href="{{ env('TELEGRAM', '#') }}" target="_blank" class="icon brands fa-telegram"><span
                                     class="label">Telegram</span></a></li>
-                        <li><a href="{{ env('DISCORD', '#') }}" class="icon brands fa-discord"><span
+                        <li><a href="{{ env('DISCORD', '#') }}" target="_blank" class="icon brands fa-discord"><span
                                     class="label">Discord</span></a></li>
-                        <li><a href="{{ env('REDDIT', '#') }}" class="icon brands fa-reddit"><span
+                        <li><a href="{{ env('REDDIT', '#') }}" target="_blank" class="icon brands fa-reddit"><span
                                     class="label">Reddit</span></a>
                         </li>
                     </ul>
