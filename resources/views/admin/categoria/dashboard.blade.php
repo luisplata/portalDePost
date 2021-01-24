@@ -3,7 +3,7 @@
 @section("contenido")
 <div class="col-md-12 col-sm-12 col-xs-12 text-right">
     <ul class="pagination pagination-split">
-        <li><a href="{{url('categoria/create')}}"><i class="fa fa-plus"></i> Crear</a></li>
+        <li><a href="{{url('admin/categoria/create')}}"><i class="fa fa-plus"></i> Crear</a></li>
     </ul>
 </div>
 @foreach($categorias as $categoria)

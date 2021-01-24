@@ -17,7 +17,7 @@ class ProductoController extends Controller {
         $datos = array(
             "productos" => \App\Producto::simplePaginate(15)
         );
-        return view("producto.dashboard", $datos);
+        return view("admin.producto.dashboard", $datos);
     }
 
     /**
@@ -30,7 +30,7 @@ class ProductoController extends Controller {
         $datos = array(
             "categorias" => \App\Categoria::all()
         );
-        return view("producto.create", $datos);
+        return view("admin.producto.create", $datos);
     }
 
     /**
@@ -56,13 +56,13 @@ class ProductoController extends Controller {
             }
             $producto->imagen = $nombre;
             if ($producto->save()) {
-                return redirect("producto?1");
+                return redirect("admin/producto?1");
             } else {
-                return redirect("producto?2");
+                return redirect("admin/producto?2");
             }
         } catch (\Exception $ex) {
             dd($ex);
-            return redirect("producto?3");
+            return redirect("admin/producto?3");
         }
     }
 
@@ -75,7 +75,7 @@ class ProductoController extends Controller {
     public function show($id) {
         //mostrasmo el producto en especifico
         $datos = array("producto" => \App\Producto::find($id));
-        return view("producto.view", $datos);
+        return view("admin.producto.view", $datos);
     }
 
     /**
@@ -90,7 +90,7 @@ class ProductoController extends Controller {
             "producto" => \App\Producto::find($id),
             "categorias" => \App\Categoria::all()
         );
-        return view("producto.edit", $datos);
+        return view("admin.producto.edit", $datos);
     }
 
     /**
@@ -121,13 +121,13 @@ class ProductoController extends Controller {
                 $producto->imagen = $nombre;
             }
             if ($producto->save()) {
-                return redirect("producto?mensaje=Se modifico el producto con exito&tipo=success");
+                return redirect("admin/producto?mensaje=Se modifico el producto con exito&tipo=success");
             } else {
-                return redirect("producto?mensaje=No se modifico el producto con exito&tipo=warning");
+                return redirect("admin/producto?mensaje=No se modifico el producto con exito&tipo=warning");
             }
         } catch (\Exception $ex) {
             dd($ex);
-            return redirect("producto?mensaje=Error&tipo=error");
+            return redirect("admin/producto?mensaje=Error&tipo=error");
         }
     }
 
@@ -144,13 +144,13 @@ class ProductoController extends Controller {
             Storage::delete([public_path().$producto->imagen]);
             if ($producto->delete()) {
                 //eliminamos el archivo
-                return redirect("producto?mensaje=Se guardo el producto&tipo=success");
+                return redirect("admin/producto?mensaje=Se guardo el producto&tipo=success");
             } else {
-                return redirect("producto?mensaje=No se guardo el producto&tipo=warining");
+                return redirect("admin/producto?mensaje=No se guardo el producto&tipo=warining");
             }
         } catch (\Exception $ex) {
             dd($ex);
-            return redirect("producto?mensaje=Error&tipo=error");
+            return redirect("admin/producto?mensaje=Error&tipo=error");
         }
     }
 

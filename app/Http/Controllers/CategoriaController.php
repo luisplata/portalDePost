@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Categoria;
-use Illuminate\Support\Facades\DB;
+use Exception;
 
 class CategoriaController extends Controller {
 
@@ -20,7 +20,7 @@ class CategoriaController extends Controller {
             "categorias" => Categoria::all()
         );
         //dd($datos);
-        return view("categoria.dashboard", $datos);
+        return view("admin.categoria.dashboard", $datos);
     }
 
     /**
@@ -33,7 +33,7 @@ class CategoriaController extends Controller {
         $datos = array(
             "categorias" => Categoria::all()
         );
-        return view("categoria.create", $datos);
+        return view("admin.categoria.create", $datos);
     }
 
     /**
@@ -51,12 +51,12 @@ class CategoriaController extends Controller {
             $categoria->descripcion = $request->descripcion;
             $categoria->padre = $request->padre;
             if (!$categoria->save()) {
-                return redirect("categoria/create?mensaje=Ocurrio un error al crear la categoria&tipo=error");
+                return redirect("admin/categoria/create?mensaje=Ocurrio un error al crear la categoria&tipo=error");
             }
-            return redirect("categoria?mensaje=Se creo correctamente la categoria&tipo=seccess");
+            return redirect("admin/categoria?mensaje=Se creo correctamente la categoria&tipo=seccess");
         } catch (\Exception $ex) {
             //dd($ex);
-            return redirect("categoria?mensaje=Ocurrio un error al crear la categoria&tipo=error");
+            return redirect("admin/categoria?mensaje=Ocurrio un error al crear la categoria&tipo=error");
         }
     }
 
@@ -71,7 +71,7 @@ class CategoriaController extends Controller {
         $datos = array(
             "categoria" => Categoria::find($id)
         );
-        return view("categoria.view", $datos);
+        return view("admin.categoria.view", $datos);
     }
 
     /**
@@ -86,7 +86,7 @@ class CategoriaController extends Controller {
             "categoria" => Categoria::find($id),
             "categorias" => Categoria::all()
         );
-        return view("categoria.edit", $datos);
+        return view("admin.categoria.edit", $datos);
     }
 
     /**

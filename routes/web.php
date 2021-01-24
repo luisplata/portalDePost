@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', "IndexController@index");
 
+Route::get("product/{id}", "ProductoClientCntroller@show");
+
 Route::get("/login", function () {
     return view("login");
 });
@@ -34,5 +36,3 @@ Route::middleware('logeado')->group(function () {
     });
     Route::resource("admin", "AdminController");
 });
-
-Route::resource("product", "ProductoClientCntroller");
