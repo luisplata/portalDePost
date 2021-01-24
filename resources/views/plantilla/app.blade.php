@@ -52,8 +52,8 @@
                                     <li><a><i class="fa fa-home"></i> Inicio <span class="fa fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
                                             <li><a href="{{url('admin')}}">Administradores</a></li>
-                                            <li><a href="{{url('categoria')}}">Categorias</a></li>
-                                            <li><a href="{{url('producto')}}">Productos</a></li>
+                                            <li><a href="{{url('admin/categoria')}}">Categorias</a></li>
+                                            <li><a href="{{url('admin/producto')}}">Productos</a></li>
                                         </ul>
                                     </li>
                                 </ul>
