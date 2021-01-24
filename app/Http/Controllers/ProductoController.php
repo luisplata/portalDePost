@@ -45,10 +45,7 @@ class ProductoController extends Controller {
         try {
             $producto = new \App\Producto();
             $producto->nombre = $request->nombre;
-            $producto->descripcion = $request->descripcion;
-            $producto->url = $request->url;
             $producto->categorias_id = $request->categoria_id;
-            //$producto->imagen = $request->imagen->store('img');
             //validamos la imagen
             if ($request->file("imagen")) {
                 //si tiene la imagen

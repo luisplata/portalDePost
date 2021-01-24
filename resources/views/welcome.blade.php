@@ -7,7 +7,7 @@
 <html>
 
 <head>
-    <title>Editorial by HTML5 UP</title>
+    <title>{{ env('APP_NAME') }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
@@ -26,81 +26,34 @@
 
                 <!-- Header -->
                 <header id="header">
-                    <a href="#" class="logo"><strong>Packs</strong>.com</a>
+                    <h1><a href="#" class="logo"><strong>{{ env('APP_NAME') }}</strong>.com</a></h1>
                     <ul class="icons">
-                        <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                        <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                        <li><a href="#" class="icon brands fa-snapchat-ghost"><span class="label">Snapchat</span></a>
+                        <li><a href="{{ env('TELEGRAM', '#') }}" class="icon brands fa-telegram"><span
+                                    class="label">Telegram</span></a></li>
+                        <li><a href="{{ env('DISCORD', '#') }}" class="icon brands fa-discord"><span
+                                    class="label">Discord</span></a></li>
+                        <li><a href="{{ env('REDDIT', '#') }}" class="icon brands fa-reddit"><span
+                                    class="label">Reddit</span></a>
                         </li>
-                        <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-                        <li><a href="#" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
                     </ul>
                 </header>
 
                 <!-- Banner -->
                 <section id="banner">
                     <div class="row gtr-50 gtr-uniform">
-                        <div class="col-4">
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
+                        @foreach ($banners as $pack)
+                            <div class="col-4">
+                                <a href="product/{{ $pack->id }}">
+                                    <div class="card bg-dark center">
+                                        <img src=".{{ $pack->imagen }}" class="card-img">
+                                        <div class="card-img-overlay text-center">
+                                            <h2 class="card-title">{{ $pack->nombre }}</h2>
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-4">
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-4">
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-4">
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-4">
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-4">
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
                 </section>
 
                 <!-- Section 
@@ -148,42 +101,14 @@
                 <!-- Section -->
                 <section class="row">
                     <div class="posts">
-                        <article class="text-center">
-                            <a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
-                            <a href="#" class="">
-                                <h3>Web Camer</h3>
-                            </a>
-                        </article>
-                        <article class="text-center">
-                            <a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
-                            <a href="#" class="">
-                                <h3>Web Camer</h3>
-                            </a>
-                        </article>
-                        <article class="text-center">
-                            <a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
-                            <a href="#" class="">
-                                <h3>Web Camer</h3>
-                            </a>
-                        </article>
-                        <article class="text-center">
-                            <a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
-                            <a href="#" class="">
-                                <h3>Web Camer</h3>
-                            </a>
-                        </article>
-                        <article class="text-center">
-                            <a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
-                            <a href="#" class="">
-                                <h3>Web Camer</h3>
-                            </a>
-                        </article>
-                        <article class="text-center">
-                            <a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
-                            <a href="#" class="">
-                                <h3>Web Camer</h3>
-                            </a>
-                        </article>
+                        @foreach ($packs as $pack)
+                            <article class="text-center">
+                                <a href="product/{{ $pack->id }}" class="image"><img src=".{{ $pack->imagen }}" alt="" /></a>
+                                <a href="product/{{ $pack->id }}" class="">
+                                    <h3>{{ $pack->nombre }}</h3>
+                                </a>
+                            </article>
+                        @endforeach
                     </div>
                 </section>
 
@@ -242,36 +167,18 @@
                         <h2>Hot Post</h2>
                     </header>
                     <div class="mini-posts">
-                        <article>
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
+                        @foreach ($hot as $pack)
+                            <article>
+                                <a href="product/{{ $pack->id }}">
+                                    <div class="card bg-dark text-white center">
+                                        <img src=".{{ $pack->imagen }}" class="card-img">
+                                        <div class="card-img-overlay text-center">
+                                            <h5 class="card-title">{{ $pack->nombre }}</h5>
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        </article>
-                        <article>
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </article>
-                        <article>
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </article>
+                                </a>
+                            </article>
+                        @endforeach
                     </div>
                     <!-- implementar pagina de busqueda
          <ul class="actions">
@@ -285,36 +192,18 @@
                         <h2>Popular Post</h2>
                     </header>
                     <div class="mini-posts">
-                        <article>
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
+                        @foreach ($popular as $pack)
+                            <article>
+                                <a href="product/{{ $pack->id }}">
+                                    <div class="card bg-dark text-white center">
+                                        <img src=".{{ $pack->imagen }}" class="card-img">
+                                        <div class="card-img-overlay text-center">
+                                            <h5 class="card-title">{{ $pack->nombre }}</h5>
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        </article>
-                        <article>
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </article>
-                        <article>
-                            <a href="#">
-                                <div class="card bg-dark text-white center">
-                                    <img src="images/pic02.jpg" class="card-img">
-                                    <div class="card-img-overlay text-center">
-                                        <h5 class="card-title">Web Camer</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </article>
+                                </a>
+                            </article>
+                        @endforeach
                     </div>
                     <!-- implementar pagina de busqueda
          <ul class="actions">
@@ -326,20 +215,21 @@
                 <!-- Section -->
                 <section>
                     <header class="major">
-                        <h2>Contanct</h2>
+                        <h2>Chanels</h2>
                     </header>
-                    <p>Liks de redes</p>
                     <ul class="contact">
-                        <li class="icon solid fa-envelope"><a href="#">information@untitled.tld</a></li>
-                        <li class="icon solid fa-phone">(000) 000-0000</li>
-                        <li class="icon solid fa-home">1234 Somewhere Road #8254<br />
-                            Nashville, TN 00000-0000</li>
+                        <li class="icon brands fa-telegram"><a
+                                href="{{ env('TELEGRAM', '#') }}">{{ env('TELEGRAM', 'TELEGRAM') }}</a></li>
+                        <li class="icon brands fa-discord"><a
+                                href="{{ env('DISCORD', '#') }}">{{ env('DISCORD', 'DISCORD') }}</a></li>
+                        <li class="icon brands fa-reddit"><a
+                                href="{{ env('REDDIT', '#') }}">{{ env('REDDIT', 'REDDIT') }}</a></li>
                     </ul>
                 </section>
 
                 <!-- Footer -->
                 <footer id="footer">
-                    <p class="copyright">&copy; Packs.com</p>
+                    <p class="copyright">&copy; {{ env('APP_NAME') }}.com</p>
                 </footer>
 
             </div>
