@@ -1,7 +1,7 @@
 @extends("plantilla.app")
 
 @section("contenido")
-{{Form::open(["url"=>"producto","method"=>"POST", 'files' => true])}}
+{{Form::open(["url"=>"admin/producto","method"=>"POST"])}}
 
 <div class="form-group">
     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Nombre <span class="required">*</span>
@@ -12,7 +12,7 @@
 </div>
 <div class="clearfix"></div>
 <div class="form-group">
-    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">URL <span class="required">*</span>
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Imagen Source <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
         <input type="text" id="last-name" name="url" required="required" value="#" class="form-control col-md-7 col-xs-12">
@@ -47,10 +47,18 @@
 </div>
 <div class="clearfix"></div>
 <div class="form-group">
-    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Imagen <span class="required">*</span>
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Nombre Link <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
-        <input type="file" name="imagen" class="form-control col-md-7 col-xs-12" />
+        <input type="text" id="nombre-link" name="nombreLink" required="required" value="#" class="form-control col-md-7 col-xs-12">
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Hot Link <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="text" id="hot-link" name="hotLink" required="required" value="#" class="form-control col-md-7 col-xs-12">
     </div>
 </div>
 

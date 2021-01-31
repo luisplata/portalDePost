@@ -14,5 +14,8 @@ class DatabaseSeeder extends Seeder
         // $this->call(UsersTableSeeder::class);
         $this->call(UsuarioInicial::class);
         $this->call(Categorias::class);
+        factory(App\Producto::class, 200)->create()->each(function ($u) {
+            $u->save();
+        });
     }
 }

@@ -1,186 +1,254 @@
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!DOCTYPE HTML>
+<!--
+ Editorial by HTML5 UP
+ html5up.net | @ajlkn
+ Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
 
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-        <style>
-            .contenido-medio{
-                margin-bottom: 50px;
-                margin-top: 50px;
-            }
-            .imagenes-portada img{
-                width: 100%;
-            }
-            .articulo-principal-contenido{
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body style="background-image: url('{{asset('images/fondo-1.jpg')}}');">
-        <!-- Navbar parte superior de la pagina -->
-        <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: #c90000">
-            <div class="container">
-                <a class="navbar-brand" href="{{url("/")}}">
-                    <img src="http://www.rafastienda.com/web/wp-content/uploads/2017/05/rafas-tienda-web-logo.jpg" height="70" alt=""> 
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+<head>
+    <title>{{ env('APP_NAME') }}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="{{env("PATH_RESOURCE")}}/assets/css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
 
-                <di v class="collapse navbar-collapse h5" id="navbarSupportedContent">
-                    <ul class=" mr-auto"></ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{{url('/')}}">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url('/quienes-somos')}}">Quienes Somos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url('/portafolio')}}">Portafolio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url('/faqs')}}">Contacto</a>
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+
+                <!-- Header -->
+                <header id="header">
+                    <h1><a href="{{ env('HOME') }}" class="logo"><strong>{{ env('APP_NAME') }}</strong></a></h1>
+                    <ul class="icons">
+                        <li><a href="{{ env('TELEGRAM', '#') }}" target="_blank" class="icon brands fa-telegram"><span
+                                    class="label">Telegram</span></a></li>
+                        <li><a href="{{ env('DISCORD', '#') }}" target="_blank" class="icon brands fa-discord"><span
+                                    class="label">Discord</span></a></li>
+                        <li><a href="{{ env('REDDIT', '#') }}" target="_blank" class="icon brands fa-reddit"><span
+                                    class="label">Reddit</span></a>
                         </li>
                     </ul>
-                </div>
-            </div>
-        </nav>
-        <!-- / parte superior de la pagina -->
+                </header>
 
-
-        <!-- Carrusel -->
-        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-            <ol class="carousel-indicators">
-                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-            </ol>
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img class="d-block w-100" src="{{asset('images/banner/artesanias-mochilas-tejido.jpg')}}" alt="First slide">
-                </div>
-                <div class="carousel-item">
-                    <img class="d-block w-100" src="{{asset('images/banner/mochilas-wayuu-pintadas.jpg')}}" alt="First slide">
-                </div>
-                <div class="carousel-item">
-                    <img class="d-block w-100" src="{{asset('images/banner/mochilas-wayuu.jpg')}}" alt="First slide">
-                </div>
-            </div>
-            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>
-        <!-- / Carrusel -->
-        <div class="container">
-            <div class="row contenido-medio">
-                <div class="col-md-6 text-center imagenes-portada">
-
-                    <a href="{{ url('portafolio') }}">
-                        <img src="{{asset('images/portafolio-productos-wayuu.png')}}">
-                    </a>
-                </div>
-                <div class="col-md-6 text-center imagenes-portada">
-                    <a target="_blank" href="http://www.rafastienda.com/portafolio/rafastienda.html">
-                        <img src="{{asset('images/catalogo-productos.png')}}">
-                    </a>
-                </div>
-            </div>
-            <hr/>
-            <div class="row text-center">
-                <div class="col-md-6 text-left">
-                    <div>
-                        <span class="h3">
-                            Mochilas Wayu
-                        </span>
+                <!-- Banner -->
+                <section id="banner">
+                    <div class="row gtr-50 gtr-uniform">
+                        @foreach ($banners as $pack)
+                            <div class="col-4">
+                                <a href="product/{{ $pack->id }}">
+                                    <div class="card bg-dark center">
+                                        <img src="{{ $pack->imagen }}" class="card-img">
+                                        <div class="card-img-overlay text-center">
+                                            <h2 class="card-title">{{ $pack->nombre }}</h2>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
                     </div>
-                    <a href="{{url('/portafolio')}}">
-                        <div class="articulo-principal-contenido">
-                            <p>
+                </section>
 
-                            </p>
-                            <img class="d-block w-100" src="{{asset('images/carteras-mochilas-wayuu-arhucos.jpg')}}">
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6 text-left">
-
-                    <div>
-                        <span class="h3">
-                            Cultura Wayu
-                        </span>
+                <!-- Section 
+                <section>
+                    <header class="major">
+                        <h2>Erat lacinia</h2>
+                    </header>
+                    <div class="features">
+                        <article>
+                            <span class="icon fa-gem"></span>
+                            <div class="content">
+                                <h3>Portitor ullamcorper</h3>
+                                <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam
+                                    facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span class="icon solid fa-paper-plane"></span>
+                            <div class="content">
+                                <h3>Sapien veroeros</h3>
+                                <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam
+                                    facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span class="icon solid fa-rocket"></span>
+                            <div class="content">
+                                <h3>Quam lorem ipsum</h3>
+                                <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam
+                                    facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span class="icon solid fa-signal"></span>
+                            <div class="content">
+                                <h3>Sed magna finibus</h3>
+                                <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam
+                                    facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+                            </div>
+                        </article>
                     </div>
-                    <a href="{{url('/quienes-somos')}}">
-                        <div class="articulo-principal-contenido">
-                            <p>
-                            </p>
-                            <img class="d-block w-100" src="{{asset('images/mantas-guajiras.jpg')}}">
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col text-center" style="background-image: url('{{asset('images/rafastore-cartagena-atersanias.jpg')}}');background-repeat: no-repeat">
+                </section>
+                -->
 
-                    <br/>
-                    <span class="h3">
-                        Los mejores productos Wayuú
-                    </span>
-                    <p>
-                        En un solo lugar de Colombia
-                    </p>
+                <!-- Section -->
+                <section class="row">
+                    <div class="posts">
+                        @foreach ($packs as $pack)
+                            <article class="text-center">
+                                <a href="product/{{ $pack->id }}" class="image"><img src="{{ $pack->imagen }}" alt="" /></a>
+                                <a href="product/{{ $pack->id }}" class="">
+                                    <h3>{{ $pack->nombre }}</h3>
+                                </a>
+                            </article>
+                        @endforeach
+                    </div>
+                </section>
 
-                    <br/>
-                    <br/>
-
-                </div>
             </div>
         </div>
-        <!-- Liks para el portafolio y la revista-->
-		
-        <!-- Footer -->
 
-        <nav class="navbar navbar-dark sticky-button" style="background-color: #c90000; color: white;">
-            <div class="container">
-                <div class="col-md-4">
-                    <p class="h4">Contactenos:</p>
-                    <p>Aquiere todos tus productos wayu</p>
-                    <p>
-                        <span>Telefono:</span> <span>{{env("APP_TEL")}}</span>
-                        <br/>
-                        <span>Email:</span> <span>{{env("APP_MAIL")}}</span>
-                        <br/>
-                        <span>Dirección:</span> <span>{{env("APP_DIRECCION")}}</span>
-                        <br/>
-                    </p>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="text-center list-group">
-                    <a class="badge" href="https://luisplata.github.io" target="_blank"><span>Creado Por: </span><span>Luis Enrique Plata Osorio</span></a>
-                </div>
-            </div>
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <div class="inner">
+
+                <!-- Search funcion para luego, poder buscar post por %palabra%
+        <section id="search" class="alt">
+         <form method="post" action="#">
+          <input type="text" name="query" id="query" placeholder="Search" />
+         </form>
+        </section>
+                            -->
+                <!-- Menu No necesitamos menus para esta iteración
+        <nav id="menu">
+         <header class="major">
+          <h2>Menu</h2>
+         </header>
+         <ul>
+          <li><a href="index.html">Homepage</a></li>
+          <li><a href="generic.html">Generic</a></li>
+          <li><a href="elements.html">Elements</a></li>
+          <li>
+           <span class="opener">Submenu</span>
+           <ul>
+            <li><a href="#">Lorem Dolor</a></li>
+            <li><a href="#">Ipsum Adipiscing</a></li>
+            <li><a href="#">Tempus Magna</a></li>
+            <li><a href="#">Feugiat Veroeros</a></li>
+           </ul>
+          </li>
+          <li><a href="#">Etiam Dolore</a></li>
+          <li><a href="#">Adipiscing</a></li>
+          <li>
+           <span class="opener">Another Submenu</span>
+           <ul>
+            <li><a href="#">Lorem Dolor</a></li>
+            <li><a href="#">Ipsum Adipiscing</a></li>
+            <li><a href="#">Tempus Magna</a></li>
+            <li><a href="#">Feugiat Veroeros</a></li>
+           </ul>
+          </li>
+          <li><a href="#">Maximus Erat</a></li>
+          <li><a href="#">Sapien Mauris</a></li>
+          <li><a href="#">Amet Lacinia</a></li>
+         </ul>
         </nav>
+                            -->
+                <!-- Section -->
+                <section>
+                    <header class="major">
+                        <h2>Hot Post</h2>
+                    </header>
+                    <div class="mini-posts">
+                        @foreach ($hot as $pack)
+                            <article>
+                                <a href="product/{{ $pack->id }}">
+                                    <div class="card bg-dark text-white center">
+                                        <img src="{{ $pack->imagen }}" class="card-img">
+                                        <div class="card-img-overlay text-center">
+                                            <h5 class="card-title">{{ $pack->nombre }}</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+                        @endforeach
+                    </div>
+                </section>
 
-        <!-- Footer -->
+                <section>
+                    <header class="major">
+                        <h2>Popular Post</h2>
+                    </header>
+                    <div class="mini-posts">
+                        @foreach ($popular as $pack)
+                            <article>
+                                <a href="product/{{ $pack->id }}">
+                                    <div class="card bg-dark text-white center">
+                                        <img src="{{ $pack->imagen }}" class="card-img">
+                                        <div class="card-img-overlay text-center">
+                                            <h5 class="card-title">{{ $pack->nombre }}</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+                        @endforeach
+                    </div>
+                </section>
 
+                <!-- Section -->
+                <section>
+                    <header class="major">
+                        <h2>Chanels</h2>
+                    </header>
+                    <ul class="contact">
+                        <li class="icon brands fa-telegram"><a
+                                href="{{ env('TELEGRAM', '#') }}">{{ env('TELEGRAM', 'TELEGRAM') }}</a></li>
+                        <li class="icon brands fa-discord"><a
+                                href="{{ env('DISCORD', '#') }}">{{ env('DISCORD', 'DISCORD') }}</a></li>
+                        <li class="icon brands fa-reddit"><a
+                                href="{{ env('REDDIT', '#') }}">{{ env('REDDIT', 'REDDIT') }}</a></li>
+                    </ul>
+                </section>
+                
+                <section>
+                    <header class="major">
+                        <h2>Tutorial</h2>
+                    </header>
+                    <ul class="contact">
+                        <li class="icon solid fa-mobile-alt"><a
+                                href="{{ env('TUTORIAL_MOVIL', '#') }}">FOR MOBILE</a></li>
+                        <li class="icon solid fa-desktop"><a
+                                href="{{ env('TUTORIAL_PC', '#') }}">FOR DESKTOP</a></li>
+                    </ul>
+                </section>
 
+                <!-- Footer -->
+                <footer id="footer">
+                    <p class="copyright">&copy; {{ env('APP_NAME') }}.com</p>
+                </footer>
 
-        <!-- Liks para el portafolio y la revista-->
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-        <script src="https://unpkg.com/i18next@9.0.0/i18next.min.js"></script>
-    </body>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/jquery-3.5.1.min.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/browser.min.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/breakpoints.min.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/util.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous">
+    </script>
+
+</body>
+
 </html>
