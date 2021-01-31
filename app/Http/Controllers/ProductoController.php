@@ -45,16 +45,10 @@ class ProductoController extends Controller {
         try {
             $producto = new \App\Producto();
             $producto->nombre = $request->nombre;
+            $producto->imagen = $request->url;
             $producto->categorias_id = $request->categoria_id;
-            //validamos la imagen
-            if ($request->file("imagen")) {
-                //si tiene la imagen
-                $file = $request->file("imagen");
-                $nombre = "/images/productos/" . time() . "." . $file->getClientOriginalExtension();
-                $path = public_path() . "/images/productos/";
-                $file->move($path, $nombre);
-            }
-            $producto->imagen = $nombre;
+            $producto->nombreLink = $request->nombreLink;
+            $producto->hotLink = $request->hotLink;
             if ($producto->save()) {
                 return redirect("admin/producto?1");
             } else {

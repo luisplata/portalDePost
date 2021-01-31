@@ -34,9 +34,9 @@
                 </p>
             </div>
             <div class="col-xs-12 col-sm-12 emphasis">
-                <a class="btn btn-primary" href="{{url("producto/$producto->id")}}"><i class="fa fa-eye"></i> Ver</a>
-                <a class="btn btn-primary" href="{{url("producto/$producto->id/edit")}}"><i class="fa fa-edit"></i> Editar</a>
-                {{Form::open(["url"=>"producto/$producto->id","method"=>"DELETE"])}}
+                <a class="btn btn-primary" href="{{url("admin/producto/$producto->id")}}"><i class="fa fa-eye"></i> Ver</a>
+                <a class="btn btn-primary" href="{{url("admin/producto/$producto->id/edit")}}"><i class="fa fa-edit"></i> Editar</a>
+                {{Form::open(["url"=>"admin/producto/$producto->id","method"=>"DELETE"])}}
                 <button type="submit" class="btn btn-primary"><i class="fa fa-ellipsis-h"></i> Eliminar</button>
                 {{Form::close()}}
             </div>

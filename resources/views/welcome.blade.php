@@ -10,7 +10,7 @@
     <title>{{ env('APP_NAME') }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="{{env("PATH_RESOURCE")}}/assets/css/main.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
@@ -26,7 +26,7 @@
 
                 <!-- Header -->
                 <header id="header">
-                    <h1><a href="#" class="logo"><strong>{{ env('APP_NAME') }}</strong>.com</a></h1>
+                    <h1><a href="{{ env('HOME') }}" class="logo"><strong>{{ env('APP_NAME') }}</strong></a></h1>
                     <ul class="icons">
                         <li><a href="{{ env('TELEGRAM', '#') }}" target="_blank" class="icon brands fa-telegram"><span
                                     class="label">Telegram</span></a></li>
@@ -46,9 +46,6 @@
                                 <a href="product/{{ $pack->id }}">
                                     <div class="card bg-dark center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
-                                        <!--<video class="card-img">
-                                            <source src="{{ $pack->imagen }}" type="video/mp4">
-                                          </video>-->
                                         <div class="card-img-overlay text-center">
                                             <h2 class="card-title">{{ $pack->nombre }}</h2>
                                         </div>
@@ -106,7 +103,7 @@
                     <div class="posts">
                         @foreach ($packs as $pack)
                             <article class="text-center">
-                                <a href="product/{{ $pack->id }}" class="image"><img src=".{{ $pack->imagen }}" alt="" /></a>
+                                <a href="product/{{ $pack->id }}" class="image"><img src="{{ $pack->imagen }}" alt="" /></a>
                                 <a href="product/{{ $pack->id }}" class="">
                                     <h3>{{ $pack->nombre }}</h3>
                                 </a>
@@ -174,7 +171,7 @@
                             <article>
                                 <a href="product/{{ $pack->id }}">
                                     <div class="card bg-dark text-white center">
-                                        <img src=".{{ $pack->imagen }}" class="card-img">
+                                        <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">
                                             <h5 class="card-title">{{ $pack->nombre }}</h5>
                                         </div>
@@ -183,11 +180,6 @@
                             </article>
                         @endforeach
                     </div>
-                    <!-- implementar pagina de busqueda
-         <ul class="actions">
-          <li><a href="#" class="button">More</a></li>
-                                    </ul>
-                                    -->
                 </section>
 
                 <section>
@@ -199,7 +191,7 @@
                             <article>
                                 <a href="product/{{ $pack->id }}">
                                     <div class="card bg-dark text-white center">
-                                        <img src=".{{ $pack->imagen }}" class="card-img">
+                                        <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">
                                             <h5 class="card-title">{{ $pack->nombre }}</h5>
                                         </div>
@@ -208,11 +200,6 @@
                             </article>
                         @endforeach
                     </div>
-                    <!-- implementar pagina de busqueda
-         <ul class="actions">
-          <li><a href="#" class="button">More</a></li>
-                                    </ul>
-                                    -->
                 </section>
 
                 <!-- Section -->
@@ -241,11 +228,11 @@
     </div>
 
     <!-- Scripts -->
-    <script src="assets/js/jquery-3.5.1.min.js"></script>
-    <script src="assets/js/browser.min.js"></script>
-    <script src="assets/js/breakpoints.min.js"></script>
-    <script src="assets/js/util.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/jquery-3.5.1.min.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/browser.min.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/breakpoints.min.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/util.js"></script>
+    <script src="{{env("PATH_RESOURCE")}}/assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous">
     </script>
