@@ -41,7 +41,7 @@
                     <div class="row gtr-50 gtr-uniform">
                         @foreach ($banners as $pack)
                             <div class="col-4">
-                                <a href="product/{{ $pack->id }}">
+                                <a href="/product/{{ $pack->id }}">
                                     <div class="card bg-dark center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">
@@ -86,7 +86,7 @@
                     <div class="mini-posts">
                         @foreach ($hot as $pack)
                             <article>
-                                <a href="product/{{ $pack->id }}">
+                                <a href="/product/{{ $pack->id }}">
                                     <div class="card bg-dark text-white center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">
@@ -106,7 +106,7 @@
                     <div class="mini-posts">
                         @foreach ($popular as $pack)
                             <article>
-                                <a href="product/{{ $pack->id }}">
+                                <a href="/product/{{ $pack->id }}">
                                     <div class="card bg-dark text-white center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">

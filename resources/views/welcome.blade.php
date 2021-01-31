@@ -216,6 +216,18 @@
                                 href="{{ env('REDDIT', '#') }}">{{ env('REDDIT', 'REDDIT') }}</a></li>
                     </ul>
                 </section>
+                
+                <section>
+                    <header class="major">
+                        <h2>Tutorial</h2>
+                    </header>
+                    <ul class="contact">
+                        <li class="icon solid fa-mobile-alt"><a
+                                href="{{ env('TUTORIAL_MOVIL', '#') }}">FOR MOBILE</a></li>
+                        <li class="icon solid fa-desktop"><a
+                                href="{{ env('TUTORIAL_PC', '#') }}">FOR DESKTOP</a></li>
+                    </ul>
+                </section>
 
                 <!-- Footer -->
                 <footer id="footer">
