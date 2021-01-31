@@ -45,7 +45,10 @@
                             <div class="col-4">
                                 <a href="product/{{ $pack->id }}">
                                     <div class="card bg-dark center">
-                                        <img src=".{{ $pack->imagen }}" class="card-img">
+                                        <!--<img src="{{ $pack->imagen }}" class="card-img">-->
+                                        <video class="card-img">
+                                            <source src="{{ $pack->imagen }}" type="video/mp4">
+                                          </video>
                                         <div class="card-img-overlay text-center">
                                             <h2 class="card-title">{{ $pack->nombre }}</h2>
                                         </div>
