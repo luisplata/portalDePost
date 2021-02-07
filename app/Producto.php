@@ -11,7 +11,7 @@ class Producto extends Model
         return $this->belongsTo('App\Categoria',"categorias_id");
     }
     public static function PostOfBanner(){
-        return Producto::where("estado","1")->where('publication_date', '<', date("Y-m-d H:i:s"))->limit(6)->get();
+        return Producto::where("estado","1")->where('publication_date', '<', date("Y-m-d H:i:s"))->limit(6)->orderBy('publication_date', 'desc')->get();
     }
     public static function PostOfHot(){
         return Producto::where("estado","1")->where('publication_date', '<', date("Y-m-d H:i:s"))->limit(3)->get();
