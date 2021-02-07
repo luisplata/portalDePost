@@ -25,27 +25,28 @@
     </div>
 </div>
 <div class="clearfix"></div>
-<div class="form-group hidden">
-    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Descripción <span class="required">*</span>
+<div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="imagen">Imagen Source <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
-        <input value="{{$producto->descripcion}}" type="text" id="last-name" name="descripcion" class="form-control col-md-7 col-xs-12">
+        <input type="text" id="imagen" name="imagen" required="required" value="{{$producto->imagen}}" class="form-control col-md-7 col-xs-12">
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Nombre Link <span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="text" id="nombre-link" name="nombreLink" required="required" value="{{$producto->NombreLink}}" class="form-control col-md-7 col-xs-12">
     </div>
 </div>
 <div class="clearfix"></div>
 <div class="form-group">
-    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">URL <span class="required">*</span>
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Hot Link <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
-        <input value="{{$producto->url}}" type="text" id="last-name" name="url" required="required" class="form-control col-md-7 col-xs-12">
-    </div>
-</div>
-<div class="clearfix"></div>
-<div class="form-group">
-    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Imagen <span class="required">*</span>
-    </label>
-    <div class="col-md-6 col-sm-6 col-xs-12">
-        <input type="file" id="last-name" name="imagen" class="form-control col-md-7 col-xs-12">
+        <input type="text" id="hot-link" name="hotLink" required="required" value="{{$producto->hotLink}}" class="form-control col-md-7 col-xs-12">
     </div>
 </div>
 <div class="clearfix"></div>
@@ -63,11 +64,20 @@
         </select>
     </div>
 </div>
+
+<div class="clearfix"></div>
+<div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Fecha de publicación<span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="datetime-local" id="publication_date" name="publication_date" required="required" value="{{date("Y-m-d\TH:i:s",strtotime($producto->publication_date))}}" class="form-control col-md-7 col-xs-12">
+    </div>
+</div>
 <div class="clearfix"></div>
 <div class="ln_solid"></div>
 <div class="form-group">
     <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-        <a class="btn btn-primary" href="{{url('producto')}}">Cancelar</a>
+        <a class="btn btn-primary" href="{{url('admin/producto')}}">Cancelar</a>
         <button type="submit" class="btn btn-success">Guardar</button>
     </div>
 </div>

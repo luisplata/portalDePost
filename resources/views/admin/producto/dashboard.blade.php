@@ -12,10 +12,11 @@
         <div class="col-sm-12">
             <div class="left col-xs-7">
                 <h2>{{$producto->nombre}}</h2>
-                <img  class="img-thumbnail"  src="{{url('').$producto->imagen}}" />
+                <img  class="img-thumbnail"  src="{{$producto->imagen}}" />
                 <ul class="list-unstyled">
                     <li><i class="fa fa-check"></i> Estado: {{$producto->estado == 1 ? "Activo":"Inactivo"}}</li>
                     <li><i class="fa fa-phone"></i> {{$producto->categoria->nombre}}</li>
+                    <li><i class="fa fa-phone"></i>Publicado?: {{strtotime($producto->publication_date) <= strtotime(date("Y-m-d H:i:s"))?"Si":"No"}}</li>
                 </ul>
             </div>
             <div class="right col-xs-5 text-center">

@@ -21,15 +21,11 @@ class IndexController extends Controller
         popular de 3 packs
         packs de 9 _listado_
         */
-        $banner = Producto::where("estado","1")->limit(6)->get();
-        $hot = Producto::where("estado","1")->limit(3)->get();
-        $popular = Producto::where("estado","1")->limit(3)->get();
-        $packs = Producto::where("estado","1")->limit(9)->get();
         return view('welcome',[
-            "banners"=>$banner,
-            "hot"=>$hot,
-            "popular"=>$popular,
-            "packs"=>$packs
+            "banners"=>Producto::PostOfBanner(),
+            "hot"=>Producto::PostOfHot(),
+            "popular"=>Producto::PostOfPopular(),
+            "packs"=>Producto::PostOfPacks()
         ]);
     }
     /**

@@ -1015,7 +1015,7 @@ header p {
   text-transform: uppercase; }
 
 header.major > :last-child {
-  border-bottom: solid 3px #f56a6a;
+  border-bottom: solid 3px #00aff0;
   display: inline-block;
   margin: 0 0 2em 0;
   padding: 0 0.75em 0.5em 0; }
@@ -1367,7 +1367,7 @@ ul.icons {
     ul.icons li:last-child {
       padding-right: 0; }
     ul.icons li .icon {
-      color: inherit; }
+      color: #00aff0; }
       ul.icons li .icon:before {
         font-size: 1.25em; }
 
@@ -1393,7 +1393,7 @@ ul.contact {
       font-family: 'Font Awesome 5 Free';
       font-weight: 400; }
     ul.contact li:before {
-      color: #f56a6a;
+      color: #00aff0;
       display: inline-block;
       font-size: 1.5em;
       height: 1.125em;
@@ -2092,7 +2092,7 @@ button,
   display: -webkit-flex;
   display: -ms-flex;
   display: flex;
-  border-bottom: solid 5px #f56a6a;
+  border-bottom: solid 5px #00aff0;/*#f56a6a*/
   padding: 6em 0 1em 0;
   position: relative; }
   #header > * {

@@ -7,11 +7,24 @@
 <html>
 
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{env('CLAVE_DE_GOOGLE_ANALYTICS')}}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', '{{env('CLAVE_DE_GOOGLE_ANALYTICS')}}');
+
+    </script>
     <title>Generic - Editorial by HTML5 UP</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="{{ env('PATH_RESOURCE') }}/assets/css/main.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link rel="stylesheet" href="{{url('')}}/assets/css/main.css?v{{ date('Ymdhs')}}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css?v<?= date('Ymdhs') ?>" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
 
@@ -23,7 +36,7 @@
         <!-- Main -->
         <div id="main">
             <div class="inner">
-				<!-- Header -->
+    <!-- Header -->
                 <header id="header">
                     <h1><a href="{{ env('HOME') }}" class="logo"><strong>{{ env('APP_NAME') }}</strong></a></h1>
                     <ul class="icons">
@@ -132,9 +145,9 @@
                         <li class="icon brands fa-reddit"><a
                                 href="{{ env('REDDIT', '#') }}">REDDIT</a></li>
                     </ul>
-				</section>
-				
-				<section>
+    </section>
+    
+    <section>
                     <header class="major">
                         <h2>Tutorial</h2>
                     </header>
@@ -157,11 +170,11 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ env('PATH_RESOURCE') }}/assets/js/jquery.min.js"></script>
-    <script src="{{ env('PATH_RESOURCE') }}/assets/js/browser.min.js"></script>
-    <script src="{{ env('PATH_RESOURCE') }}/assets/js/breakpoints.min.js"></script>
-    <script src="{{ env('PATH_RESOURCE') }}/assets/js/util.js"></script>
-    <script src="{{ env('PATH_RESOURCE') }}/assets/js/main.js"></script>
+    <script src="{{url('')}}/assets/js/jquery.min.js"></script>
+    <script src="{{url('')}}/assets/js/browser.min.js"></script>
+    <script src="{{url('')}}/assets/js/breakpoints.min.js"></script>
+    <script src="{{url('')}}/assets/js/util.js"></script>
+    <script src="{{url('')}}/assets/js/main.js"></script>
 
 </body>
 

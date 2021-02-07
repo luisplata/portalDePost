@@ -43,12 +43,15 @@ class ProductoController extends Controller {
         //creamos el producto
         //recivimos el archivo
         try {
+            
             $producto = new \App\Producto();
             $producto->nombre = $request->nombre;
             $producto->imagen = $request->url;
             $producto->categorias_id = $request->categoria_id;
             $producto->nombreLink = $request->nombreLink;
             $producto->hotLink = $request->hotLink;
+            $producto->publication_date = $request->publication_date;
+            
             if ($producto->save()) {
                 return redirect("admin/producto?1");
             } else {
@@ -100,20 +103,11 @@ class ProductoController extends Controller {
         try {
             $producto = \App\Producto::find($id);
             $producto->nombre = $request->nombre;
-            $producto->descripcion = $request->descripcion;
-            $producto->url = $request->url;
+            $producto->imagen = $request->imagen;
             $producto->categorias_id = $request->categoria_id;
-            //clocando estado al producto
-            $producto->estado = $request->estado;
-            //validamos si modificamos la imagen
-            if ($request->file("imagen")) {
-                //si tiene la imagen
-                $file = $request->file("imagen");
-                $nombre = "/images/productos/" . time() . "." . $file->getClientOriginalExtension();
-                $path = public_path() . "/images/productos/";
-                $file->move($path, $nombre);
-                $producto->imagen = $nombre;
-            }
+            $producto->nombreLink = $request->nombreLink;
+            $producto->hotLink = $request->hotLink;
+            $producto->publication_date = $request->publication_date;
             if ($producto->save()) {
                 return redirect("admin/producto?mensaje=Se modifico el producto con exito&tipo=success");
             } else {
