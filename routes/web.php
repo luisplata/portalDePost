@@ -19,6 +19,8 @@ Route::get('/', "IndexController@index");
 
 Route::get("content/{id}", "ProductoClientCntroller@show");
 
+Route::get("redirect/{url}", "ProductoClientCntroller@Redirect");
+
 Route::get("/login", function () {
     return view("login");
 });

@@ -26,4 +26,7 @@ class Producto extends Model
     public function ConvertNameNormalToUrl(){
         return str_replace(" ", "-", $this->nombre);
     }
+    public function Visitas(){
+        return $this->hasOne(VisitPost::class);
+    }
 }

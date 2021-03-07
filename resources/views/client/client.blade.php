@@ -76,11 +76,11 @@
                     <span class="image main"><img src="{{ $post->imagen }}" alt="" /></span>
 
                     <ul class="actions fit">
-                        <li><a href="{{ $post->hotLink }}" class="button primary fit">{{ $post->NombreLink }}</a></li>
+                        <li><a target="_blank" href="{{ env('HOME') }}redirect/{{ $post->id }}" class="button primary fit">{{ $post->NombreLink }}</a></li>
                     </ul>
 
                     <p>
-                        {{ $post->NombreLink }} : <a href="{{ $post->hotLink }}"
+                        {{ $post->NombreLink }} : <a target="_blank" href="{{ env('HOME') }}redirect/{{ $post->id }}"
                             class="primary">{{ $post->hotLink }}</a>
                     </p>
                 </section>
