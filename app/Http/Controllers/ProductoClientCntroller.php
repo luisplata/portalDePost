@@ -16,7 +16,7 @@ class ProductoClientCntroller extends Controller
             "hot"=>Producto::PostOfHot(),
             "popular"=>Producto::PostOfPopular(),
             "packs"=>Producto::PostOfPacks(),
-            "post"=>Producto::where("id",$id)->first()
+            "post"=>Producto::where("nombre",$id)->first()
         ]);
     }
 }
