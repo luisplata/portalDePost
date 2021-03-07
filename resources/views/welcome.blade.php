@@ -43,7 +43,7 @@
                     <div class="row gtr-50 gtr-uniform">
                         @foreach ($banners as $pack)
                             <div class="col-4">
-                                <a href="content/{{ $pack->nombre }}">
+                                <a href="content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">
@@ -103,8 +103,8 @@
                     <div class="posts">
                         @foreach ($packs as $pack)
                             <article class="text-center">
-                                <a href="{{ env('HOME') }}content/{{ $pack->nombre }}" class="image"><img src="{{ $pack->imagen }}" alt="" /></a>
-                                <a href="{{ env('HOME') }}content/{{ $pack->nombre }}" class="">
+                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="image"><img src="{{ $pack->imagen }}" alt="" /></a>
+                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="">
                                     <h3>{{ $pack->nombre }}</h3>
                                 </a>
                             </article>
@@ -169,7 +169,7 @@
                     <div class="mini-posts">
                         @foreach ($hot as $pack)
                             <article>
-                                <a href="{{ env('HOME') }}content/{{ $pack->nombre }}">
+                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark text-white center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">
@@ -189,7 +189,7 @@
                     <div class="mini-posts">
                         @foreach ($popular as $pack)
                             <article>
-                                <a href="{{ env('HOME') }}content/{{ $pack->nombre }}">
+                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark text-white center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">

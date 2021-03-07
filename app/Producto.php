@@ -22,4 +22,8 @@ class Producto extends Model
     public static function PostOfPacks(){
         return Producto::where("estado","1")->where('publication_date', '<', date("Y-m-d H:i:s"))->limit(10)->get();
     }
+
+    public function ConvertNameNormalToUrl(){
+        return str_replace(" ", "-", $this->nombre);
+    }
 }
