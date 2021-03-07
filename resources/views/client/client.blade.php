@@ -81,7 +81,7 @@
 
                     <p>
                         {{ $post->NombreLink }} : <a target="_blank" href="{{ env('HOME') }}redirect/{{ $post->id }}"
-                            class="primary">{{ $post->hotLink }}</a>
+                            class="primary">{{ env('HOME') }}redirection/{{ $post->nombre }}</a>
                     </p>
                 </section>
 

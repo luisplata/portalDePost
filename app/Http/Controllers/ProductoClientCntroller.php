@@ -41,4 +41,16 @@ class ProductoClientCntroller extends Controller
         $visita->AddHotLink();
         return redirect($producto->hotLink);
     }
+
+    public function RedirectName($name){
+        $producto = Producto::where("nombre",$name)->first(); 
+        $visita = $producto->Visitas;
+        if($visita == null){
+            $visita = new VisitPost();
+            $visita->producto_id = $producto->id;
+            $visita->save();
+        }
+        $visita->AddHotLink();
+        return redirect($producto->hotLink);
+    }
 }
