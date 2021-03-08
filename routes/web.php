@@ -37,6 +37,7 @@ Route::middleware('logeado')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::resource("categoria", "CategoriaController");
         Route::resource("producto", "ProductoController");
+        Route::resource("graficas", "GraficaController");
     });
     Route::resource("admin", "AdminController");
 });
