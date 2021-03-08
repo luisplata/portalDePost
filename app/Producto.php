@@ -29,4 +29,7 @@ class Producto extends Model
     public function Visitas(){
         return $this->hasOne(VisitPost::class);
     }
+    public function LogVisitas(){
+        return $this->hasOne(LogVisit::class);
+    }
 }

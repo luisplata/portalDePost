@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\LogVisit;
 use App\Producto;
 use App\VisitPost;
 use Illuminate\Http\Request;
@@ -21,6 +22,11 @@ class ProductoClientCntroller extends Controller
             $visita->save();
         }
         $visita->AddVisita();
+        
+        $log = new LogVisit();
+        $log->producto_id = $product->id;
+        $log->save();
+
         return view('client.client',[
             "banners"=>Producto::PostOfBanner(),
             "hot"=>Producto::PostOfHot(),
