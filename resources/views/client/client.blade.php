@@ -8,7 +8,7 @@
 
 <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{env('CLAVE_DE_GOOGLE_ANALYTICS')}}"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ env('CLAVE_DE_GOOGLE_ANALYTICS') }}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -17,13 +17,13 @@
         }
         gtag('js', new Date());
 
-        gtag('config', '{{env('CLAVE_DE_GOOGLE_ANALYTICS')}}');
+        gtag('config', '{{ env('CLAVE_DE_GOOGLE_ANALYTICS') }}');
 
     </script>
     <title>Generic - Editorial by HTML5 UP</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="{{url('')}}/assets/css/main.css?v{{ date('Ymdhs')}}" />
+    <link rel="stylesheet" href="{{ url('') }}/assets/css/main.css?v{{ date('Ymdhs') }}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css?v<?= date('Ymdhs') ?>" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
@@ -49,23 +49,7 @@
                         </li>
                     </ul>
                 </header>
-                <!-- Banner -->
-                <section id="banner">
-                    <div class="row">
-                        @foreach ($banners as $pack)
-                            <div class="col-sm-6 col-md-4">
-                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
-                                    <div class="card bg-dark center">
-                                        <img src="{{ $pack->imagen }}" class="card-img">
-                                        <div class="card-img-overlay text-center">
-                                            <h2 class="card-title">{{ $pack->nombre }}</h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                </section>
+                
 
                 <!-- Content -->
                 <section>
@@ -84,7 +68,23 @@
                             class="primary">{{ env('HOME') }}redirection/{{ $post->nombre }}</a>
                     </p>
                 </section>
-
+                <!-- Banner -->
+                <section id="banner">
+                    <div class="row">
+                        @foreach ($banners as $pack)
+                            <div class="col-sm-6 col-md-4">
+                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
+                                    <div class="card bg-dark center">
+                                        <img src="{{ $pack->imagen }}" class="card-img">
+                                        <div class="card-img-overlay text-center">
+                                            <h2 class="card-title">{{ $pack->nombre }}</h2>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
             </div>
         </div>
 
@@ -170,11 +170,11 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{url('')}}/assets/js/jquery.min.js"></script>
-    <script src="{{url('')}}/assets/js/browser.min.js"></script>
-    <script src="{{url('')}}/assets/js/breakpoints.min.js"></script>
-    <script src="{{url('')}}/assets/js/util.js"></script>
-    <script src="{{url('')}}/assets/js/main.js"></script>
+    <script src="{{ url('') }}/assets/js/jquery.min.js"></script>
+    <script src="{{ url('') }}/assets/js/browser.min.js"></script>
+    <script src="{{ url('') }}/assets/js/breakpoints.min.js"></script>
+    <script src="{{ url('') }}/assets/js/util.js"></script>
+    <script src="{{ url('') }}/assets/js/main.js"></script>
 
 </body>
 
