@@ -231,7 +231,7 @@
 
                 <!-- Footer -->
                 <footer id="footer">
-                    <p class="copyright">&copy; {{ env('APP_NAME') }}.com</p>
+                    <p class="copyright">&copy; {{ env('APP_NAME') }}</p>
                 </footer>
 
             </div>
