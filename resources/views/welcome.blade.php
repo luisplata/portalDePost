@@ -43,7 +43,7 @@
                     <div class="row row-cols-2 row-cols-sm-3">
                         @foreach ($banners as $pack)
                             <div class="col">
-                                <a href="content/{{ $pack->ConvertNameNormalToUrl() }}">
+                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">
@@ -100,14 +100,14 @@
 
                 <!-- Section -->
                 <section class="row">
-                    <div class="posts">
+                    <div class="row row-cols-1 row-cols-sm-2">
                         @foreach ($packs as $pack)
-                            <article class="text-center">
-                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="image"><img src="{{ $pack->imagen }}" alt="" /></a>
-                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="">
+                        <div class="col">
+                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="imagee"><img class="card-img" src="{{ $pack->imagen }}" alt="" /></a>
+                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="text-center">
                                     <h3>{{ $pack->nombre }}</h3>
                                 </a>
-                            </article>
+                        </div>
                         @endforeach
                     </div>
                 </section>
