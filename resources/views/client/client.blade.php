@@ -51,9 +51,9 @@
                 </header>
                 <!-- Banner -->
                 <section id="banner">
-                    <div class="row gtr-50 gtr-uniform">
+                    <div class="row">
                         @foreach ($banners as $pack)
-                            <div class="col-4">
+                            <div class="col-sm-6 col-md-4">
                                 <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
