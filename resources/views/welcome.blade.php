@@ -39,10 +39,10 @@
                 </header>
 
                 <!-- Banner -->
-                <section id="banner">
-                    <div class="row gtr-50 gtr-uniform">
+                <section id="banner container">
+                    <div class="row row-cols-2 row-cols-sm-3">
                         @foreach ($banners as $pack)
-                            <div class="col-sm-6 col-md-4">
+                            <div class="col">
                                 <a href="content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark center">
                                         <img src="{{ $pack->imagen }}" class="card-img">
