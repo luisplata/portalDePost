@@ -2,19 +2,23 @@
 
 @section('contenido')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-    <div class="col-md-6 col-sm-12 col-xs-12">
-        <canvas id="myChart"></canvas>
-    </div>
-    <div class="col-md-6 col-sm-12 col-xs-12">
-        <canvas id="barGrafic"></canvas>
-    </div>
-    
-    <div class="col-md-6 col-sm-12 col-xs-12">
-        <canvas id="visitsvsclicks"></canvas>
-    </div>
-    
+    <section id="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <canvas id="visitsvsclicks"></canvas>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <canvas id="barGrafic"></canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+    </section>
+
     <script>
-        
         window.onload = function() {
             loadGrafica()
             LoadBarGrafic()
@@ -40,7 +44,8 @@
                         data: {
                             labels: labels,
                             datasets: [{
-                                label:"visitas por día",
+                                label: "visitas por día",
+                                backgroundColor: '#00a950',
                                 data: dataSets
                             }]
                         }
@@ -51,7 +56,7 @@
             xhttp.send();
         }
 
-        function LoadBarGrafic(){
+        function LoadBarGrafic() {
             var ctx = document.getElementById('barGrafic').getContext('2d');
             var server = []
             var labels = []
@@ -68,13 +73,13 @@
                         labels.push(a.nombre)
                         tazaEfectividad.push(a.porcentaje_efectividad)
                     })
-                    
+
                     var chart = new Chart(ctx, {
                         type: 'horizontalBar',
                         data: {
                             labels: labels,
                             datasets: [{
-                                label:"Taza de efectividad",
+                                label: "Taza de efectividad",
                                 backgroundColor: '#00a950',
                                 data: tazaEfectividad
                             }]
@@ -86,7 +91,7 @@
             xhttp.send();
         }
 
-        function VisitsVsClicks(){
+        function VisitsVsClicks() {
             var ctx = document.getElementById('visitsvsclicks').getContext('2d');
             var server = []
             var labels = []
@@ -104,21 +109,22 @@
                         clicks.push(a.clicks)
                         visitas.push(a.visitas)
                     })
-                    
+
                     var chart = new Chart(ctx, {
                         type: 'horizontalBar',
                         data: {
                             labels: labels,
                             datasets: [{
-                                label:"Visitas totales",
-                                backgroundColor: '#8549ba',
-                                data: visitas
-                            },
-                            {
-                                label:"Clicks en el link",
-                                backgroundColor: '#537bc4',
-                                data: clicks
-                            }]
+                                    label: "Visitas totales",
+                                    backgroundColor: '#8549ba',
+                                    data: visitas
+                                },
+                                {
+                                    label: "Clicks en el link",
+                                    backgroundColor: '#537bc4',
+                                    data: clicks
+                                }
+                            ]
                         }
                     });
                 }
