@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model
 {
-    //
+    protected $hidden = ['hotLink','publication_date','created_at','updated_at','id','imagen','categorias_id','estado'];
     public function categoria() {
         return $this->belongsTo('App\Categoria',"categorias_id");
     }
@@ -30,6 +30,6 @@ class Producto extends Model
         return $this->hasOne(VisitPost::class);
     }
     public function LogVisitas(){
-        return $this->hasOne(LogVisit::class);
+        return $this->hasMany(LogVisit::class);
     }
 }

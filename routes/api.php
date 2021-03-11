@@ -14,4 +14,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('grafica', [GraficaApiController::class, 'index']);// [GraficaApiController::class, 'index']
+Route::get('grafica', [GraficaApiController::class, 'index']);// TazaDeConvercion
+Route::get('TazaDeConvercion', [GraficaApiController::class, 'TazaDeConvercion']);
+Route::get('VisitsVsClicks', [GraficaApiController::class, 'VisitasVsClicks']);
