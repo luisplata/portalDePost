@@ -60,6 +60,8 @@
                 <section class="row">
                     <div class="row row-cols-1 row-cols-sm-2" id="contentPacks">
                         @include('ScrollInfinite')
+                    </div>
+                    <div class="row row-cols-1 row-cols-sm-2">
                         <div class="text-center col-12" id="cargando" ><span class="h1">CARGANDO...</span></div>
                     </div>
                 </section>
@@ -162,7 +164,6 @@
         const cargando    =     document.getElementById("cargando")
         let isLoad = false
         window.onscroll   =     () =>{
-            cargando.removeAttribute('hidden')
             //console.log(window.innerHeight + window.pageYOffset + 20 , document.body.offsetHeight)
             if((window.innerHeight + window.pageYOffset + 20) >= document.body.offsetHeight && !isLoad){
                 isLoad = true
@@ -171,10 +172,16 @@
                 })
                 .then(response => response.text() )
                 .then(html => {
-                    cargando.setAttribute('hidden','hidden')
+                    cargando.classList.add("d-none")
+                    console.log(html != "")
                     document.getElementById("contentPacks").innerHTML += html
                     pagina++;
-                    isLoad = false                
+                    if(html != ""){
+                        isLoad = false
+                        cargando.classList.remove("d-none")
+                    }else{
+                        cargando.classList.add("d-none")
+                    }
                 })
                 .catch(error => console.log(error))
             }
