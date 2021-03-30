@@ -160,10 +160,12 @@
     <script>
         let pagina        =     2
         const cargando    =     document.getElementById("cargando")
+        let isLoad = false
         window.onscroll   =     () =>{
             cargando.removeAttribute('hidden')
             //console.log(window.innerHeight + window.pageYOffset + 20 , document.body.offsetHeight)
-            if((window.innerHeight + window.pageYOffset + 5) >= document.body.offsetHeight ){
+            if((window.innerHeight + window.pageYOffset + 20) >= document.body.offsetHeight && !isLoad){
+                isLoad = true
                 fetch('{{url('')}}/api/infiniteScroll?page='+pagina,{
                     method:'get'
                 })
@@ -171,7 +173,8 @@
                 .then(html => {
                     cargando.setAttribute('hidden','hidden')
                     document.getElementById("contentPacks").innerHTML += html
-                    pagina++;                
+                    pagina++;
+                    isLoad = false                
                 })
                 .catch(error => console.log(error))
             }
