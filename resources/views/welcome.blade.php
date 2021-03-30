@@ -56,59 +56,11 @@
                     </div>
                 </section>
 
-                <!-- Section 
-                <section>
-                    <header class="major">
-                        <h2>Erat lacinia</h2>
-                    </header>
-                    <div class="features">
-                        <article>
-                            <span class="icon fa-gem"></span>
-                            <div class="content">
-                                <h3>Portitor ullamcorper</h3>
-                                <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam
-                                    facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-                            </div>
-                        </article>
-                        <article>
-                            <span class="icon solid fa-paper-plane"></span>
-                            <div class="content">
-                                <h3>Sapien veroeros</h3>
-                                <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam
-                                    facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-                            </div>
-                        </article>
-                        <article>
-                            <span class="icon solid fa-rocket"></span>
-                            <div class="content">
-                                <h3>Quam lorem ipsum</h3>
-                                <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam
-                                    facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-                            </div>
-                        </article>
-                        <article>
-                            <span class="icon solid fa-signal"></span>
-                            <div class="content">
-                                <h3>Sed magna finibus</h3>
-                                <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam
-                                    facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-                            </div>
-                        </article>
-                    </div>
-                </section>
-                -->
-
                 <!-- Section -->
                 <section class="row">
-                    <div class="row row-cols-1 row-cols-sm-2">
-                        @foreach ($packs as $pack)
-                        <div class="col">
-                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="imagee"><img class="card-img" src="{{ $pack->imagen }}" alt="" /></a>
-                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="text-center">
-                                    <h3>{{ $pack->nombre }}</h3>
-                                </a>
-                        </div>
-                        @endforeach
+                    <div class="row row-cols-1 row-cols-sm-2" id="contentPacks">
+                        @include('ScrollInfinite')
+                        <div class="text-center col-12" id="cargando" ><span class="h1">CARGANDO...</span></div>
                     </div>
                 </section>
 
@@ -118,49 +70,6 @@
         <!-- Sidebar -->
         <div id="sidebar">
             <div class="inner">
-
-                <!-- Search funcion para luego, poder buscar post por %palabra%
-        <section id="search" class="alt">
-         <form method="post" action="#">
-          <input type="text" name="query" id="query" placeholder="Search" />
-         </form>
-        </section>
-                            -->
-                <!-- Menu No necesitamos menus para esta iteración
-        <nav id="menu">
-         <header class="major">
-          <h2>Menu</h2>
-         </header>
-         <ul>
-          <li><a href="index.html">Homepage</a></li>
-          <li><a href="generic.html">Generic</a></li>
-          <li><a href="elements.html">Elements</a></li>
-          <li>
-           <span class="opener">Submenu</span>
-           <ul>
-            <li><a href="#">Lorem Dolor</a></li>
-            <li><a href="#">Ipsum Adipiscing</a></li>
-            <li><a href="#">Tempus Magna</a></li>
-            <li><a href="#">Feugiat Veroeros</a></li>
-           </ul>
-          </li>
-          <li><a href="#">Etiam Dolore</a></li>
-          <li><a href="#">Adipiscing</a></li>
-          <li>
-           <span class="opener">Another Submenu</span>
-           <ul>
-            <li><a href="#">Lorem Dolor</a></li>
-            <li><a href="#">Ipsum Adipiscing</a></li>
-            <li><a href="#">Tempus Magna</a></li>
-            <li><a href="#">Feugiat Veroeros</a></li>
-           </ul>
-          </li>
-          <li><a href="#">Maximus Erat</a></li>
-          <li><a href="#">Sapien Mauris</a></li>
-          <li><a href="#">Amet Lacinia</a></li>
-         </ul>
-        </nav>
-                            -->
                 <!-- Section -->
                 <section>
                     <header class="major">
@@ -247,6 +156,25 @@
     <script src="{{url('')}}/assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous">
+    </script>
+    <script>
+        let pagina        =     2
+        const cargando    =     document.getElementById("cargando")
+        window.onscroll   =     () =>{
+            cargando.removeAttribute('hidden')
+            if((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight ){
+                fetch('{{url('')}}/api/infiniteScroll?page='+pagina,{
+                    method:'get'
+                })
+                .then(response => response.text() )
+                .then(html => {
+                    cargando.setAttribute('hidden','hidden')
+                    document.getElementById("contentPacks").innerHTML += html
+                    pagina++;                
+                })
+                .catch(error => console.log(error))
+            }
+        }
     </script>
 
 </body>

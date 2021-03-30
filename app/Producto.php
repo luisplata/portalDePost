@@ -20,7 +20,7 @@ class Producto extends Model
         return Producto::where("estado","1")->where('publication_date', '<', date("Y-m-d H:i:s"))->limit(3)->get();
     }
     public static function PostOfPacks(){
-        return Producto::where("estado","1")->where('publication_date', '<', date("Y-m-d H:i:s"))->limit(10)->get();
+        return Producto::where("estado","1")->where('publication_date', '<', date("Y-m-d H:i:s"))->paginate(10);
     }
 
     public function ConvertNameNormalToUrl(){

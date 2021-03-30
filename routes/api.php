@@ -17,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('grafica', [GraficaApiController::class, 'index']);// TazaDeConvercion
 Route::get('TazaDeConvercion', [GraficaApiController::class, 'TazaDeConvercion']);
 Route::get('VisitsVsClicks', [GraficaApiController::class, 'VisitasVsClicks']);
+Route::get("infiniteScroll",function(){
+    $paginate = Producto::PostOfPacks();
+    return view("ScrollInfinite",["packs"=>$paginate]);
+});
