@@ -163,7 +163,7 @@
         window.onscroll   =     () =>{
             cargando.removeAttribute('hidden')
             //console.log(window.innerHeight + window.pageYOffset + 20 , document.body.offsetHeight)
-            if((window.innerHeight + window.pageYOffset + 10) >= document.body.offsetHeight ){
+            if((window.innerHeight + window.pageYOffset + 5) >= document.body.offsetHeight ){
                 fetch('{{url('')}}/api/infiniteScroll?page='+pagina,{
                     method:'get'
                 })
