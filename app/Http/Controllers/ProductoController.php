@@ -2,11 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Reader;
 
 class ProductoController extends Controller {
 
+    public function Upload(){
+        return view("admin.producto.upload");
+    }
+
+    public function UploadFile(Request $request){
+        $file = $request->file('logo');
+        $reader = Reader::createFromFileObject($file->openFile());
+        // Create a customer from each row in the CSV file
+        foreach ($reader as $index => $row) {
+            $producto = new Producto();
+            $producto->nombre = $row[0];
+            $producto->imagen = $row[1];
+            $producto->nombreLink = $row[2];
+            $producto->hotLink = $row[3];
+            $producto->publication_date = $row[4];
+            $producto->categorias_id = 1;
+            $producto->save();
+        }
+        return redirect('admin/producto');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +37,7 @@ class ProductoController extends Controller {
     public function index() {
         //
         $datos = array(
-            "productos" => \App\Producto::simplePaginate(15)
+            "productos" => \App\Producto::all()
         );
         return view("admin.producto.dashboard", $datos);
     }

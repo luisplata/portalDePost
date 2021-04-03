@@ -35,6 +35,9 @@ Route::post("/login", "LoginController@login");
 Route::middleware('logeado')->group(function () {
     //para el admin
     Route::prefix('admin')->group(function () {
+        
+        Route::get("producto/upload", "ProductoController@Upload");
+        Route::post("producto/uploadFile", "ProductoController@UploadFile")->name('admin.producto.uploadFile');;
         Route::resource("categoria", "CategoriaController");
         Route::resource("producto", "ProductoController");
         Route::resource("graficas", "GraficaController");
