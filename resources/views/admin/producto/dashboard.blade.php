@@ -2,10 +2,8 @@
 
 @section("contenido")
 <div class="col-md-12 col-sm-12 col-xs-12 text-right">
-    <ul class="pagination pagination-split">
-        <li><a href="{{url('admin/producto/create')}}"><i class="fa fa-plus"></i> Crear</a></li>
-        <li><a href="{{url('admin/producto/upload')}}"><i class="fa fa-plus"></i> Upload File</a></li>
-    </ul>
+    <a class="btn btn-primary" href="{{url('admin/producto/create')}}"><i class="fa fa-plus"></i> Crear single post</a>
+    <a class="btn btn-primary" href="{{url('admin/producto/upload')}}"><i class="fa fa-cloud"></i> Upload CSV File</a>
 </div>
 
 <table class="table table-striped table-hover" id="tableData">
