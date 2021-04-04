@@ -10,23 +10,16 @@ use Illuminate\Support\Facades\DB;
 
 class GraficaApiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $datee = DB::select("select CAST(created_at AS DATE) as date_of_day, count(1) as count_of_day from `log_visits` where CAST(created_at AS DATE) = CAST(created_at AS DATE) group by CAST(created_at AS DATE)");
+        $sql = Producto::GetGrafics();
+        $datee = DB::select($sql);
         return response()->json($datee);
     }
 
     public function TazaDeConvercion(){
-        /*
-        SELECT producto_id, visita, idoAlPack, ((idoAlPack/visita)*100) as porcentaje_efectividad FROM `visit_posts` v 
-        ORDER BY (idoAlPack/visita)*100  DESC LIMIT 10
-        */
-        $datee = DB::select("SELECT producto_id, visita, idoAlPack, ((idoAlPack/visita)*100) as porcentaje_efectividad FROM `visit_posts` v ORDER BY (idoAlPack/visita)*100  DESC LIMIT 10");
+        $sql = Producto::TazaDeConvercion();
+        $datee = DB::select($sql);
         $consult = [];
         foreach($datee as $row){
             $producto = Producto::find($row->producto_id);
@@ -39,7 +32,8 @@ class GraficaApiController extends Controller
     }
 
     public function VisitasVsClicks(){
-        $datee = DB::select("SELECT producto_id, visita, idoAlPack FROM `visit_posts` v ORDER BY visita  DESC LIMIT 10");
+        $sql = Producto::VisitasPorClicks();
+        $datee = DB::select($sql);
         $consult = [];
         foreach($datee as $row){
             $producto = Producto::find($row->producto_id);
