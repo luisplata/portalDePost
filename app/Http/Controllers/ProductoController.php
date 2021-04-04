@@ -37,7 +37,7 @@ class ProductoController extends Controller {
     public function index() {
         //
         $datos = array(
-            "productos" => \App\Producto::all()
+            "productos" => \App\Producto::orderBy('publication_date', 'desc')->get()
         );
         return view("admin.producto.dashboard", $datos);
     }
