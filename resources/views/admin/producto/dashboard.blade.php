@@ -36,7 +36,9 @@
 <br><script src = "//cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js" defer ></script>
 <script>
     $(document).ready( function () {
-        $('#tableData').DataTable();
+        $('#tableData').DataTable({
+        "order": [[ 2, "desc" ]]
+    });
     } );
 </script>
 @endsection
