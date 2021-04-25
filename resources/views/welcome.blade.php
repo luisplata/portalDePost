@@ -45,7 +45,11 @@
                             <div class="col">
                                 <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark center">
+                                        @if($pack->isVideo == "1")
+                                        <video class="card-img" src="{{ $pack->url_video }}" muted autoplay loop></video>
+                                        @else
                                         <img src="{{ $pack->imagen }}" class="card-img">
+                                        @endif
                                         <div class="card-img-overlay text-center">
                                             <h2 class="card-title">{{ $pack->nombre }}</h2>
                                         </div>
