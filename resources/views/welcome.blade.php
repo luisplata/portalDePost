@@ -82,6 +82,7 @@
                             <article>
                                 <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark text-white center">
+                                        <video src="https://fs-01.cyberdrop.cc/InShot_20210424_182538579-27Ebujdb.mp4" muted autoplay loop></video>
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                         <div class="card-img-overlay text-center">
                                             <h5 class="card-title">{{ $pack->nombre }}</h5>
