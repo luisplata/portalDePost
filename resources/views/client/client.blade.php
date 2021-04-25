@@ -57,7 +57,13 @@
                         <h1>{{ $post->nombre }}</h1>
                     </header>
 
-                    <span class="image main"><img src="{{ $post->imagen }}" alt="" /></span>
+                    <span class="image main">
+                        @if($post->isVideo == "1")
+                        <video src="{{ $post->url_video }}" muted autoplay loop></video>
+                        @else
+                        <img src="{{ $post->imagen }}" alt="" />
+                        @endif
+                    </span>
 
                     <ul class="actions fit">
                         <li><a target="_blank" href="{{ env('HOME') }}redirect/{{ $post->id }}" class="button primary fit">{{ $post->NombreLink }}</a></li>
