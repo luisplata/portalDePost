@@ -1260,6 +1260,8 @@ input[type="radio"] + label:before {
     width: 100%; }
     .image.main img {
       width: 100%; }
+    .image.main video {
+      width: 100%; }
 
 a.image {
   overflow: hidden; }
