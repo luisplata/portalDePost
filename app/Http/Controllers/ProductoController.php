@@ -25,6 +25,8 @@ class ProductoController extends Controller {
             $producto->hotLink = $row[3];
             $producto->publication_date = $row[4];
             $producto->categorias_id = 1;
+            $producto->isVideo = $row[5];
+            $producto->url_video = $row[6];
             $producto->save();
         }
         return redirect('admin/producto');
@@ -73,6 +75,8 @@ class ProductoController extends Controller {
             $producto->nombreLink = $request->nombreLink;
             $producto->hotLink = $request->hotLink;
             $producto->publication_date = $request->publication_date;
+            $producto->isVideo = $request->isVideo;
+            $producto->url_video = $request->url_video;
             
             if ($producto->save()) {
                 return redirect("admin/producto?1");
@@ -105,8 +109,11 @@ class ProductoController extends Controller {
      */
     public function edit($id) {
         //
+        $producto = \App\Producto::find($id);
+        $producto->checkedSi = $producto->isVideo == "1"? "checked" : "";
+        $producto->checkedNo = $producto->isVideo == "0"? "checked" : "";
         $datos = array(
-            "producto" => \App\Producto::find($id),
+            "producto" => $producto,
             "categorias" => \App\Categoria::all()
         );
         return view("admin.producto.edit", $datos);
@@ -130,6 +137,9 @@ class ProductoController extends Controller {
             $producto->nombreLink = $request->nombreLink;
             $producto->hotLink = $request->hotLink;
             $producto->publication_date = $request->publication_date;
+            $producto->isVideo = $request->isVideo;
+            $producto->url_video = $request->url_video;
+            
             if ($producto->save()) {
                 return redirect("admin/producto?mensaje=Se modifico el producto con exito&tipo=success");
             } else {

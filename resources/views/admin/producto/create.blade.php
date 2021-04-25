@@ -58,7 +58,7 @@
     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Hot Link <span class="required">*</span>
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
-        <input type="text" id="hot-link" name="hotLink" required="required" value="#" class="form-control col-md-7 col-xs-12">
+        <input type="url" id="hot-link" name="hotLink" required="required" value="#" class="form-control col-md-7 col-xs-12">
     </div>
 </div>
 
@@ -68,6 +68,35 @@
     </label>
     <div class="col-md-6 col-sm-6 col-xs-12">
         <input type="datetime-local" id="publication_date" name="publication_date" required="required" value="" class="form-control col-md-7 col-xs-12">
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Es Video<span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="isVideo" id="isVideo" value="1">
+            <label class="form-check-label" for="isVideo">
+              Si
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="isVideo" id="isVideo2" value="0" checked>
+            <label class="form-check-label" for="isVideo2">
+              No
+            </label>
+          </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Link del video<span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="url" id="url_video" name="url_video" required="required" value="#" class="form-control col-md-7 col-xs-12">
     </div>
 </div>
 

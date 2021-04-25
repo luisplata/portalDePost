@@ -73,6 +73,37 @@
         <input type="datetime-local" id="publication_date" name="publication_date" required="required" value="{{date("Y-m-d\TH:i:s",strtotime($producto->publication_date))}}" class="form-control col-md-7 col-xs-12">
     </div>
 </div>
+
+
+<div class="clearfix"></div>
+<div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Es Video<span class="required">*</span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="isVideo" id="isVideo" value="1" {{$producto->checkedSi}} >
+            <label class="form-check-label" for="isVideo">
+              Si
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="isVideo" id="isVideo2" value="0" {{$producto->checkedNo}}>
+            <label class="form-check-label" for="isVideo2">
+              No
+            </label>
+          </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Link del video
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <input type="url" id="url_video" name="url_video" value="{{$producto->url_video}}" class="form-control col-md-7 col-xs-12">
+    </div>
+</div>
+
 <div class="clearfix"></div>
 <div class="ln_solid"></div>
 <div class="form-group">
