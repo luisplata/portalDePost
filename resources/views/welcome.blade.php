@@ -82,8 +82,11 @@
                             <article>
                                 <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark text-white center">
-                                        <video src="https://fs-01.cyberdrop.cc/InShot_20210424_182538579-27Ebujdb.mp4" muted autoplay loop></video>
+                                        @if($pack->isVideo == "1")
+                                        <video class="card-img" src="{{ $pack->url_video }}" muted autoplay loop></video>
+                                        @else
                                         <img src="{{ $pack->imagen }}" class="card-img">
+                                        @endif
                                         <div class="card-img-overlay text-center">
                                             <h5 class="card-title">{{ $pack->nombre }}</h5>
                                         </div>
@@ -103,7 +106,11 @@
                             <article>
                                 <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                     <div class="card bg-dark text-white center">
+                                        @if($pack->isVideo == "1")
+                                        <video class="card-img" src="{{ $pack->url_video }}" muted autoplay loop></video>
+                                        @else
                                         <img src="{{ $pack->imagen }}" class="card-img">
+                                        @endif
                                         <div class="card-img-overlay text-center">
                                             <h5 class="card-title">{{ $pack->nombre }}</h5>
                                         </div>
