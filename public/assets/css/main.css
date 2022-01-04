@@ -2290,3 +2290,6 @@ button,
     border-top: 0;
     margin-top: 0;
     padding-top: 0; }
+
+.row > .col-3{
+  padding-top: 20px;}

@@ -22,5 +22,9 @@ class DatabaseSeeder extends Seeder
         factory(\App\Producto::class, 200)->create()->each(function ($u) {
             $u->save();
         });
+        \App\Stream::factory()->count(200)->create();
+        /*factory(\App\Stream::class, 200)->create()->each(function ($u) {
+            $u->save();
+        });*/
     }
 }
