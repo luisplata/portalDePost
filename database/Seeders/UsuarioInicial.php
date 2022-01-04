@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 
 class UsuarioInicial extends Seeder {
@@ -11,7 +13,7 @@ class UsuarioInicial extends Seeder {
      */
     public function run() {
         //creamos al usuario root
-        $userRoot = new App\Usuario();
+        $userRoot = new \App\Usuario();
         $userRoot->id = 1;
         $userRoot->nombre = "Root";
         $userRoot->email = "www.luisplata@gmail.com";

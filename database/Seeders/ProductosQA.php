@@ -18,6 +18,10 @@ class ProductosQA extends Seeder
             $producto->imagen = "/images/productos/1611518819.png";
             $producto->categoria = 1;
             $producto->estado = 1;
+            $producto->NombreLink = "link";
+            $producto->hotLink = "hotlink";
+            $producto->publication_date = "2022-01-04 00:32:07";
+            $producto->isVideo = 0;
             $producto->save();
         }
     }
