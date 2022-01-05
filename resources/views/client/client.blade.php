@@ -60,6 +60,12 @@
                         <h1>{{ $post->nombre }}</h1>
                     </header>
 
+                    <h2>
+                        @foreach ($tags as $tag)
+                            <span class="badge bg-secondary">{{$tag}}</span>
+                        @endforeach
+                    </h2>
+                    
                     <span class="image main">
                         @if($post->isVideo == "1")
                         <video src="{{ $post->url_video }}" muted autoplay loop></video>

@@ -32,7 +32,8 @@ class ProductoClientCntroller extends Controller
             "hot"=>Producto::PostOfHot(),
             "popular"=>Producto::PostOfPopular(),
             "packs"=>Producto::PostOfPacks(),
-            "post"=>$product
+            "post"=>$product,
+            "tags"=>explode("-", $product->tags)
         ]);
     }
 
