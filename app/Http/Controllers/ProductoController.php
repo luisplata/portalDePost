@@ -27,6 +27,7 @@ class ProductoController extends Controller {
             $producto->categorias_id = 1;
             $producto->isVideo = $row[5];
             $producto->url_video = $row[6];
+            $producto->tags = $row[7];
             $producto->save();
         }
         return redirect('admin/producto');
@@ -77,6 +78,7 @@ class ProductoController extends Controller {
             $producto->publication_date = $request->publication_date;
             $producto->isVideo = $request->isVideo;
             $producto->url_video = $request->url_video;
+            $producto->tags = $request->tags;
             
             if ($producto->save()) {
                 return redirect("admin/producto?1");
@@ -139,6 +141,7 @@ class ProductoController extends Controller {
             $producto->publication_date = $request->publication_date;
             $producto->isVideo = $request->isVideo;
             $producto->url_video = $request->url_video;
+            $producto->tags = $request->tags;
             
             if ($producto->save()) {
                 return redirect("admin/producto?mensaje=Se modifico el producto con exito&tipo=success");

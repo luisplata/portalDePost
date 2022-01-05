@@ -23,6 +23,7 @@ class StreamController extends Controller
             $stream->imagen = $row[1];
             $stream->publication_date = $row[2];
             $stream->url = $row[3];
+            $stream->tags = $row[4];
             $stream->estado =1;
             $stream->save();
         }
@@ -68,6 +69,7 @@ class StreamController extends Controller
             $stream->imagen = $request->image;
             $stream->publication_date = $request->publication_date;
             $stream->url = $request->url;
+            $stream->tags = $request->tags;
             $stream->estado = 1;
             
             if ($stream->save()) {
@@ -127,6 +129,7 @@ class StreamController extends Controller
             $stream->publication_date = $request->publication_date;
             $stream->url = $request->url;
             $stream->estado =$request->estado;
+            $stream->tags = $request->tags;
             
             if ($stream->save()) {
                 return redirect("admin/stream?mensaje=Se modifico el stream con exito&tipo=success");

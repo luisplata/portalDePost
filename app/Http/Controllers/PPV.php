@@ -23,11 +23,12 @@ class PPV extends Controller
         $id = str_replace("-", " ", $id);
         $stream = \App\Stream::where("nombre",$id)->first();
         $stream->CreateLog();
-
         return view('client.stream',[
             "stream"=>$stream,
-            "streams"=>\App\Stream::GetFirstStreams()
+            "streams"=>\App\Stream::GetFirstStreams(),
+            "tags"=>explode("-", $stream->tags)
         ]);
+
     }
 
     public function RegisterVisit($id){

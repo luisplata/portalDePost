@@ -34,6 +34,13 @@
         <input type="datetime-local" id="publication_date" name="publication_date" required="required" value="" class="form-control col-md-7 col-xs-12">
     </div>
 </div>
+<div class="clearfix"></div>
+<div class="form-group">
+    <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Tags </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <textarea class="form-control col-md-7 col-xs-12" name="tags"></textarea>
+    </div>
+</div>
 
 <div class="clearfix"></div>
 <div class="ln_solid"></div>

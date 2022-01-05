@@ -60,7 +60,11 @@
                     <header class="main">
                         <h1>{{ $stream->nombre }}</h1>
                     </header>
-
+                    <h2>
+                        @foreach ($tags as $tag)
+                            <span class="badge bg-secondary">{{$tag}}</span>
+                        @endforeach
+                    </h2>
                     <span class="image main">
                         <iframe src="{{$stream->url}}" frameborder="0" style='width:100%;height: 575px;'></iframe>
                     </span>
