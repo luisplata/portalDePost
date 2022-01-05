@@ -13,7 +13,6 @@ class PPV extends Controller
      */
     public function index()
     {
-        //dd(\App\Stream::GetFirstStreams());
         return view("PPV.index",[
             "packs"=>\App\Stream::GetFirstStreams()
         ]);
@@ -23,21 +22,16 @@ class PPV extends Controller
         //desconvertir
         $id = str_replace("-", " ", $id);
         $stream = \App\Stream::where("nombre",$id)->first();
-        //$visita = $stream->Visitas;
-        //if($visita == null){
-            //$visita = new \App\VisitPost();
-            //$visita->producto_id = $stream->id;
-            //$visita->save();
-        //}
-        //$visita->AddVisita();
-        
-        //$log = new \App\LogVisit();
-        //$log->producto_id = $stream->id;
-        //$log->save();
+        $stream->CreateLog();
 
         return view('client.stream',[
             "stream"=>$stream,
             "streams"=>\App\Stream::GetFirstStreams()
         ]);
+    }
+
+    public function RegisterVisit($id){
+        $stream = \App\Stream::Find($id);
+        $stream->CreateVisit();
     }
 }

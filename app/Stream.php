@@ -17,4 +17,26 @@ class Stream extends Model
     public function ConvertNameNormalToUrl(){
         return str_replace(" ", "-", $this->nombre);
     }
+    public function Visitas(){
+        return $this->hasOne(VisitStream::class);
+    }
+    public function LogVisitas(){
+        return $this->hasMany(LogVisitStream::class);
+    }
+
+    public function CreateLog(){
+        $log = new \App\LogVisitStream();
+        $log->stream_id = $this->id;
+        $log->save();
+    }
+
+    public function CreateVisit(){
+        $visita = $this->Visitas;
+        if($visita == null){
+            $visita = new \App\VisitStream();
+            $visita->stream_id = $this->id;
+            $visita->save();
+        }
+        $visita->AddVisita();
+    }
 }

@@ -133,6 +133,20 @@
     <script src="{{ url('') }}/assets/js/util.js"></script>
     <script src="{{ url('') }}/assets/js/main.js"></script>
 
+    <script>
+        function RegistrarVisita() {
+        
+            fetch('{{url('api/registrarVisita')}}/'+{{ $stream->id }},{
+                    method:'get'
+                })
+                .then(response => {})
+                .then(html => {})
+                .catch(error => console.log(error))
+        
+        }
+                                    //Min       *seg     *milisecons
+        setTimeout(RegistrarVisita, 1           *60      *1000);
+    </script>
 </body>
 
 </html>
