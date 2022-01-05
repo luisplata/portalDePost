@@ -131,6 +131,8 @@ a {
   border-bottom: dotted 1px;
   color: #f56a6a;
   text-decoration: none; }
+  a.dark {
+    color: antiquewhite;}
   a:hover {
     border-bottom-color: #f56a6a;
     color: #f56a6a !important; }
@@ -140,6 +142,9 @@ a {
 strong, b {
   color: #3d4449;
   font-weight: 600; }
+
+  strong.dark, b.dark {
+    color: #eff1f2; }
 
 em, i {
   font-style: italic; }
@@ -153,6 +158,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.5;
   margin: 0 0 1em 0; }
+  h1.dark, h2.dark, h3.dark, h4.dark, h5.dark, h6.dark {
+    color: #eff1f2;}
   h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     color: inherit;
     text-decoration: none;
@@ -1127,6 +1134,9 @@ input[type="radio"] {
     padding-left: 2.4em;
     padding-right: 0.75em;
     position: relative; }
+    input[type="checkbox"] + label.dark{
+      color: #eff1f2;
+    }
     input[type="checkbox"] + label:before,
     input[type="radio"] + label:before {
       -moz-osx-font-smoothing: grayscale;
@@ -1951,6 +1961,9 @@ button,
   font-size: 0.9em;
   position: relative;
   width: 26em; }
+  #sidebar.dark {
+    background-color: #3d4449;
+    }
   #sidebar h2 {
     font-size: 1.38889em; }
   #sidebar > .inner {
@@ -2293,3 +2306,8 @@ button,
 
 .row > .col-3{
   padding-top: 20px;}
+
+body.dark{
+  background-color: #3d4449;
+  color: #eff1f2;
+}

@@ -47,6 +47,9 @@
                         <li><a href="{{ env('REDDIT', '#') }}" target="_blank" class="icon brands fa-reddit"><span
                                     class="label">Reddit</span></a>
                         </li>
+
+                        <li><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="darkMode"><label class="custom-control-label" for="darkMode">Dark Mode</label></div></li>
+                        
                     </ul>
                 </header>
                 
@@ -181,6 +184,7 @@
     <script src="{{ url('') }}/assets/js/breakpoints.min.js"></script>
     <script src="{{ url('') }}/assets/js/util.js"></script>
     <script src="{{ url('') }}/assets/js/main.js"></script>
+    <script src="{{ url('') }}/assets/js/DarkMode.js"></script>
 
 </body>
 
