@@ -18,70 +18,26 @@ class PPV extends Controller
             "packs"=>\App\Stream::GetFirstStreams()
         ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
-    }
+        //desconvertir
+        $id = str_replace("-", " ", $id);
+        $stream = \App\Stream::where("nombre",$id)->first();
+        //$visita = $stream->Visitas;
+        //if($visita == null){
+            //$visita = new \App\VisitPost();
+            //$visita->producto_id = $stream->id;
+            //$visita->save();
+        //}
+        //$visita->AddVisita();
+        
+        //$log = new \App\LogVisit();
+        //$log->producto_id = $stream->id;
+        //$log->save();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return view('client.stream',[
+            "stream"=>$stream,
+            "streams"=>\App\Stream::GetFirstStreams()
+        ]);
     }
 }

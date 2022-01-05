@@ -56,6 +56,7 @@
                                         <li><a href="{{ url('admin') }}">Administradores</a></li>
                                         <li><a href="{{ url('admin/categoria') }}">Categorias</a></li>
                                         <li><a href="{{ url('admin/producto') }}">Productos</a></li>
+                                        <li><a href="{{ url('admin/stream') }}">Streams</a></li>
                                         <li><a href="{{ url('admin/graficas') }}">Graficas</a></li>
                                     </ul>
                                 </li>

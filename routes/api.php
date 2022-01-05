@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GraficaApiController;
 use App\Producto;
+use App\Stream;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,4 +21,8 @@ Route::get('VisitsVsClicks', [GraficaApiController::class, 'VisitasVsClicks']);
 Route::get("infiniteScroll",function(){
     $paginate = Producto::PostOfPacks();
     return view("ScrollInfinite",["packs"=>$paginate]);
+});
+Route::get("infiniteScrollStream",function(){
+    $paginate = Stream::GetFirstStreams();
+    return view("ScrollInfiniteStream",["packs"=>$paginate]);
 });

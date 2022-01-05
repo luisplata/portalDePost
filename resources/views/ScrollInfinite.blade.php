@@ -1,16 +1,18 @@
 @if (count($packs))
     @foreach ($packs as $pack)
     <div class="col">
-            <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="imagee">
+        <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
+            <div class="card bg-dark text-center">
                 @if($pack->isVideo == "1")
                 <video class="card-img" src="{{ $pack->url_video }}" muted autoplay loop></video>
                 @else
-                <img class="card-img" src="{{ $pack->imagen }}" alt="" />
+                <img src="{{ $pack->imagen }}" class="card-img">
                 @endif
-                </a>
-            <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}" class="text-center">
-                <h3>{{ $pack->nombre }}</h3>
-            </a>
+                <div class="card-body">
+                    <p class="card-text"></p><h2 class="card-title">{{ $pack->nombre }}</h2><p></p>
+                </div>
+            </div>
+        </a>
     </div>
     @endforeach
 @endif  

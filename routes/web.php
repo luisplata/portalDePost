@@ -24,6 +24,8 @@ Route::get("redirection/{url}", "ProductoClientCntroller@RedirectName");
 
 Route::get("PPV", "PPV@index");
 
+Route::get("PPV/{id}", "PPV@show");
+
 
 Route::get("/login", function () {
     return view("login");
@@ -39,9 +41,12 @@ Route::middleware('logeado')->group(function () {
     Route::prefix('admin')->group(function () {
         
         Route::get("producto/upload", "ProductoController@Upload");
-        Route::post("producto/uploadFile", "ProductoController@UploadFile")->name('admin.producto.uploadFile');;
+        Route::post("producto/uploadFile", "ProductoController@UploadFile")->name('admin.producto.uploadFile');
+        Route::get("stream/upload", "StreamController@Upload");
+        Route::post("stream/uploadFile", "StreamController@UploadFile")->name('admin.stream.uploadFile');
         Route::resource("categoria", "CategoriaController");
         Route::resource("producto", "ProductoController");
+        Route::resource("stream", "StreamController");
         Route::resource("graficas", "GraficaController");
     });
     Route::resource("admin", "AdminController");
