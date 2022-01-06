@@ -26,6 +26,7 @@ Route::get("PPV", "PPV@index");
 
 Route::get("PPV/{id}", "PPV@show");
 
+Route::get("search/{work}", "PPV@search");
 
 Route::get("/login", function () {
     return view("login");

@@ -15,6 +15,7 @@ window.onload = function() {
         ColocateDarkMode()
     }
     ColocateDarkMode();
+    InitSearch()
 };
 
 
@@ -51,9 +52,13 @@ function ColocateDarkMode(){
         if(document.querySelector("#header > ul > li:nth-child(5) > div > label") != null){
             document.querySelector("#header > ul > li:nth-child(5) > div > label").classList.add("dark")
         }else{
-            document.querySelector("#header > ul > li:nth-child(4) > div > label").classList.add("dark")
+            document.querySelector("#header > ul > li:nth-child(6) > div > label").classList.add("dark")
         }
         document.querySelectorAll("a").forEach(function(element){
+            element.classList.add("dark")
+        })
+        document.querySelector(".modal-content").classList.add("dark")
+        document.querySelectorAll("input").forEach(function(element){
             element.classList.add("dark")
         })
     }else{
@@ -70,9 +75,13 @@ function ColocateDarkMode(){
         if(document.querySelector("#header > ul > li:nth-child(5) > div > label") != null){
             document.querySelector("#header > ul > li:nth-child(5) > div > label").classList.remove("dark")
         }else{
-            document.querySelector("#header > ul > li:nth-child(4) > div > label").classList.remove("dark")
+            document.querySelector("#header > ul > li:nth-child(6) > div > label").classList.remove("dark")
         }
         document.querySelectorAll("a").forEach(function(element){
+            element.classList.remove("dark")
+        })
+        document.querySelector(".modal-content").classList.remove("dark")
+        document.querySelectorAll("input").forEach(function(element){
             element.classList.remove("dark")
         })
     }

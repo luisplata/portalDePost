@@ -26,6 +26,14 @@
                     <h1><a href="{{ env('HOME') }}PPV" class="logo"><strong>{{ env('APP_ALTER_NAME') }}</strong></a></h1>
 
                     <ul class="icons">
+                        <li> 
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                                </svg>
+                                Search
+                            </button>
+                        </li>
                         <li><a href="{{ env('HOME') }}" target="" class="logo"><span
                                     class="label">{{ env('APP_NAME') }}</span></a></li>
                         <li><a href="{{ env('TELEGRAM', '#') }}" target="_blank" class="icon brands fa-telegram"><span
@@ -53,6 +61,28 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="input-group">
+                    <input type="text" id="search" class="form-control" placeholder="Input group example" aria-label="Input group example" aria-describedby="btnGroupAddon2">
+                    <div class="input-group-text btn btn-secondary" id="search_button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //variables iniciables
+        let pagePrincipal = "{{url('')}}"
+    </script>
+    <script src="{{ url('') }}/assets/js/searchComponent.js"></script>
     <!-- Scripts -->
     <script src="{{url('')}}/assets/js/jquery-3.5.1.min.js"></script>
     <script src="{{url('')}}/assets/js/browser.min.js"></script>

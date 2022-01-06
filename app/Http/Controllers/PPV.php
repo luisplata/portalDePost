@@ -21,6 +21,7 @@ class PPV extends Controller
     {
         //desconvertir
         $id = str_replace("-", " ", $id);
+        $id = trim($id);
         $stream = \App\Stream::where("nombre",$id)->first();
         $stream->CreateLog();
         return view('client.stream',[
@@ -34,5 +35,13 @@ class PPV extends Controller
     public function RegisterVisit($id){
         $stream = \App\Stream::Find($id);
         $stream->CreateVisit();
+    }
+
+    public function search($work){
+        return view('client.stream',[
+            "stream"=>$stream,
+            "streams"=>\App\Stream::GetFirstStreams(),
+            "tags"=>explode("-", $stream->tags)
+        ]);
     }
 }
