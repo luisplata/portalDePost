@@ -46,35 +46,12 @@
                         
                     </ul>
                 </header>
-
-                <!-- Banner -->
-                <section id="banner container">
-                    <div class="row row-cols-2 row-cols-sm-3">
-                        @foreach ($banners as $pack)
-                            <div class="col">
-                                <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
-                                    <div class="card bg-dark text-center">
-                                        @if($pack->isVideo == "1")
-                                        <video class="card-img" src="{{ $pack->url_video }}" muted autoplay loop></video>
-                                        @else
-                                        <img src="{{ $pack->imagen }}" class="card-img">
-                                        @endif
-                                        <div class="card-body">
-                                            <p class="card-text"></p><h2 class="card-title">{{ $pack->nombre }}</h2><p></p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                </section>
-
                 <!-- Section -->
                 <section class="row">
-                    <div class="row row-cols-1 row-cols-sm-2" id="contentPacks">
+                    <div class="row row-cols-2 row-cols-sm-3" id="contentPacks">
                         @include('ScrollInfinite')
                     </div>
-                    <div class="row row-cols-1 row-cols-sm-2">
+                    <div class="row row-cols-2 row-cols-sm-3">
                         <div class="text-center col-12" id="cargando" ><span class="h1">CARGANDO...</span></div>
                     </div>
                 </section>

@@ -50,10 +50,10 @@
 
                 <!-- Section -->
                 <section class="row">
-                    <div class="row row-cols-1 row-cols-sm-2" id="contentPacks">
+                    <div class="row row-cols-1 row-cols-sm-4" id="contentPacks">
                         @include('ScrollInfiniteStream')
                     </div>
-                    <div class="row row-cols-1 row-cols-sm-2">
+                    <div class="row row-cols-1 row-cols-sm-4">
                         <div class="text-center col-12" id="cargando" ><span class="h1">CARGANDO...</span></div>
                     </div>
                 </section>

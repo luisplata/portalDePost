@@ -1,6 +1,6 @@
 @if (count($packs))
     @foreach ($packs as $stream)
-        <div class="col-3">
+        <div class="col">
             <a href="{{ env('HOME') }}PPV/{{ $stream->ConvertNameNormalToUrl() }}">
                 <div class="card bg-dark text-center">
                     <img src="{{ $stream->imagen }}" class="card-img">
