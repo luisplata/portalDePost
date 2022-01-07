@@ -56,7 +56,7 @@
 
             <!-- Section -->
             <section class="row">
-                <div class="row row-cols-1 row-cols-sm-4" id="contentPacks">
+                <div class="row row-cols-2 row-cols-sm-4" id="contentPacks">
                     @include('ScrollInfiniteStream')
                 </div>
                 <div class="row row-cols-1 row-cols-sm-4">
