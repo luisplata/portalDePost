@@ -15,179 +15,204 @@
         function gtag() {
             dataLayer.push(arguments);
         }
+
         gtag('js', new Date());
 
         gtag('config', '{{ env('CLAVE_DE_GOOGLE_ANALYTICS') }}');
 
     </script>
     <title>{{ env('APP_NAME') }}</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="{{ url('') }}/assets/css/main.css?v{{ date('Ymdhs') }}" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css?v<?= date('Ymdhs') ?>" rel="stylesheet"
-        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="{{ url('') }}/assets/css/main.css?v{{ date('Ymdhs') }}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css?v<?= date('Ymdhs') ?>"
+          rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
 
 <body class="is-preload">
 
-    <!-- Wrapper -->
-    <div id="wrapper">
+<!-- Wrapper -->
+<div id="wrapper">
 
-        <!-- Main -->
-        <div id="main">
-            <div class="inner">
-    <!-- Header -->
-                <header id="header">
-                    <h1><a href="{{ env('HOME') }}PPV" class="logo"><strong>{{ env('APP_ALTER_NAME') }}</strong></a></h1>
-                    <ul class="icons">
-                        <li> 
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-                                </svg>
-                                Search
-                            </button>
-                        </li>
-                        <li><a href="{{ env('HOME') }}" target="" class="logo"><span
+    <!-- Main -->
+    <div id="main">
+        <div class="inner">
+            <!-- Header -->
+            <header id="header">
+                <h1><a href="{{ env('HOME') }}PPV" class="logo"><strong>{{ env('APP_ALTER_NAME') }}</strong></a></h1>
+                <ul class="icons">
+                    <li>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                            </svg>
+                            Search
+                        </button>
+                    </li>
+                    <li><a href="{{ env('HOME') }}" target="" class="logo"><span
                                     class="label">{{ env('APP_NAME') }}</span></a></li>
-                        <li><a href="{{ env('TELEGRAM', '#') }}" target="_blank" class="icon brands fa-telegram"><span
+                    <li><a href="{{ env('TELEGRAM', '#') }}" target="_blank" class="icon brands fa-telegram"><span
                                     class="label">Telegram</span></a></li>
-                        <li><a href="{{ env('DISCORD', '#') }}" target="_blank" class="icon brands fa-discord"><span
+                    <li><a href="{{ env('DISCORD', '#') }}" target="_blank" class="icon brands fa-discord"><span
                                     class="label">Discord</span></a></li>
-                        <li><a href="{{ env('REDDIT', '#') }}" target="_blank" class="icon brands fa-reddit"><span
+                    <li><a href="{{ env('REDDIT', '#') }}" target="_blank" class="icon brands fa-reddit"><span
                                     class="label">Reddit</span></a>
-                        </li>
+                    </li>
 
-                        <li><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="darkMode"><label class="custom-control-label" for="darkMode">Dark Mode</label></div></li>
-                        
-                    </ul>
+                    <li>
+                        <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input"
+                                                                         id="darkMode"><label
+                                    class="custom-control-label" for="darkMode">Dark Mode</label></div>
+                    </li>
+
+                </ul>
+            </header>
+
+            <!-- Content -->
+            <section>
+                <header class="main">
+                    <h1>{{ $stream->nombre }}</h1>
                 </header>
-
-                <!-- Content -->
-                <section>
-                    <header class="main">
-                        <h1>{{ $stream->nombre }}</h1>
-                    </header>
-                    <h2>
-                        @foreach ($tags as $tag)
-                            <a class="badge bg-secondary tag" href="{{ env('HOME') }}search/{{$tag}}">{{$tag}}</a>
-                        @endforeach
-                    </h2>
-                    <span class="image main">
+                <h2>
+                    @foreach ($tags as $tag)
+                        <a class="badge bg-secondary" href="{{ env('HOME') }}search/{{$tag}}">{{$tag}}</a>
+                    @endforeach
+                </h2>
+                <span class="image main">
                         <iframe src="{{$stream->url}}" frameborder="0" style='width:100%;height: 575px;'></iframe>
                     </span>
-                </section>
-            </div>
-            
-                 <!-- Banner -->
-                 <section id="banner">
-                    <div class="row row-cols-2 row-cols-sm-3">
-                        @foreach ($streams as $pack)
-                            <div class="col-3">
-                                <a href="{{ env('HOME') }}PPV/{{ $pack->ConvertNameNormalToUrl() }}">
-                                    <div class="card bg-dark center">
-                                        <img src="{{ $pack->imagen }}" class="card-img">
-                                        <div class="card-img-overlay text-center">
-                                            <h2 class="card-title">{{ $pack->nombre }}</h2>
-                                        </div>
-                                    </div>
-                                </a>
+            </section>
+        </div>
+
+        <!-- Banner -->
+        <section id="banner">
+            <div class="row row-cols-2 row-cols-sm-3">
+                @foreach ($streams as $pack)
+                    <div class="col-3">
+                        <a href="{{ env('HOME') }}PPV/{{ $pack->ConvertNameNormalToUrl() }}">
+                            <div class="card bg-dark center">
+                                <img src="{{ $pack->imagen }}" class="card-img">
+                                <div class="card-img-overlay text-center">
+                                    <h2 class="card-title">{{ $pack->nombre }}</h2>
+                                </div>
                             </div>
-                        @endforeach
+                        </a>
                     </div>
-                </section>
-        </div>
-        
-<!-- Sidebar -->
-<div id="sidebar">
-            <div class="inner">
-                <!-- Section -->
-
-
-                <!-- Section -->
-                <section>
-                    <header class="major">
-                        <h2>Chanels</h2>
-                    </header>
-                    <ul class="contact">
-                        <li class="icon brands fa-telegram"><a
-                                href="{{ env('TELEGRAM', '#') }}">{{ env('TELEGRAM', 'TELEGRAM') }}</a></li>
-                        <li class="icon brands fa-discord"><a
-                                href="{{ env('DISCORD', '#') }}">{{ env('DISCORD', 'DISCORD') }}</a></li>
-                        <li class="icon brands fa-reddit"><a
-                                href="{{ env('REDDIT', '#') }}">{{ env('REDDIT', 'REDDIT') }}</a></li>
-                    </ul>
-                </section>
-                
-                <section>
-                    <header class="major">
-                        <h2>Tutorial</h2>
-                    </header>
-                    <ul class="contact">
-                        <li class="icon solid fa-mobile-alt"><a
-                                href="{{ env('TUTORIAL_MOVIL', '#') }}">FOR MOBILE</a></li>
-                        <li class="icon solid fa-desktop"><a
-                                href="{{ env('TUTORIAL_PC', '#') }}">FOR DESKTOP</a></li>
-                    </ul>
-                </section>
-
-                <!-- Footer -->
-                <footer id="footer">
-                    <p class="copyright">&copy; {{ env('APP_NAME') }}</p>
-                </footer>
-
+                @endforeach
             </div>
-        </div>
-
+        </section>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="inner">
+            <!-- Section -->
+
+
+            <section>
+                <header class="major">
+                    <h2>Tags</h2>
+                </header>
+                <div class="mini-posts">
+                    <h2>
+                        @foreach ($other as $o)
+                            <a class="badge bg-secondary" href="{{ env('HOME') }}search/{{$o}}">{{$o}}</a>
+                        @endforeach
+                    </h2>
+                </div>
+            </section>
+            <!-- Section -->
+            <section>
+                <header class="major">
+                    <h2>Chanels</h2>
+                </header>
+                <ul class="contact">
+                    <li class="icon brands fa-telegram"><a
+                                href="{{ env('TELEGRAM', '#') }}">{{ env('TELEGRAM', 'TELEGRAM') }}</a></li>
+                    <li class="icon brands fa-discord"><a
+                                href="{{ env('DISCORD', '#') }}">{{ env('DISCORD', 'DISCORD') }}</a></li>
+                    <li class="icon brands fa-reddit"><a
+                                href="{{ env('REDDIT', '#') }}">{{ env('REDDIT', 'REDDIT') }}</a></li>
+                </ul>
+            </section>
+
+            <section>
+                <header class="major">
+                    <h2>Tutorial</h2>
+                </header>
+                <ul class="contact">
+                    <li class="icon solid fa-mobile-alt"><a
+                                href="{{ env('TUTORIAL_MOVIL', '#') }}">FOR MOBILE</a></li>
+                    <li class="icon solid fa-desktop"><a
+                                href="{{ env('TUTORIAL_PC', '#') }}">FOR DESKTOP</a></li>
+                </ul>
+            </section>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <p class="copyright">&copy; {{ env('APP_NAME') }}</p>
+            </footer>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
             <div class="modal-body text-center">
                 <div class="input-group">
-                    <input type="text" id="search" class="form-control" placeholder="Input group example" aria-label="Input group example" aria-describedby="btnGroupAddon2">
+                    <input type="text" id="search" class="form-control" placeholder="Input group example"
+                           aria-label="Input group example" aria-describedby="btnGroupAddon2">
                     <div class="input-group-text btn btn-secondary" id="search_button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
                         </svg>
                     </div>
                 </div>
             </div>
-            </div>
         </div>
     </div>
-    <script>
-        //variables iniciables
-        let pagePrincipal = "{{url('')}}"
-    </script>
-    <script src="{{ url('') }}/assets/js/searchComponent.js"></script>
-    <!-- Scripts -->
-    <script src="{{url('')}}/assets/js/jquery-3.5.1.min.js"></script>
-    <script src="{{url('')}}/assets/js/browser.min.js"></script>
-    <script src="{{url('')}}/assets/js/breakpoints.min.js"></script>
-    <script src="{{url('')}}/assets/js/util.js"></script>
-    <script src="{{url('')}}/assets/js/main.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+</div>
+<script>
+    //variables iniciables
+    let pagePrincipal = "{{url('')}}"
+</script>
+<script src="{{ url('') }}/assets/js/searchComponent.js"></script>
+<!-- Scripts -->
+<script src="{{url('')}}/assets/js/jquery-3.5.1.min.js"></script>
+<script src="{{url('')}}/assets/js/browser.min.js"></script>
+<script src="{{url('')}}/assets/js/breakpoints.min.js"></script>
+<script src="{{url('')}}/assets/js/util.js"></script>
+<script src="{{url('')}}/assets/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous">
-    </script>
-    <script src="{{ url('') }}/assets/js/DarkMode.js"></script>
+</script>
+<script src="{{ url('') }}/assets/js/DarkMode.js"></script>
 
-    <script>
-        function RegistrarVisita() {
-        
-            fetch('{{url('api/registrarVisita')}}/'+{{ $stream->id }},{
-                    method:'get'
-                })
-                .then(response => {})
-                .then(html => {})
-                .catch(error => console.log(error))
-        
-        }
-                                    //Min       *seg     *milisecons
-        setTimeout(RegistrarVisita, 1           *60      *1000);
-    </script>
+<script>
+    function RegistrarVisita() {
+
+        fetch('{{url('api/registrarVisita')}}/' + {{ $stream->id }}, {
+            method: 'get'
+        })
+            .then(response => {
+            })
+            .then(html => {
+            })
+            .catch(error => console.log(error))
+
+    }
+
+    //Min       *seg     *milisecons
+    setTimeout(RegistrarVisita, 1 * 60 * 1000);
+</script>
 </body>
 
 </html>

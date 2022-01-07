@@ -7,6 +7,25 @@ use App\Producto;
 
 class IndexController extends Controller
 {
+    private function GetTags(){
+        $post = \App\Producto::all();
+        $streams = \App\Stream::all();
+
+        $result = [];
+        foreach ($post as $p){
+            $tags = explode("-", $p->tags);
+            foreach ($tags as $tag){
+                $result[] = $tag;
+            }
+        }
+        foreach ($streams as $p){
+            $tags = explode("-", $p->tags);
+            foreach ($tags as $tag){
+                $result[] = $tag;
+            }
+        }
+        return array_unique($result);
+    }
     public function index()
     {
         //necesitamos listar:
@@ -20,7 +39,8 @@ class IndexController extends Controller
             "banners"=>Producto::PostOfBanner(),
             "hot"=>Producto::PostOfHot(),
             "popular"=>Producto::PostOfPopular(),
-            "packs"=>Producto::PostOfPacks()
+            "packs"=>Producto::PostOfPacks(),
+            "other"=>$this->GetTags()
         ]);
     }
 }

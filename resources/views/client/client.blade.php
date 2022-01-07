@@ -70,7 +70,7 @@
 
                     <h2>
                         @foreach ($tags as $tag)
-                            <a class="badge bg-secondary tag" href="{{ env('HOME') }}search/{{$tag}}">{{$tag}}</a>
+                            <a class="badge bg-secondary" href="{{ env('HOME') }}search/{{$tag}}">{{$tag}}</a>
                         @endforeach
                     </h2>
 
@@ -155,6 +155,18 @@
                     </div>
                 </section>
 
+                <section>
+                    <header class="major">
+                        <h2>Tags</h2>
+                    </header>
+                    <div class="mini-posts">
+                        <h2>
+                            @foreach ($other as $o)
+                                <a class="badge bg-secondary" href="{{ env('HOME') }}search/{{$o}}">{{$o}}</a>
+                            @endforeach
+                        </h2>
+                    </div>
+                </section>
                 <!-- Section -->
                 <section>
                     <header class="major">

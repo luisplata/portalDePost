@@ -9,6 +9,25 @@ use Illuminate\Http\Request;
 
 class ProductoClientCntroller extends Controller
 {
+    private function GetTags(){
+        $post = \App\Producto::all();
+        $streams = \App\Stream::all();
+
+        $result = [];
+        foreach ($post as $p){
+            $tags = explode("-", $p->tags);
+            foreach ($tags as $tag){
+                $result[] = $tag;
+            }
+        }
+        foreach ($streams as $p){
+            $tags = explode("-", $p->tags);
+            foreach ($tags as $tag){
+                $result[] = $tag;
+            }
+        }
+        return array_unique($result);
+    }
 
     public function show($id)
     {
@@ -33,7 +52,8 @@ class ProductoClientCntroller extends Controller
             "popular"=>Producto::PostOfPopular(),
             "packs"=>Producto::PostOfPacks(),
             "post"=>$product,
-            "tags"=>explode("-", $product->tags)
+            "tags"=>explode("-", $product->tags),
+            "other"=>$this->GetTags()
         ]);
     }
 
