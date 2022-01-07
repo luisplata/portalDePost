@@ -105,7 +105,7 @@
                 <div class="row row-cols-2 row-cols-sm-3">
                     @foreach ($banners as $pack)
                         <div class="col">
-                            <a href="{{ env('HOME') }}PPV/{{ $pack->ConvertNameNormalToUrl() }}">
+                            <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
                                 <div class="card bg-dark text-center">
                                     <img src="{{ $pack->imagen }}" class="card-img">
                                     <div class="card-body">
