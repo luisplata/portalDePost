@@ -188,7 +188,7 @@
     //variables iniciables
     let pagePrincipal = "{{url('')}}"
 </script>
-<script src="{{ url('') }}/assets/js/searchComponent.js"></script>
+<script src="{{ url('') }}/assets/js/searchComponent.js?v<?=date('Ymd')?>"></script>
 <!-- Scripts -->
 <script src="{{url('')}}/assets/js/jquery-3.5.1.min.js"></script>
 <script src="{{url('')}}/assets/js/browser.min.js"></script>
