@@ -70,7 +70,7 @@
 
                     <h2>
                         @foreach ($tags as $tag)
-                            <span class="badge bg-secondary tag">{{$tag}}</span>
+                            <a class="badge bg-secondary tag" href="{{ env('HOME') }}search/{{$tag}}">{{$tag}}</a>
                         @endforeach
                     </h2>
 
