@@ -89,7 +89,7 @@
 
         <!-- Banner -->
         <section id="banner">
-            <div class="row row-cols-2 row-cols-sm-3">
+            <div class="row row-cols-1 row-cols-sm-4">
                 @foreach ($streams as $pack)
                     <div class="col">
                         <a href="{{ env('HOME') }}PPV/{{ $pack->ConvertNameNormalToUrl() }}">
