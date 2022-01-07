@@ -91,12 +91,12 @@
         <section id="banner">
             <div class="row row-cols-2 row-cols-sm-3">
                 @foreach ($streams as $pack)
-                    <div class="col-3">
+                    <div class="col">
                         <a href="{{ env('HOME') }}PPV/{{ $pack->ConvertNameNormalToUrl() }}">
-                            <div class="card bg-dark center">
+                            <div class="card bg-dark text-center">
                                 <img src="{{ $pack->imagen }}" class="card-img">
-                                <div class="card-img-overlay text-center">
-                                    <h2 class="card-title">{{ $pack->nombre }}</h2>
+                                <div class="card-body">
+                                    <p class="card-text"></p><h2 class="card-title">{{ $pack->nombre }}</h2><p></p>
                                 </div>
                             </div>
                         </a>
