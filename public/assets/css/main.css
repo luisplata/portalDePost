@@ -2326,3 +2326,12 @@ body.dark{
 .modal-content.dark{
   background-color: #3d4449;
 }
+
+.footer-widget {
+  border: 1px solid #444;
+  height: 100%;
+  width: 100%;
+}
+.col{
+  margin-bottom: 15px;
+}
