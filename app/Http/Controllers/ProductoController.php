@@ -39,8 +39,13 @@ class ProductoController extends Controller {
      */
     public function index() {
         //
+        $products = \App\Producto::orderBy('publication_date', 'desc')->get();
+        foreach ($products as $prod){
+            $prod->Visitas();
+            $prod->LogVisitas();
+        }
         $datos = array(
-            "productos" => \App\Producto::orderBy('publication_date', 'desc')->get()
+            "productos" => $products
         );
         return view("admin.producto.dashboard", $datos);
     }

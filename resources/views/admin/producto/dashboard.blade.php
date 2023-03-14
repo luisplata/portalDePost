@@ -12,6 +12,8 @@
         <th scope="col">Nombre</th>
         <th scope="col">Es publicado?</th>
         <th scope="col">Fecha de publicacion</th>
+        <th scope="col">Visitas</th>
+        <th scope="col">Clicks</th>
         <th scope="col">Editar</th>
         <th scope="col">Eliminar</th>
       </tr>
@@ -22,6 +24,8 @@
                 <th>{{$producto->nombre}}</th>
                 <td>{{strtotime($producto->publication_date) <= strtotime(date("Y-m-d H:i:s"))?"Si":"No"}}</td>
                 <td>{{$producto->publication_date}}</td>
+                <td>{{count($producto->Visitas)}}</td>
+                <td>{{count($producto->LogVisitas)}}</td>
                 <td><a class="btn btn-primary" href="{{url("admin/producto/$producto->id/edit")}}"><i class="fa fa-edit"></i> Editar</a></td>
                 <td>{{Form::open(["url"=>"admin/producto/$producto->id","method"=>"DELETE"])}}
                     <button type="submit" class="btn btn-primary"><i class="fa fa-ellipsis-h"></i> Eliminar</button>
