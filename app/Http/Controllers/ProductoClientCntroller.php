@@ -9,20 +9,21 @@ use Illuminate\Http\Request;
 
 class ProductoClientCntroller extends Controller
 {
-    private function GetTags(){
+    private function GetTags()
+    {
         $post = \App\Producto::all();
         $streams = \App\Stream::all();
 
         $result = [];
-        foreach ($post as $p){
+        foreach ($post as $p) {
             $tags = explode("-", $p->tags);
-            foreach ($tags as $tag){
+            foreach ($tags as $tag) {
                 $result[] = $tag;
             }
         }
-        foreach ($streams as $p){
+        foreach ($streams as $p) {
             $tags = explode("-", $p->tags);
-            foreach ($tags as $tag){
+            foreach ($tags as $tag) {
                 $result[] = $tag;
             }
         }
@@ -33,34 +34,47 @@ class ProductoClientCntroller extends Controller
     {
         //desconvertir
         $id = str_replace("-", " ", $id);
-        $product = Producto::where("nombre",$id)->first();
-        $visita = $product->Visitas;
-        if($visita == null){
+        $product = Producto::where("nombre", $id)->first();
+        try {
+            $visita = $product->Visitas;
+            if ($visita == null) {
+                $visita = new VisitPost();
+                $visita->producto_id = $product->id;
+                $visita->save();
+            }
+        } catch (\Exception $e) {
             $visita = new VisitPost();
             $visita->producto_id = $product->id;
             $visita->save();
         }
         $visita->AddVisita();
-        
+
         $log = new LogVisit();
         $log->producto_id = $product->id;
         $log->save();
 
-        return view('client.client',[
-            "banners"=>Producto::PostOfBanner(),
-            "hot"=>Producto::PostOfHot(),
-            "popular"=>Producto::PostOfPopular(),
-            "packs"=>Producto::PostOfPacks(),
-            "post"=>$product,
-            "tags"=>explode("-", $product->tags),
-            "other"=>$this->GetTags()
+        return view('client.client', [
+            "banners" => Producto::PostOfBanner(),
+            "hot" => Producto::PostOfHot(),
+            "popular" => Producto::PostOfPopular(),
+            "packs" => Producto::PostOfPacks(),
+            "post" => $product,
+            "tags" => explode("-", $product->tags),
+            "other" => $this->GetTags()
         ]);
     }
 
-    public function Redirect($url){
-        $producto = Producto::where("id",$url)->first(); 
-        $visita = $producto->Visitas;
-        if($visita == null){
+    public function Redirect($url)
+    {
+        $producto = Producto::where("id", $url)->first();
+        try {
+            $visita = $producto->Visitas;
+            if ($visita == null) {
+                $visita = new VisitPost();
+                $visita->producto_id = $producto->id;
+                $visita->save();
+            }
+        } catch (\Exception $e) {
             $visita = new VisitPost();
             $visita->producto_id = $producto->id;
             $visita->save();
@@ -69,10 +83,17 @@ class ProductoClientCntroller extends Controller
         return redirect($producto->hotLink);
     }
 
-    public function RedirectName($name){
-        $producto = Producto::where("nombre",$name)->first(); 
-        $visita = $producto->Visitas;
-        if($visita == null){
+    public function RedirectName($name)
+    {
+        $producto = Producto::where("nombre", $name)->first();
+        try {
+            $visita = $producto->Visitas;
+            if ($visita == null) {
+                $visita = new VisitPost();
+                $visita->producto_id = $producto->id;
+                $visita->save();
+            }
+        } catch (\Exception $e) {
             $visita = new VisitPost();
             $visita->producto_id = $producto->id;
             $visita->save();
