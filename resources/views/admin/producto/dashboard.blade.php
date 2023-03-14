@@ -24,11 +24,9 @@
                 <th>{{$producto->nombre}}</th>
                 <td>{{strtotime($producto->publication_date) <= strtotime(date("Y-m-d H:i:s"))?"Si":"No"}}</td>
                 <td>{{$producto->publication_date}}</td>
-                {{dd($producto->Visitas())}}
-                @foreach($producto->Visitas() as $visita)
-                    <td>{{$visita->visitas}}</td>
-                    <td>{{$visita->idoalpack}}</td>
-                @endforeach
+                {{dd($producto->Visitas()->visitas)}}
+                <td>{{$producto->Visitas()->visitas}}</td>
+                <td>{{$producto->Visitas()->idoalpack}}</td>
 
                 <td><a class="btn btn-primary" href="{{url("admin/producto/$producto->id/edit")}}"><i class="fa fa-edit"></i> Editar</a></td>
                 <td>{{Form::open(["url"=>"admin/producto/$producto->id","method"=>"DELETE"])}}
