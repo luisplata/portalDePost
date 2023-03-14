@@ -24,7 +24,7 @@
                 <th>{{$producto->nombre}}</th>
                 <td>{{strtotime($producto->publication_date) <= strtotime(date("Y-m-d H:i:s"))?"Si":"No"}}</td>
                 <td>{{$producto->publication_date}}</td>
-                {{dd($producto->Visitas()->visita)}}
+                {{dd($producto)}}
                 <td>{{$producto->Visitas()->visita}}</td>
                 <td>{{$producto->Visitas()->idoalpack}}</td>
 
