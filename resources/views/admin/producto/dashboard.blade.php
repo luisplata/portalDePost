@@ -24,8 +24,13 @@
                 <th>{{$producto->nombre}}</th>
                 <td>{{strtotime($producto->publication_date) <= strtotime(date("Y-m-d H:i:s"))?"Si":"No"}}</td>
                 <td>{{$producto->publication_date}}</td>
-                <td>{{$producto->Visitas->visita}}</td>
-                <td>{{$producto->Visitas->idoAlPack}}</td>
+                @if($producto->Visitas == null)
+                    <td>0</td>
+                    <td>0</td>
+                @else
+                    <td>{{$producto->Visitas->visita}}</td>
+                    <td>{{$producto->Visitas->idoAlPack}}</td>
+                @endif
                 <td><a class="btn btn-primary" href="{{url("admin/producto/$producto->id/edit")}}"><i class="fa fa-edit"></i> Editar</a></td>
                 <td>{{Form::open(["url"=>"admin/producto/$producto->id","method"=>"DELETE"])}}
                     <button type="submit" class="btn btn-primary"><i class="fa fa-ellipsis-h"></i> Eliminar</button>
