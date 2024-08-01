@@ -24,6 +24,8 @@ RUN mkdir -p /var/www/vendor && chown -R www-data:www-data /var/www/vendor
 # Cambia al usuario www-data
 USER www-data
 
+WORKDIR /var/www
+
 # Instala las dependencias de Composer
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
