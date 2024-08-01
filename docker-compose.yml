@@ -1,9 +1,6 @@
 version: '3'
 services:
-  # Follow the tutorial to success the activity
-  # https://www.digitalocean.com/community/tutorials/how-to-set-up-laravel-nginx-and-mysql-with-docker-compose
-
-  #PHP Service
+  # PHP Service
   app:
     build:
       context: .
@@ -22,7 +19,7 @@ services:
     networks:
       - app-network
 
-  #Nginx Service
+  # Nginx Service
   webserver:
     image: nginx:alpine
     container_name: webserver
@@ -37,7 +34,7 @@ services:
     networks:
       - app-network
 
-  #MySQL Service
+  # MySQL Service
   db:
     image: mysql:5.7.22
     container_name: db
@@ -46,21 +43,18 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: your_mysql_root_password
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
+      MYSQL_ROOT_PASSWORD: "laravel"
+      MYSQL_DATABASE: "laravel"
+      MYSQL_USER: "laravel"
+      MYSQL_PASSWORD: "laravel"
     volumes:
-      - dbdata:/var/lib/mysql/
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - dbdata:/var/lib/mysql
     networks:
       - app-network
 
-#Docker Networks
 networks:
   app-network:
     driver: bridge
-#Volumes
+
 volumes:
   dbdata:
-    driver: local

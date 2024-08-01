@@ -1,58 +1,32 @@
-FROM php:8.1.13-fpm
+# Usa una imagen base adecuada
+FROM php:7.4-fpm
 
-# Copy composer.lock and composer.json
-COPY composer.lock composer.json /var/www/
+# Instala las dependencias necesarias
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libzip-dev \
+    && docker-php-ext-install zip pdo_mysql
 
-# Set working directory
+# Instala Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Establece el directorio de trabajo
 WORKDIR /var/www
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-	libzip-dev \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
-    git \
-    curl \
-	libonig-dev \
-	&& docker-php-ext-install zip
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install extensions
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-RUN docker-php-ext-configure gd --with-freetype=/usr/include/
-RUN docker-php-ext-install gd
-
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Add user for laravel application
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
-
-# Copy existing application directory contents
+# Copia el código de la aplicación y ajusta los permisos
 COPY . /var/www
+RUN chown -R www-data:www-data /var/www
 
-# Copy existing application directory permissions
-COPY --chown=www:www . /var/www
+# Cambia la propiedad del directorio vendor
+RUN mkdir -p /var/www/vendor && chown -R www-data:www-data /var/www/vendor
 
-# Change current user to www
-USER www
+# Cambia al usuario www-data
+USER www-data
 
-# install composer
-RUN composer install
-RUN php artisan key:generate
-RUN php artisan config:cache
+# Instala las dependencias de Composer
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Expose port 9000 and start php-fpm server
+# Expone el puerto 9000 y arranca el servidor php-fpm
 EXPOSE 9000
 CMD ["php-fpm"]
-
