@@ -89,6 +89,22 @@
             </section>
 
             <section>
+                <div class="mini-posts">
+                    <article>
+                        <a href="#" target="">
+                            <div class="card bg-dark text-white center">
+                                <img src="https://placehold.co/800x400" class="card-img">
+                                <div class="card-img-overlay text-center">
+                                    <h5 class="card-title">Streaming</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+                </div>
+                
+            </section>
+
+            <section>
                 <header class="major">
                     <h2>Hot Post</h2>
                 </header>
