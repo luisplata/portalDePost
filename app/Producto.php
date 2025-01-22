@@ -29,6 +29,9 @@ class Producto extends Model
         return $sql;
     }
 
+    public static function Search($search){
+        return Producto::where("nombre","like","%$search%")->where("estado","1")->where('publication_date', '<', date("Y-m-d H:i:s"))->orderBy('publication_date', 'desc')->paginate(10);
+    }
     public static function TazaDeConvercion(){
         return "SELECT producto_id, visita, idoAlPack, ((idoAlPack/visita)*100) as porcentaje_efectividad FROM `visit_posts` v ORDER BY (idoAlPack/visita)*100  DESC LIMIT 10";
     }
