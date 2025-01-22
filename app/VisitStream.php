@@ -2,16 +2,16 @@
 
 namespace App;
 
+use App\Stream;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class VisitStream extends Model
 {
     use HasFactory;
-    
-    //
+
     public function Stream(){
-        return $this->hasOne(Stream::class);
+        return $this->belongsTo(Stream::class);
     }
 
     public function AddVisita(){
