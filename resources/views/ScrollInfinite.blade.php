@@ -1,7 +1,7 @@
 @if (count($packs))
     @foreach ($packs as $pack)
     <div class="col">
-        <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
+        <a href="{{ url('') }}/content/{{ $pack->ConvertNameNormalToUrl() }}">
             <div class="card bg-dark text-center">
                 @if($pack->isVideo == "1")
                 <video class="card-img" src="{{ $pack->url_video }}" muted autoplay loop></video>

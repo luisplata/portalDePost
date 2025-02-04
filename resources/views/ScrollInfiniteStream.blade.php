@@ -1,7 +1,7 @@
 @if (count($packs))
     @foreach ($packs as $stream)
         <div class="col">
-            <a href="{{ env('HOME') }}PPV/{{ $stream->ConvertNameNormalToUrl() }}">
+            <a href="{{ url('') }}/PPV/{{ $stream->ConvertNameNormalToUrl() }}">
                 <div class="card bg-dark text-center footer-widget">
                     <img src="{{ $stream->imagen }}" class="card-img">
                     <div class="card-body">

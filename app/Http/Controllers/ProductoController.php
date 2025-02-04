@@ -170,6 +170,8 @@ class ProductoController extends Controller {
         try {
             $producto = \App\Producto::find($id);
             Storage::delete([public_path().$producto->imagen]);
+            $producto->LogVisitas()->delete();
+            $producto->Visitas()->delete();
             if ($producto->delete()) {
                 //eliminamos el archivo
                 return redirect("admin/producto?mensaje=Se guardo el producto&tipo=success");

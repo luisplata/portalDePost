@@ -40,7 +40,7 @@
         <div class="inner">
             <!-- Header -->
             <header id="header">
-                <h1><a href="{{ env('HOME') }}" class="logo"><strong>{{ env('APP_NAME') }}</strong></a></h1>
+                <h1><a href="{{ url("") }}" class="logo"><strong>{{ env('APP_NAME') }}</strong></a></h1>
                 <ul class="icons">
                     <li>
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
@@ -78,7 +78,7 @@
 
                 <h2>
                     @foreach ($tags as $tag)
-                        <a class="badge bg-secondary" href="{{ env('HOME') }}search/{{$tag}}">{{$tag}}</a>
+                        <a class="badge bg-secondary" href="{{ url('') }}/search/{{$tag}}">{{$tag}}</a>
                     @endforeach
                 </h2>
 
@@ -91,13 +91,13 @@
                     </span>
 
                 <ul class="actions fit">
-                    <li><a target="_blank" href="{{ env('HOME') }}redirect/{{ $post->id }}"
+                    <li><a target="_blank" href="{{ url('') }}/redirect/{{ $post->id }}"
                            class="button primary fit">{{ $post->NombreLink }}</a></li>
                 </ul>
 
                 <p>
-                    {{ $post->NombreLink }} : <a target="_blank" href="{{ env('HOME') }}redirect/{{ $post->id }}"
-                                                 class="primary">{{ env('HOME') }}redirection/{{ $post->nombre }}</a>
+                    {{ $post->NombreLink }} : <a target="_blank" href="{{ url('') }}/redirect/{{ $post->id }}"
+                                                 class="primary">{{ url('') }}/redirection/{{ $post->nombre }}</a>
                 </p>
             </section>
             <!-- Banner -->
@@ -105,7 +105,7 @@
                 <div class="row row-cols-2 row-cols-sm-3">
                     @foreach ($banners as $pack)
                         <div class="col">
-                            <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
+                            <a href="{{ url('') }}/content/{{ $pack->ConvertNameNormalToUrl() }}">
                                 <div class="card bg-dark text-center">
                                     <img src="{{ $pack->imagen }}" class="card-img">
                                     <div class="card-body">
@@ -133,7 +133,7 @@
                 <div class="mini-posts">
                     @foreach ($hot as $pack)
                         <article>
-                            <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
+                            <a href="{{ url('') }}/content/{{ $pack->ConvertNameNormalToUrl() }}">
                                 <div class="card bg-dark text-white center">
                                     <img src="{{ $pack->imagen }}" class="card-img">
                                     <div class="card-img-overlay text-center">
@@ -153,7 +153,7 @@
                 <div class="mini-posts">
                     @foreach ($popular as $pack)
                         <article>
-                            <a href="{{ env('HOME') }}content/{{ $pack->ConvertNameNormalToUrl() }}">
+                            <a href="{{ url('') }}/content/{{ $pack->ConvertNameNormalToUrl() }}">
                                 <div class="card bg-dark text-white center">
                                     <img src="{{ $pack->imagen }}" class="card-img">
                                     <div class="card-img-overlay text-center">
@@ -173,7 +173,7 @@
                 <div class="mini-posts">
                     <h2>
                         @foreach ($other as $o)
-                            <a class="badge bg-secondary" href="{{ env('HOME') }}search/{{$o}}">{{$o}}</a>
+                            <a class="badge bg-secondary" href="{{ url('') }}/search/{{$o}}">{{$o}}</a>
                         @endforeach
                     </h2>
                 </div>
