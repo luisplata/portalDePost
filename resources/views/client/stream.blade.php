@@ -52,7 +52,7 @@
                             Search
                         </button>
                     </li>
-                    <li><a href="{{ env('') }}" target="" class="logo"><span
+                    <li><a href="{{ url('') }}" target="" class="logo"><span
                                     class="label">OnlysFree.com</span></a></li>
                     <li><a href="{{ env('TELEGRAM', '#') }}" target="_blank" class="icon brands fa-telegram"><span
                                     class="label">Telegram</span></a></li>
