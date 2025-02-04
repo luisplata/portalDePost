@@ -21,7 +21,7 @@
         gtag('config', '{{ env('CLAVE_DE_GOOGLE_ANALYTICS') }}');
 
     </script>
-    <title>{{ env('APP_NAME') }}</title>
+    <title>OnlysFree.com</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
     <link rel="stylesheet" href="{{ url('') }}/assets/css/main.css?v{{ date('Ymdhs') }}"/>
@@ -53,7 +53,7 @@
                         </button>
                     </li>
                     <li><a href="{{ env('') }}" target="" class="logo"><span
-                                    class="label">{{ env('APP_NAME') }}</span></a></li>
+                                    class="label">OnlysFree.com</span></a></li>
                     <li><a href="{{ env('TELEGRAM', '#') }}" target="_blank" class="icon brands fa-telegram"><span
                                     class="label">Telegram</span></a></li>
                     <li><a href="{{ env('DISCORD', '#') }}" target="_blank" class="icon brands fa-discord"><span
@@ -155,7 +155,7 @@
 
             <!-- Footer -->
             <footer id="footer">
-                <p class="copyright">&copy; {{ env('APP_NAME') }}</p>
+                <p class="copyright">&copy; OnlysFree.com</p>
             </footer>
 
         </div>
