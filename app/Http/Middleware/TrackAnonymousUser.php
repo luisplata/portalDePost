@@ -57,11 +57,13 @@ class TrackAnonymousUser
                 'url' => $request->fullUrl(),
             ]),
         ]);
+        /*
         Log::info('user anonymous', [
             $nameOfCookie => $anonymousUserId,
             'url' => $request->fullUrl(),
             'data' => $request->all(),
         ]);
+        */
 
         return $next($request);
     }
