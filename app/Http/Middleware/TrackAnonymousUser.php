@@ -34,19 +34,11 @@ class TrackAnonymousUser
         if (!$anonymousUserId) {
             $anonymousUserId = (string) Str::uuid();;
             Cookie::queue($nameOfCookie, $anonymousUserId, 60 * 24 * 365);
-            Log::info('Generated new UUID:', ['uuid' => $anonymousUserId]);
         }
         if ($anonymousUserId && !AnonymousUsers::where('uuid_user', $anonymousUserId)->exists()) {
             AnonymousUsers::create(['uuid_user' => $anonymousUserId]);
         }
-        /*
-        {
-        "ip": "127.0.0.1",
-        "referer": "http://localhost:8000/",
-        "extra_data": "some_value",
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
-        }
-         */
+
         ActivitiesAnonymousUsers::create([
             'user_uuid' => $anonymousUserId,
             'page' => $request->path(),
@@ -57,13 +49,6 @@ class TrackAnonymousUser
                 'url' => $request->fullUrl(),
             ]),
         ]);
-        /*
-        Log::info('user anonymous', [
-            $nameOfCookie => $anonymousUserId,
-            'url' => $request->fullUrl(),
-            'data' => $request->all(),
-        ]);
-        */
 
         return $next($request);
     }
