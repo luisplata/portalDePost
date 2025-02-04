@@ -24,7 +24,7 @@ class Producto extends Model
     }
 
     public static function GetGrafics(){
-        $days = env("days_of_grafic",1);
+        $days = env("DAYS_OF_GRAPHIC",3);
         $sql = "select CAST(created_at AS DATE) as date_of_day, count(1) as count_of_day from `log_visits` where CAST(created_at AS DATE) = CAST(created_at AS DATE) and CAST(created_at AS DATE) > DATE_ADD(NOW(), INTERVAL -$days DAY) group by CAST(created_at AS DATE)";
         return $sql;
     }
