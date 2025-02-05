@@ -89,19 +89,33 @@
             </section>
 
             <section>
+                <header class="major">
+                    <h2>Publicity</h2>
+                </header>
                 <div class="mini-posts">
                     <article>
-                        <a href="#" target="">
+                        <style>
+                            .custom-img {
+                                width: 100%;
+                                height: auto;
+                                aspect-ratio: 16 / 9;
+                                object-fit: cover;
+                            }
+                        </style>
+                        <a href="{{url('publicity/' . env('PUBLICITY_KEY'))}}" target="_blank">
                             <div class="card bg-dark text-white center">
-                                <img src="https://placehold.co/800x400" class="card-img">
+                                <img src="{{url('api/publicity/image/' . env('PUBLICITY_KEY'))}}"
+                                     class="card-img custom-img"
+                                     alt="{{env('PUBLICITY_KEY')}}">
                                 <div class="card-img-overlay text-center">
-                                    <h5 class="card-title">Streaming</h5>
+                                    <h5 class="card-title"></h5>
                                 </div>
                             </div>
                         </a>
                     </article>
+
                 </div>
-                
+
             </section>
 
             <section>
@@ -114,12 +128,15 @@
                             <a href="{{ url('') }}/content/{{ $pack->ConvertNameNormalToUrl() }}">
                                 <div class="card bg-dark text-center">
                                     @if($pack->isVideo == "1")
-                                        <video class="card-img" src="{{ $pack->url_video }}" muted autoplay loop></video>
+                                        <video class="card-img" src="{{ $pack->url_video }}" muted autoplay
+                                               loop></video>
                                     @else
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                     @endif
                                     <div class="card-body">
-                                        <p class="card-text"></p><h2 class="card-title">{{ $pack->nombre }}</h2><p></p>
+                                        <p class="card-text"></p>
+                                        <h2 class="card-title">{{ $pack->nombre }}</h2>
+                                        <p></p>
                                     </div>
                                 </div>
                             </a>
@@ -138,12 +155,15 @@
                             <a href="{{ url('') }}/content/{{ $pack->ConvertNameNormalToUrl() }}">
                                 <div class="card bg-dark text-center">
                                     @if($pack->isVideo == "1")
-                                        <video class="card-img" src="{{ $pack->url_video }}" muted autoplay loop></video>
+                                        <video class="card-img" src="{{ $pack->url_video }}" muted autoplay
+                                               loop></video>
                                     @else
                                         <img src="{{ $pack->imagen }}" class="card-img">
                                     @endif
                                     <div class="card-body">
-                                        <p class="card-text"></p><h2 class="card-title">{{ $pack->nombre }}</h2><p></p>
+                                        <p class="card-text"></p>
+                                        <h2 class="card-title">{{ $pack->nombre }}</h2>
+                                        <p></p>
                                     </div>
                                 </div>
                             </a>

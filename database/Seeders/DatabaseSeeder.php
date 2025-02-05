@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Producto;
+use App\Stream;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -16,15 +18,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
         $this->call(UsuarioInicial::class);
         $this->call(Categorias::class);
-        factory(\App\Producto::class, 200)->create()->each(function ($u) {
+        factory(Producto::class, 200)->create()->each(function ($u) {
             $u->save();
         });
-        \App\Stream::factory()->count(200)->create();
-        /*factory(\App\Stream::class, 200)->create()->each(function ($u) {
-            $u->save();
-        });*/
+        Stream::factory()->count(200)->create();
     }
 }

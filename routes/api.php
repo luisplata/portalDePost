@@ -1,5 +1,6 @@
 <?php
 
+use App\ConfigPublicity;
 use App\Http\Controllers\GraficaApiController;
 use App\Http\Controllers\PPV;
 use App\Producto;
@@ -33,3 +34,5 @@ Route::get("/search/{search}",function($search){
     $paginate = Producto::Search($search);
     return response()->json($paginate);
 });
+
+Route::get("publicity/image/{key}",[ConfigPublicity::class,"GetImage"]);

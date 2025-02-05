@@ -168,6 +168,36 @@
 
             <section>
                 <header class="major">
+                    <h2>Publicity</h2>
+                </header>
+                <div class="mini-posts">
+                    <article>
+                        <style>
+                            .custom-img {
+                                width: 100%;
+                                height: auto;
+                                aspect-ratio: 16 / 9;
+                                object-fit: cover;
+                            }
+                        </style>
+                        <a href="{{url('publicity/' . env('PUBLICITY_KEY'))}}" target="_blank">
+                            <div class="card bg-dark text-white center">
+                                <img src="{{url('api/publicity/image/' . env('PUBLICITY_KEY'))}}"
+                                     class="card-img custom-img"
+                                     alt="{{env('PUBLICITY_KEY')}}">
+                                <div class="card-img-overlay text-center">
+                                    <h5 class="card-title"></h5>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+
+                </div>
+
+            </section>
+
+            <section>
+                <header class="major">
                     <h2>Tags</h2>
                 </header>
                 <div class="mini-posts">
