@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PublicityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -37,10 +38,12 @@ Route::get("/logout", function () {
 });
 Route::post("/login", "LoginController@login");
 
+Route::get("publicity/{key}", [PublicityController::class, "redirect"]);
+
 Route::middleware('logeado')->group(function () {
     //para el admin
     Route::prefix('admin')->group(function () {
-        
+
         Route::get("producto/upload", "ProductoController@Upload");
         Route::post("producto/uploadFile", "ProductoController@UploadFile")->name('admin.producto.uploadFile');
         Route::get("stream/upload", "StreamController@Upload");
