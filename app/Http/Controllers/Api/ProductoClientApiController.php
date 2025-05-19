@@ -16,7 +16,7 @@ class ProductoClientApiController extends Controller
 
     public function show($id)
     {
-        return response()->json($this->service->showProductoPorNombre($id));
+        return response()->json($this->service->showOnlyProductoPorNombre($id));
     }
 
     public function redirectById($id)

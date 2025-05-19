@@ -43,6 +43,29 @@ class ProductoClientService
         ];
     }
 
+    public function showOnlyProductoPorNombre($nombre)
+    {
+        // Intentar primero por nombre (limpiando guiones)
+        $nombreLimpio = str_replace("-", " ", $nombre);
+        $producto = Producto::where("nombre", $nombreLimpio)->first();
+
+        // Si no se encontró por nombre, intentamos por ID
+        if (!$producto && is_numeric($nombre)) {
+            $producto = Producto::find($nombre);
+        }
+
+        // Si aún no se encontró, lanzar 404
+        if (!$producto) {
+            abort(404, "Producto no encontrado");
+        }
+
+        $this->registrarVisita($producto);
+        $this->registrarLogVisita($producto);
+
+        return $producto;
+    }
+
+
     public function redirigirPorId($id)
     {
         $producto = Producto::findOrFail($id);
