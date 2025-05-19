@@ -6,6 +6,8 @@ use App\Http\Controllers\PPV;
 use App\Producto;
 use App\Stream;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ProductoClientApiController;
+use App\Http\Controllers\Api\PPVApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,18 +23,35 @@ Route::get('grafica', [GraficaApiController::class, 'index']);// TazaDeConvercio
 Route::get('TazaDeConvercion', [GraficaApiController::class, 'TazaDeConvercion']);
 Route::get('VisitsVsClicks', [GraficaApiController::class, 'VisitasVsClicks']);
 Route::get('registrarVisita/{id}', [PPV::class, 'RegisterVisit']);
-Route::get("infiniteScroll",function(){
+Route::get("infiniteScroll", function () {
     $paginate = Producto::PostOfPacks();
-    return view("ScrollInfinite",["packs"=>$paginate]);
+    return view("ScrollInfinite", ["packs" => $paginate]);
 });
-Route::get("infiniteScrollStream",function(){
+Route::get("infiniteScrollStream", function () {
     $paginate = Stream::GetFirstStreams();
-    return view("ScrollInfiniteStream",["packs"=>$paginate]);
+    return view("ScrollInfiniteStream", ["packs" => $paginate]);
 });
 
-Route::get("/search/{search}",function($search){
+Route::get("/search/{search}", function ($search) {
     $paginate = Producto::Search($search);
     return response()->json($paginate);
 });
 
-Route::get("publicity/image/{key}",[ConfigPublicity::class,"GetImage"]);
+Route::get("publicity/image/{key}", [ConfigPublicity::class, "GetImage"]);
+
+
+// UPDATE: PUBLISH ALL FEATURES TO API
+Route::get('/home', [App\Http\Controllers\Api\IndexApiController::class, 'index']);
+
+Route::prefix('ppv')->group(function () {
+    Route::get('/', [PPVApiController::class, 'index']);
+    Route::get('/{id}', [PPVApiController::class, 'show']);
+    Route::post('/visit/{id}', [PPVApiController::class, 'registerVisit']);
+    Route::get('/search/{keyword}', [PPVApiController::class, 'search']);
+});
+
+Route::prefix('model')->group(function () {
+    Route::get('/{id}', [ProductoClientApiController::class, 'show']);
+    Route::get('/redirect/id/{id}', [ProductoClientApiController::class, 'redirectById']);
+    Route::get('/redirect/name/{name}', [ProductoClientApiController::class, 'redirectByName']);
+});

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Services\ProductoService;
 
-class IndexController extends Controller
+class IndexApiController extends Controller
 {
     protected $productoService;
 
@@ -15,6 +16,6 @@ class IndexController extends Controller
 
     public function index()
     {
-        return view('welcome', $this->productoService->getDataForHomepage());
+        return response()->json($this->productoService->getDataForHomepage());
     }
 }
