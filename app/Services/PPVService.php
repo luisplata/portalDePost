@@ -4,45 +4,75 @@ namespace App\Services;
 
 use App\Producto;
 use App\Stream;
+use App\Services\TagService;
 
 class PPVService
 {
-    public function getTags()
+    protected $tagService;
+
+    public function __construct(TagService $tagService)
     {
-        $tags = [];
-
-        foreach (Producto::all() as $p) {
-            $tags = array_merge($tags, explode('-', $p->tags));
-        }
-
-        foreach (Stream::all() as $p) {
-            $tags = array_merge($tags, explode('-', $p->tags));
-        }
-
-        return array_unique($tags);
+        $this->tagService = $tagService;
     }
+
+    // 🔹 Nuevos métodos reutilizables
+    public function getFirstStreams()
+    {
+        return Stream::GetFirstStreams();
+    }
+
+    public function getStreamBySlug($slug)
+    {
+        $nombre = str_replace("-", " ", $slug);
+        $nombre = trim($nombre);
+        return Stream::where("nombre", $nombre)->firstOrFail();
+    }
+
+    public function getStreamTags($stream)
+    {
+        return explode('-', $stream->tags);
+    }
+
+    public function getPostsByTag($keyword)
+    {
+        return Producto::whereRaw('LOWER(`tags`) like ?', ["%$keyword%"])->get();
+    }
+
+    public function getPostsByName($keyword)
+    {
+        return Producto::whereRaw('LOWER(`nombre`) like ?', ["%$keyword%"])->get();
+    }
+
+    public function getStreamsByTag($keyword)
+    {
+        return Stream::whereRaw('LOWER(`tags`) like ?', ["%$keyword%"])->get();
+    }
+
+    public function getStreamsByName($keyword)
+    {
+        return Stream::whereRaw('LOWER(`nombre`) like ?', ["%$keyword%"])->get();
+    }
+
+    // 🔸 Métodos que usan los anteriores
 
     public function getIndexData()
     {
         return [
-            "packs" => Stream::GetFirstStreams(),
-            "other" => $this->getTags()
+            "packs" => $this->getFirstStreams(),
+            "other" => $this->tagService->getAllTags()
         ];
     }
 
     public function getStreamByNombre($slug)
     {
-        $nombre = str_replace("-", " ", $slug);
-        $nombre = trim($nombre);
-
-        $stream = Stream::where("nombre", $nombre)->firstOrFail();
+        $stream = $this->getStreamBySlug($slug);
         $stream->CreateLog();
 
         return [
             "stream" => $stream,
-            "streams" => Stream::GetFirstStreams(),
-            "tags" => explode("-", $stream->tags),
-            "other" => $this->getTags()
+            "streams" => $this->getFirstStreams(),
+            "tags" => $this->getStreamTags($stream),
+            "other" => $this->tagService->getAllTags()
         ];
     }
 
@@ -58,11 +88,11 @@ class PPVService
         $keyword = strtolower($keyword);
 
         return [
-            "posts" => Producto::whereRaw('LOWER(`tags`) like ?', ["%$keyword%"])->get(),
-            "postNames" => Producto::whereRaw('LOWER(`nombre`) like ?', ["%$keyword%"])->get(),
-            "streams" => Stream::whereRaw('LOWER(`tags`) like ?', ["%$keyword%"])->get(),
-            "streamNames" => Stream::whereRaw('LOWER(`nombre`) like ?', ["%$keyword%"])->get(),
-            "other" => $this->getTags()
+            "posts" => $this->getPostsByTag($keyword),
+            "postNames" => $this->getPostsByName($keyword),
+            "streams" => $this->getStreamsByTag($keyword),
+            "streamNames" => $this->getStreamsByName($keyword),
+            "other" =>  $this->tagService->getAllTags()
         ];
     }
 }

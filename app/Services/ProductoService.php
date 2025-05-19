@@ -4,32 +4,45 @@ namespace App\Services;
 
 use App\Producto;
 use App\Stream;
+use App\Services\TagService;
 
 class ProductoService
 {
-    public function getTags()
+    protected $tagService;
+
+    public function __construct(TagService $tagService)
     {
-        $tags = [];
+        $this->tagService = $tagService;
+    }
+    public function getBanners()
+    {
+        return Producto::PostOfBanner();
+    }
 
-        foreach (Producto::all() as $p) {
-            $tags = array_merge($tags, explode('-', $p->tags));
-        }
+    public function getHot()
+    {
+        return Producto::PostOfHot();
+    }
 
-        foreach (Stream::all() as $p) {
-            $tags = array_merge($tags, explode('-', $p->tags));
-        }
+    public function getPopular()
+    {
+        return Producto::PostOfPopular();
+    }
 
-        return array_unique($tags);
+    public function getPacks()
+    {
+        return Producto::PostOfPacks();
     }
 
     public function getDataForHomepage()
     {
         return [
-            "banners" => Producto::PostOfBanner(),
-            "hot" => Producto::PostOfHot(),
-            "popular" => Producto::PostOfPopular(),
-            "packs" => Producto::PostOfPacks(),
-            "other" => $this->getTags()
+            "banners" => $this->getBanners(),
+            "hot" => $this->getHot(),
+            "popular" => $this->getPopular(),
+            "packs" => $this->getPacks(),
+            "other" => $this->tagService->getAllTags()
         ];
     }
+
 }

@@ -8,6 +8,7 @@ use App\Stream;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductoClientApiController;
 use App\Http\Controllers\Api\PPVApiController;
+use App\Http\Controllers\Api\ProductoDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,3 +56,9 @@ Route::prefix('model')->group(function () {
     Route::get('/redirect/id/{id}', [ProductoClientApiController::class, 'redirectById']);
     Route::get('/redirect/name/{name}', [ProductoClientApiController::class, 'redirectByName']);
 });
+
+Route::get('/banners', [ProductoDataController::class, 'banners']);
+Route::get('/hot', [ProductoDataController::class, 'hot']);
+Route::get('/popular', [ProductoDataController::class, 'popular']);
+Route::get('/packs', [ProductoDataController::class, 'packs']);
+Route::get('/tags', [ProductoDataController::class, 'tags']);
