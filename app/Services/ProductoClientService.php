@@ -47,7 +47,7 @@ class ProductoClientService
     {
         // Intentar primero por nombre (limpiando guiones)
         $nombreLimpio = str_replace("-", " ", $nombre);
-        $producto = Producto::where("nombre", $nombreLimpio)->first();
+        $producto = Producto::whereRaw('LOWER(nombre) LIKE ?', ['%' . strtolower($nombreLimpio) . '%'])->first();
 
         // Si no se encontró por nombre, intentamos por ID
         if (!$producto && is_numeric($nombre)) {
