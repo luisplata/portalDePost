@@ -45,12 +45,8 @@ class ProductoClientService
 
     public function showOnlyProductoPorNombre($nombre)
     {
-        // Intentar primero por nombre (limpiando guiones)
-        $nombreLimpio = str_replace("-", " ", $nombre);
-        $producto = Producto::whereRaw('LOWER(nombre) LIKE ?', ['%' . strtolower($nombreLimpio) . '%'])->first();
-
         // Si no se encontró por nombre, intentamos por ID
-        if (!$producto && is_numeric($nombre)) {
+        if (is_numeric($nombre)) {
             $producto = Producto::find($nombre);
         }
 
