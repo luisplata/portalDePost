@@ -2,6 +2,7 @@
 
 use App\ConfigPublicity;
 use App\Http\Controllers\GraficaApiController;
+use App\Http\Controllers\IndexController;
 use App\Http\Controllers\PPV;
 use App\Producto;
 use App\Stream;
@@ -43,6 +44,12 @@ Route::get("publicity/image/{key}", [ConfigPublicity::class, "GetImage"]);
 
 // UPDATE: PUBLISH ALL FEATURES TO API
 Route::get('/home', [App\Http\Controllers\Api\IndexApiController::class, 'index']);
+Route::get('/search/{keyword}', [App\Http\Controllers\Api\IndexApiController::class, 'search']);
+Route::get('/banners', [ProductoDataController::class, 'banners']);
+Route::get('/hot', [ProductoDataController::class, 'hot']);
+Route::get('/popular', [ProductoDataController::class, 'popular']);
+Route::get('/packs', [ProductoDataController::class, 'packs']);
+Route::get('/tags', [ProductoDataController::class, 'tags']);
 
 Route::prefix('ppv')->group(function () {
     Route::get('/', [PPVApiController::class, 'index']);
@@ -56,9 +63,3 @@ Route::prefix('model')->group(function () {
     Route::get('/redirect/id/{id}', [ProductoClientApiController::class, 'redirectById']);
     Route::get('/redirect/name/{name}', [ProductoClientApiController::class, 'redirectByName']);
 });
-
-Route::get('/banners', [ProductoDataController::class, 'banners']);
-Route::get('/hot', [ProductoDataController::class, 'hot']);
-Route::get('/popular', [ProductoDataController::class, 'popular']);
-Route::get('/packs', [ProductoDataController::class, 'packs']);
-Route::get('/tags', [ProductoDataController::class, 'tags']);

@@ -45,12 +45,20 @@ class PPVService
 
     public function getStreamsByTag($keyword)
     {
-        return Stream::whereRaw('LOWER(`tags`) like ?', ["%$keyword%"])->get();
+        return Stream::where('estado', '1')
+            ->where('publication_date', '<', now())
+            ->whereRaw('LOWER(tags) like ?', ['%' . strtolower($keyword) . '%'])
+            ->orderBy('publication_date', 'desc')
+            ->paginate(10);
     }
 
     public function getStreamsByName($keyword)
     {
-        return Stream::whereRaw('LOWER(`nombre`) like ?', ["%$keyword%"])->get();
+        return Stream::where('estado', '1')
+            ->where('publication_date', '<', now())
+            ->whereRaw('LOWER(tags) like ?', ['%' . strtolower($keyword) . '%'])
+            ->orderBy('publication_date', 'desc')
+            ->paginate(10);
     }
 
     // 🔸 Métodos que usan los anteriores

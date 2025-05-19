@@ -45,4 +45,22 @@ class ProductoService
         ];
     }
 
+    public function getPostsByTag(string $tag)
+    {
+        return Producto::where('estado', '1')
+            ->where('publication_date', '<', now())
+            ->whereRaw('LOWER(tags) like ?', ['%' . strtolower($tag) . '%'])
+            ->orderBy('publication_date', 'desc')
+            ->paginate(10);
+    }
+
+    public function getPostsByName(string $name)
+    {
+        return Producto::where('estado', '1')
+            ->where('publication_date', '<', now())
+            ->whereRaw('LOWER(nombre) like ?', ['%' . strtolower($name) . '%'])
+            ->orderBy('publication_date', 'desc')
+            ->paginate(10);
+    }
+
 }
