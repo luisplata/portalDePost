@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductoClientApiController;
 use App\Http\Controllers\Api\PPVApiController;
 use App\Http\Controllers\Api\ProductoDataController;
+use App\Http\Controllers\Api\IndexApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,13 +44,16 @@ Route::get("publicity/image/{key}", [ConfigPublicity::class, "GetImage"]);
 
 
 // UPDATE: PUBLISH ALL FEATURES TO API
-Route::get('/home', [App\Http\Controllers\Api\IndexApiController::class, 'index']);
-Route::get('/search/{keyword}', [App\Http\Controllers\Api\IndexApiController::class, 'search']);
+Route::get('/home', [IndexApiController::class, 'index']);
+Route::get('/search/{keyword}', [IndexApiController::class, 'search']);
 Route::get('/banners', [ProductoDataController::class, 'banners']);
 Route::get('/hot', [ProductoDataController::class, 'hot']);
 Route::get('/popular', [ProductoDataController::class, 'popular']);
 Route::get('/packs', [ProductoDataController::class, 'packs']);
 Route::get('/tags', [ProductoDataController::class, 'tags']);
+Route::get('/search', [IndexApiController::class, 'search']);
+Route::get('/tag/search', [IndexApiController::class, 'searchByTag']);
+
 
 Route::prefix('ppv')->group(function () {
     Route::get('/', [PPVApiController::class, 'index']);

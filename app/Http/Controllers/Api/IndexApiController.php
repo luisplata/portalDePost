@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\ProductoService;
 use App\Services\PPVService;
+use App\Producto;
+use App\Stream;
 
 class IndexApiController extends Controller
 {
@@ -22,24 +25,57 @@ class IndexApiController extends Controller
         return response()->json($this->productoService->getDataForHomepage());
     }
 
-    public function search($keyword)
+    public function search(Request $request)
     {
-        $keyword = strtolower($keyword);
+        $query = strtolower($request->query('query', ''));
+        $perPage = $request->query('per_page', 10);
 
-        // Buscar productos
-        $productsByTag = $this->productoService->getPostsByTag($keyword);
-        $productsByName = $this->productoService->getPostsByName($keyword);
+        $productos = Producto::where(function ($q) use ($query) {
+            $q->whereRaw('LOWER(nombre) LIKE ?', ["%$query%"])
+                ->orWhereRaw('LOWER(tags) LIKE ?', ["%$query%"]);
+        })
+            ->where("estado", "1")
+            ->where('publication_date', '<', now())
+            ->orderBy('publication_date', 'desc')
+            ->paginate($perPage, ['*'], 'productos_page');
 
-        // Buscar streams (PPV)
-        $streamsByTag = $this->ppvService->getStreamsByTag($keyword);
-        $streamsByName = $this->ppvService->getStreamsByName($keyword);
+        $streams = Stream::where(function ($q) use ($query) {
+            $q->whereRaw('LOWER(nombre) LIKE ?', ["%$query%"])
+                ->orWhereRaw('LOWER(tags) LIKE ?', ["%$query%"]);
+        })
+            ->where("estado", "1")
+            ->where('publication_date', '<', now())
+            ->orderBy('publication_date', 'desc')
+            ->paginate($perPage, ['*'], 'streams_page');
 
-        // Combinar resultados (podés decidir si quieres hacer merge o devolver por separado)
         return response()->json([
-            'products_by_tag' => $productsByTag,
-            'products_by_name' => $productsByName,
-            'streams_by_tag' => $streamsByTag,
-            'streams_by_name' => $streamsByName,
+            'productos' => $productos,
+            'streams' => $streams,
+        ]);
+    }
+
+    public function searchByTag(Request $request)
+    {
+        $tag = strtolower($request->query('tag', ''));
+        $perPage = $request->query('per_page', 10);
+
+        // Búsqueda en productos
+        $productos = Producto::where("estado", "1")
+            ->where('publication_date', '<', now())
+            ->whereRaw('LOWER(tags) LIKE ?', ["%$tag%"])
+            ->orderBy('publication_date', 'desc')
+            ->paginate($perPage, ['*'], 'productos_page');
+
+        // Búsqueda en streams
+        $streams = Stream::where("estado", "1")
+            ->where('publication_date', '<', now())
+            ->whereRaw('LOWER(tags) LIKE ?', ["%$tag%"])
+            ->orderBy('publication_date', 'desc')
+            ->paginate($perPage, ['*'], 'streams_page');
+
+        return response()->json([
+            'productos' => $productos,
+            'streams' => $streams,
         ]);
     }
 }
