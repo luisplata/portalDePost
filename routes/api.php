@@ -35,23 +35,28 @@ Route::get("infiniteScrollStream", function () {
     return view("ScrollInfiniteStream", ["packs" => $paginate]);
 });
 
-Route::get("/search/{search}", function ($search) {
-    $paginate = Producto::Search($search);
-    return response()->json($paginate);
-});
+
 
 Route::get("publicity/image/{key}", [ConfigPublicity::class, "GetImage"]);
 
 
 // UPDATE: PUBLISH ALL FEATURES TO API
 Route::get('/home', [IndexApiController::class, 'index']);
+
+//TODO : Cambiar a un solo endpoint
 Route::get('/search/{keyword}', [IndexApiController::class, 'search']);
+Route::get('/search', [IndexApiController::class, 'search']);
+Route::get("/search/{search}", function ($search) {
+    $paginate = Producto::Search($search);
+    return response()->json($paginate);
+});
+
+
 Route::get('/banners', [ProductoDataController::class, 'banners']);
 Route::get('/hot', [ProductoDataController::class, 'hot']);
 Route::get('/popular', [ProductoDataController::class, 'popular']);
 Route::get('/packs', [ProductoDataController::class, 'packs']);
 Route::get('/tags', [ProductoDataController::class, 'tags']);
-Route::get('/search', [IndexApiController::class, 'search']);
 Route::get('/tag/search', [IndexApiController::class, 'searchByTag']);
 
 
