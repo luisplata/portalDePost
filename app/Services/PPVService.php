@@ -65,10 +65,7 @@ class PPVService
 
     public function getIndexData()
     {
-        return [
-            "packs" => $this->getFirstStreams(),
-            "other" => $this->tagService->getAllTags()
-        ];
+        return $this->getFirstStreams();
     }
 
     public function getStreamByNombre($slug)
