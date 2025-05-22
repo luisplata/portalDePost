@@ -22,7 +22,7 @@ class PPVApiController extends Controller
 
     public function show($id)
     {
-        return response()->json($this->service->getStreamByNombre($id));
+        return response()->json($this->service->getStreamById($id));
     }
 
     public function registerVisit($id)

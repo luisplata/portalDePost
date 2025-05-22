@@ -28,6 +28,11 @@ class PPVService
         return Stream::where("nombre", $nombre)->firstOrFail();
     }
 
+    public function getStreamById($id)
+    {
+        return Stream::findOrFail($id);
+    }
+
     public function getStreamTags($stream)
     {
         return explode('-', $stream->tags);
