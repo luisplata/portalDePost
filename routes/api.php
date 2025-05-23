@@ -44,12 +44,12 @@ Route::get("publicity/image/{key}", [ConfigPublicity::class, "GetImage"]);
 Route::get('/home', [IndexApiController::class, 'index']);
 
 //TODO : Cambiar a un solo endpoint
-Route::get('/search/{keyword}', [IndexApiController::class, 'search']);
+// Route::get('/search/{keyword}', [IndexApiController::class, 'search']);
 Route::get('/search', [IndexApiController::class, 'search']);
-Route::get("/search/{search}", function ($search) {
-    $paginate = Producto::Search($search);
-    return response()->json($paginate);
-});
+// Route::get("/search/{search}", function ($search) {
+//     $paginate = Producto::Search($search);
+//     return response()->json($paginate);
+// });
 
 
 Route::get('/banners', [ProductoDataController::class, 'banners']);
@@ -63,8 +63,6 @@ Route::get('/tag/search', [IndexApiController::class, 'searchByTag']);
 Route::prefix('ppv')->group(function () {
     Route::get('/', [PPVApiController::class, 'index']);
     Route::get('/{id}', [PPVApiController::class, 'show']);
-    Route::post('/visit/{id}', [PPVApiController::class, 'registerVisit']);
-    Route::get('/search/{keyword}', [PPVApiController::class, 'search']);
 });
 
 Route::prefix('model')->group(function () {

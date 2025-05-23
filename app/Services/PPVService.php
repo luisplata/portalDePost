@@ -30,7 +30,9 @@ class PPVService
 
     public function getStreamById($id)
     {
-        return Stream::findOrFail($id);
+        $stream = Stream::findOrFail($id);
+        $stream->CreateVisit();
+        return $stream;
     }
 
     public function getStreamTags($stream)
