@@ -2,38 +2,24 @@
 
 namespace App\Http\Controllers;
 
-
-use App\ConfigPublicity;
-use App\Publicity;
+use App\Services\PublicityService;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class PublicityController extends Controller
 {
-    //
+    protected $service;
+
+    public function __construct(PublicityService $service)
+    {
+        $this->service = $service;
+    }
+
     public function redirect(Request $request, $key)
     {
-        $config = ConfigPublicity::where('key', $key)->first();
-        if ($config) {
-            $nameOfCookie = 'anonymous_user_id';
-            $anonymousUserId = Cookie::get($nameOfCookie);
-            if (!$anonymousUserId) {
-                $anonymousUserId = "anonymous";
-            }
-            $publicity = Publicity::where('config_publicities_id', $config->id)
-                ->where('uuid_user', $anonymousUserId)
-                ->first();
-            if (!$publicity) {
-                $publicity = new Publicity();
-                $publicity->config_publicities_id = $config->id;
-                $publicity->uuid_user = $anonymousUserId;
-                $publicity->save();
-            } else {
-                $publicity->touch();
-                $publicity->increment('count');
-            }
-            return redirect($config->GetValue()->url);
-        }
-        return redirect('/');
+        $anonymousUserId = Cookie::get('anonymous_user_id') ?? 'anonymous';
+        $url = $this->service->handleRedirect($key, $anonymousUserId);
+
+        return $url ? redirect($url) : redirect('/');
     }
 }
