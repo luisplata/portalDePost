@@ -4,25 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use App\Services\AuthService;
 
-class LoginController extends Controller {
+class LoginController extends Controller
+{
+    protected $auth;
 
-    //
-    public function login(Request $request) {
-        /* Pasos de autenticación
-         * se busca por el correo el usuario
-         * se calcula si la contraseña es igual
-         * se le manda al dash board
-         */
-        $user = \App\Usuario::where("email", $request->email)->first();
-        //Validamos que encontro algo
-        //validamos la contraseña
-        if (!is_object($user) || sha1($request->pass) != $user->pass) {
-            return redirect("/login?mensaje=Usuario o Contraseña, no validos");
-        }
-        //metemos datos en la session en este caso le user ID
-        Session::put('admin', $user);
-        return redirect("/admin");
+    public function __construct(AuthService $auth)
+    {
+        $this->auth = $auth;
     }
 
+    public function login(Request $request)
+    {
+        $user = $this->auth->autenticar($request->email, $request->pass);
+
+        if (!$user) {
+            return redirect("/login?mensaje=Usuario o Contraseña, no válidos");
+        }
+
+        Session::put('admin', $user);
+
+        return redirect("/admin");
+    }
 }
