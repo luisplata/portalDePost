@@ -22,52 +22,64 @@ class ProcesarProductos extends Command
         $allAutos = Auto::all();
 
         $this->info("Procesando productos");
-        Log::info("Procesando productos: " . $productos->count() . " pendientes.");
+        Log::info("Procesando productos: {$productos->count()} pendientes.");
 
         foreach ($productos as $producto) {
             $ok = true;
 
             foreach ($allAutos as $auto) {
-                $response = null;
+                try {
+                    $response = null;
 
-                switch ($auto->method) {
-                    case 'POST':
-                        $response = Http::post($auto->webhook, [
-                            'id' => $producto->id,
-                            'nombre' => $producto->nombre,
-                            'precio' => $producto->precio,
-                            'publication_date' => $producto->publication_date,
-                        ]);
-                        break;
+                    switch ($auto->method) {
+                        case 'POST':
+                            $response = Http::timeout(5)->post($auto->webhook, [
+                                'id' => $producto->id,
+                                'nombre' => $producto->nombre,
+                                'precio' => $producto->precio,
+                                'publication_date' => $producto->publication_date,
+                            ]);
+                            break;
 
-                    case 'GET':
-                        $response = Http::get($auto->webhook, [
-                            'id' => $producto->id,
-                            'nombre' => $producto->nombre,
-                            'precio' => $producto->precio,
-                            'publication_date' => $producto->publication_date,
-                        ]);
-                        break;
-                }
+                        case 'GET':
+                            $response = Http::timeout(5)->get($auto->webhook, [
+                                'id' => $producto->id,
+                                'nombre' => $producto->nombre,
+                                'precio' => $producto->precio,
+                                'publication_date' => $producto->publication_date,
+                            ]);
+                            break;
+                    }
 
-                if (!$response || !$response->successful()) {
+                    if (!$response || !$response->successful()) {
+                        $ok = false;
+                        $errorMsg = "Error HTTP enviando producto {$producto->id} a {$auto->webhook}: " . ($response ? $response->status() : 'sin respuesta');
+                        $this->error($errorMsg);
+                        Log::error($errorMsg);
+                    } else {
+                        $msg = "Producto {$producto->id} enviado a {$auto->webhook}.";
+                        $this->info($msg);
+                        Log::info($msg);
+                    }
+
+                } catch (\Exception $e) {
                     $ok = false;
-                    $this->error("Error enviando producto {$producto->id} a {$auto->webhook}: " . ($response ? $response->body() : 'sin respuesta'));
-                    Log::error("Error enviando producto {$producto->id} a {$auto->webhook}: " . ($response ? $response->body() : 'sin respuesta'));
-                } else {
-                    $this->info("Producto {$producto->id} enviado a {$auto->webhook}.");
-                    Log::info("Producto {$producto->id} enviado a {$auto->webhook}.");
+                    $errorMsg = "No se pudo conectar a {$auto->webhook}: " . $e->getMessage();
+                    $this->error($errorMsg);
+                    Log::error($errorMsg);
                 }
             }
 
-            // Si se envió a todos los autos, recién ahí se marca publicado
+            // Solo marcar como publicado si todos los webhooks respondieron bien
             if ($ok) {
                 $producto->published = true;
                 $producto->save();
-                $this->info("Producto {$producto->id} marcado como publicado.");
-                Log::info("Producto {$producto->id} marcado como publicado.");
+                $msg = "Producto {$producto->id} marcado como publicado.";
+                $this->info($msg);
+                Log::info($msg);
             }
         }
 
+        Log::info("Fin del procesamiento de productos.");
     }
 }
