@@ -6,6 +6,7 @@ use App\Auto;
 use App\Producto;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ProcesarProductos extends Command
 {
@@ -21,6 +22,7 @@ class ProcesarProductos extends Command
         $allAutos = Auto::all();
 
         $this->info("Procesando productos");
+        Log::info("Procesando productos: " . $productos->count() . " pendientes.");
 
         foreach ($productos as $producto) {
             $ok = true;
@@ -51,8 +53,10 @@ class ProcesarProductos extends Command
                 if (!$response || !$response->successful()) {
                     $ok = false;
                     $this->error("Error enviando producto {$producto->id} a {$auto->webhook}: " . ($response ? $response->body() : 'sin respuesta'));
+                    Log::error("Error enviando producto {$producto->id} a {$auto->webhook}: " . ($response ? $response->body() : 'sin respuesta'));
                 } else {
                     $this->info("Producto {$producto->id} enviado a {$auto->webhook}.");
+                    Log::info("Producto {$producto->id} enviado a {$auto->webhook}.");
                 }
             }
 
@@ -61,6 +65,7 @@ class ProcesarProductos extends Command
                 $producto->published = true;
                 $producto->save();
                 $this->info("Producto {$producto->id} marcado como publicado.");
+                Log::info("Producto {$producto->id} marcado como publicado.");
             }
         }
 
