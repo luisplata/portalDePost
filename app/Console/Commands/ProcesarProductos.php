@@ -20,6 +20,8 @@ class ProcesarProductos extends Command
 
         $allAutos = Auto::all();
 
+        $this->info("Procesando productos");
+
         foreach ($productos as $producto) {
             $ok = true;
 
