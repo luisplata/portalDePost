@@ -65,12 +65,17 @@ class ProcesarProductos extends Command
                 } catch (\Exception $e) {
                     $ok = false;
                     $errorMsg = "No se pudo conectar a {$auto->webhook}: " . $e->getMessage();
+
+                    // Detectar cURL error 7 (no se puede conectar)
+                    if (strpos($e->getMessage(), 'cURL error 7') !== false) {
+                        $errorMsg .= " — Probablemente el puerto está bloqueado por firewall o el servidor no responde.";
+                    }
+
                     $this->error($errorMsg);
                     Log::error($errorMsg);
                 }
             }
 
-            // Solo marcar como publicado si todos los webhooks respondieron bien
             if ($ok) {
                 $producto->published = true;
                 $producto->save();
