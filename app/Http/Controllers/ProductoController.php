@@ -29,6 +29,7 @@ class ProductoController extends Controller {
             $producto->isVideo = $row[5];
             $producto->url_video = $row[6];
             $producto->tags = $row[7];
+            $producto->published = false;
             $producto->save();
         }
         return redirect('admin/producto');

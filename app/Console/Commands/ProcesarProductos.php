@@ -33,21 +33,11 @@ class ProcesarProductos extends Command
 
                     switch ($auto->method) {
                         case 'POST':
-                            $response = Http::timeout(5)->post($auto->webhook, [
-                                'id' => $producto->id,
-                                'nombre' => $producto->nombre,
-                                'precio' => $producto->precio,
-                                'publication_date' => $producto->publication_date,
-                            ]);
+                            $response = Http::timeout(5)->post($auto->webhook, $producto->toArray());
                             break;
 
                         case 'GET':
-                            $response = Http::timeout(5)->get($auto->webhook, [
-                                'id' => $producto->id,
-                                'nombre' => $producto->nombre,
-                                'precio' => $producto->precio,
-                                'publication_date' => $producto->publication_date,
-                            ]);
+                            $response = Http::timeout(5)->get($auto->webhook, $producto->toArray());
                             break;
                     }
 
