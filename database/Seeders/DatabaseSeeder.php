@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UsuarioInicial::class);
         $this->call(Categorias::class);
+        $this->call(AutoSeeder::class);
         factory(Producto::class, 200)->create()->each(function ($u) {
             $u->save();
         });

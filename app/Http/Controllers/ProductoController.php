@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Auto;
 use App\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -28,10 +29,20 @@ class ProductoController extends Controller {
             $producto->isVideo = $row[5];
             $producto->url_video = $row[6];
             $producto->tags = $row[7];
+            $producto->published = false;
             $producto->save();
         }
         return redirect('admin/producto');
     }
+
+    //creata a private function to get the prodcut and consult from database tha table autos and each webhook send product
+    private function sendToWebHook($producto){
+        $allWebhooks = Auto::all();
+        foreach ($allWebhooks as $webhook) {
+
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
