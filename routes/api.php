@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ProductoClientApiController;
 use App\Http\Controllers\Api\PPVApiController;
 use App\Http\Controllers\Api\ProductoDataController;
 use App\Http\Controllers\Api\IndexApiController;
+use App\Http\Controllers\Api\PlacementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,9 @@ Route::get("infiniteScrollStream", function () {
 
 
 Route::get("publicity/image/{key}", [ConfigPublicity::class, "GetImage"]);
+
+// Publicidad: contrato publico de un slot (REQ-API-01). Solo lectura.
+Route::get('placements/{key}', [PlacementController::class, 'show']);
 
 
 // UPDATE: PUBLISH ALL FEATURES TO API

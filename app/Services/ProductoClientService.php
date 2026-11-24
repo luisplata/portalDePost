@@ -33,7 +33,6 @@ class ProductoClientService
         $this->registrarLogVisita($producto);
 
         return [
-            "banners" => Producto::PostOfBanner(),
             "hot" => Producto::PostOfHot(),
             "popular" => Producto::PostOfPopular(),
             "packs" => Producto::PostOfPacks(),
