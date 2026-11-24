@@ -12,9 +12,16 @@ services:
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
+      # Dentro de la red de compose el MySQL es `db`, no localhost.
+      # Se resuelve por variable de entorno y pisa el valor de .env (Laravel usa Dotenv inmutable).
+      DB_HOST: db
+    depends_on:
+      - db
     working_dir: /var/www
     volumes:
       - ./:/var/www
+      # vendor propio de la imagen (PHP 7.4), aislado del vendor del host (PHP 8.2)
+      - vendor:/var/www/vendor
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
@@ -58,3 +65,4 @@ networks:
 
 volumes:
   dbdata:
+  vendor:
