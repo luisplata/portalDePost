@@ -180,6 +180,30 @@ class AdminPanelTest extends AnalyticsTestSupport
         $response->assertSee('id="analitica-legacy-visits"', false);
     }
 
+    public function test_the_uv_header_switches_to_the_approximate_label()
+    {
+        $view = file_get_contents(resource_path('views/admin/Analitica/index.blade.php'));
+
+        $this->assertMatchesRegularExpression(
+            "/data\\.uv_approximate \\? 'Suma de unicos diarios' : 'UV'/",
+            $view
+        );
+        $this->assertMatchesRegularExpression(
+            "/data\\.metric === 'uv'\\s*\\?\\s*\\(data\\.uv_approximate \\? 'Suma de unicos diarios' : 'UV'\\)\\s*:\\s*'Pageviews'/s",
+            $view
+        );
+    }
+
+    public function test_the_conversion_note_requires_both_coverage_dates()
+    {
+        $view = file_get_contents(resource_path('views/admin/Analitica/index.blade.php'));
+
+        $this->assertMatchesRegularExpression(
+            "/if \\(data\\.coverage\\.identities_from && data\\.coverage\\.clicks_from\\) \\{\\s*notes\\.push\\('Conversion por visitante disponible desde ' \\+ maxDate\\(/s",
+            $view
+        );
+    }
+
     public function test_the_render_contract_matches_the_metrics_payload()
     {
         $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);

@@ -251,9 +251,8 @@
             notes.push('Clicks disponibles desde ' + data.coverage.clicks_from);
         }
 
-        var conversionFrom = maxDate(data.coverage.identities_from, data.coverage.clicks_from);
-        if (conversionFrom) {
-            notes.push('Conversion por visitante disponible desde ' + conversionFrom);
+        if (data.coverage.identities_from && data.coverage.clicks_from) {
+            notes.push('Conversion por visitante disponible desde ' + maxDate(data.coverage.identities_from, data.coverage.clicks_from));
         }
 
         document.getElementById('analitica-coverage').textContent = notes.join(' \u00b7 ');
@@ -348,7 +347,9 @@
         document.getElementById('analitica-legacy-clicks').textContent = num(data.legacy.clicks);
         document.getElementById('analitica-legacy-conversion').textContent = pctLabel(data.legacy.conversion_by_pageview);
 
-        document.getElementById('analitica-uv-header').textContent = data.metric === 'uv' ? 'UV' : 'Pageviews';
+        document.getElementById('analitica-uv-header').textContent = data.metric === 'uv'
+            ? (data.uv_approximate ? 'Suma de unicos diarios' : 'UV')
+            : 'Pageviews';
 
         document.getElementById('analitica-ranking-body').innerHTML = data.ranking.data.map(function (item, index) {
             return rowHtml(item, index, data);
