@@ -27,6 +27,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
         $schedule->command('productos:procesar')->hourly();
+
+        // Retencion del detalle de clicks (REQ-PRV-02). Si el hosting no corre
+        // el scheduler, el comando se ejecuta a mano sin efectos adversos.
+        $schedule->command('ads:purge-clicks')->daily();
     }
 
     /**

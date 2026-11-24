@@ -1,6 +1,9 @@
 <?php
 
-use App\Http\Controllers\PublicityController;
+use App\Http\Controllers\AdClickController;
+use App\Http\Controllers\AdCreativeController;
+use App\Http\Controllers\AdMetricsController;
+use App\Http\Controllers\AdPlacementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +41,16 @@ Route::get("/logout", function () {
 });
 Route::post("/login", "LoginController@login");
 
-Route::get("publicity/{key}", [PublicityController::class, "redirect"]);
+// Publicidad: click atribuible (REQ-CLK-01, D-06) y alias legacy (REQ-CLK-04, D-07).
+// Van despues de content/PPV/search y antes del grupo admin. El where evita
+// capturar rutas con mayusculas, puntos o barras; admite `_` porque las
+// creatividades legacy sembradas usan keys como `game-home_sidebar`.
+Route::get("ads/{campaign_key}", [AdClickController::class, "redirect"])
+    ->where("campaign_key", "[a-z0-9]+([_-][a-z0-9]+)*")
+    ->middleware("throttle:ads-tracking");
+
+Route::get("publicity/{key}", [AdClickController::class, "legacy"])
+    ->middleware("throttle:ads-tracking");
 
 Route::middleware('logeado')->group(function () {
     //para el admin
@@ -52,6 +64,20 @@ Route::middleware('logeado')->group(function () {
         Route::resource("producto", "ProductoController");
         Route::resource("stream", "StreamController");
         Route::resource("graficas", "GraficaController");
+
+        // Administracion de placements (REQ-PLC-02, REQ-PLC-04). `key` es
+        // inmutable (D-01) y no se lee del request: solo name/max_items/is_active.
+        Route::get("placements", [AdPlacementController::class, "index"]);
+        Route::put("placements/{key}", [AdPlacementController::class, "update"]);
+
+        // Series diarias para las graficas del listado (REQ-MET-01, REQ-MET-02).
+        // Va antes del resource para no chocar con publicidad/{id}/edit.
+        Route::get("publicidad/metrics", [AdMetricsController::class, "show"]);
+
+        // CRUD de creatividades (REQ-ADM-01, D-01, D-03). El listado con
+        // metricas (S2c) se declara antes del resource; show no se expone.
+        Route::get("publicidad", [AdCreativeController::class, "index"]);
+        Route::resource("publicidad", "AdCreativeController")->except(["show"]);
     });
     Route::resource("admin", "AdminController");
 });

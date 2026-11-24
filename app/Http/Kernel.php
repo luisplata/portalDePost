@@ -60,6 +60,7 @@ class Kernel extends HttpKernel {
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         "logeado" => \App\Http\Middleware\Logeado::class,
+        'ad.origin' => \App\Http\Middleware\VerifyAdOrigin::class,
     ];
 
 }
