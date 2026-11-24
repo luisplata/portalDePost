@@ -44,9 +44,15 @@ mas `uv_approximate` y `conversion_available`.
 
 Regla: **si el numero no es exacto, va `null` con warning; nunca un aproximado silencioso.**
 
-DD-09: un click que llega antes de la visita del dia deja `post_stats_daily.unique_visits = NULL`.
-Ese dia no adelanta `identities_from`; el UV del rango se calcula de `post_visit_identities`, asi
-que un producto solo clickeado tiene UV-r 0 (nadie lo visito), no `null`.
+`post_stats_daily.unique_visits` es el marcador de cobertura del dia:
+
+- `NULL: dia sin captura de identidad` (backfill historico). No hay UV y la cobertura no lo incluye.
+- `0` o mas: dia con captura viva. `0 es un valor real`: nadie visito ese producto ese dia.
+
+Un `click antes de la primera visita` del dia crea la fila con UV 0 y la visita posterior la
+incrementa a 1, asi que el dia queda cubierto. El UV del rango se calcula de
+`post_visit_identities`; un producto solo clickeado en un dia cubierto tiene UV-r 0, no `null`.
+Si el rango cae antes de `identities_from`, el UV va `null` con warning `uv_unavailable`.
 
 ---
 

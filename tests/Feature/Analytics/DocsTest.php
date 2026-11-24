@@ -30,4 +30,14 @@ class DocsTest extends TestCase
             $this->assertStringContainsString($needle, $doc);
         }
     }
+
+    public function test_the_analytics_doc_describes_the_coverage_marker_truthfully()
+    {
+        $doc = file_get_contents(base_path('docs/analitica-publicaciones.md'));
+
+        $this->assertStringContainsString('NULL: dia sin captura de identidad', $doc);
+        $this->assertStringContainsString('0 es un valor real', $doc);
+        $this->assertStringContainsString('click antes de la primera visita', $doc);
+        $this->assertStringNotContainsString('deja `post_stats_daily.unique_visits = NULL`', $doc);
+    }
 }
