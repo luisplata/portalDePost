@@ -136,13 +136,16 @@ class AdminPanelTest extends AnalyticsTestSupport
         $response->assertSee('id="analitica-uv-chart"', false);
     }
 
-    public function test_charts_keep_gaps_for_null_days()
+    public function test_charts_keep_gaps_for_null_days_without_unsupported_options()
     {
-        $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);
+        $view = file_get_contents(resource_path('views/admin/Analitica/index.blade.php'));
 
-        $response->assertSee('function gap(', false);
-        $response->assertSee('spanGaps: false', false);
-        $response->assertSee('unique_visits', false);
+        // Chart.js vendorizado es 2.1.4: no soporta spanGaps. Los null se
+        // convierten en NaN y Chart.js salta el punto, dejando el hueco.
+        $this->assertStringContainsString('function gap(', $view);
+        $this->assertStringContainsString('return gap(day.visits)', $view);
+        $this->assertStringContainsString('return gap(day.unique_visits)', $view);
+        $this->assertStringNotContainsString('spanGaps', $view);
     }
 
     public function test_the_error_banner_and_retry_never_render_fake_zeros()

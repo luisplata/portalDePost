@@ -277,7 +277,6 @@
                         backgroundColor: 'rgba(38,185,154,0.15)',
                         fill: false,
                         borderWidth: 2,
-                        spanGaps: false
                     },
                     {
                         label: 'Clicks',
@@ -286,14 +285,12 @@
                         backgroundColor: 'rgba(3,88,106,0.15)',
                         fill: false,
                         borderWidth: 2,
-                        spanGaps: false
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                spanGaps: false,
                 scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
             }
         });
@@ -310,14 +307,12 @@
                         backgroundColor: 'rgba(133,73,186,0.15)',
                         fill: false,
                         borderWidth: 2,
-                        spanGaps: false
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                spanGaps: false,
                 scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
             }
         });
