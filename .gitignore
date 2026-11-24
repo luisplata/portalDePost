@@ -16,4 +16,5 @@ yarn-error.log
 /.composer
 /.atl
 /.phpunit.result.cache
+/.config
 *.csv
