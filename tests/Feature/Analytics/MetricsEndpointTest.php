@@ -369,6 +369,111 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         $this->assertLessThanOrEqual(6, $this->countAnalyticsQueriesFor($uri));
     }
 
+    public function test_a_backfilled_day_after_capture_starts_makes_uv_approximate()
+    {
+        $productoId = $this->makeProduct(['nombre' => 'Cobertura No Contigua']);
+
+        // 23/11: captura viva solo-click (0 UV real). 24/11: fila backfilleada.
+        $this->seedDay($productoId, '2026-11-23', 0, 0, 1);
+        $this->seedDay($productoId, '2026-11-24', 10, null, 0);
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-23&to=2026-11-24')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('metric', 'uv')
+            ->assertJsonPath('uv_approximate', true)
+            ->assertJsonPath('conversion_available', false)
+            ->assertJsonPath('series.0.unique_visits', 0)
+            ->assertJsonPath('series.1.unique_visits', null)
+            ->assertJsonPath('totals.unique_visits', 0);
+
+        $this->assertContains('uv_approximate', $response->json('warnings'));
+        $this->assertContains('conversion_unavailable', $response->json('warnings'));
+        $this->assertNotContains('uv_unavailable', $response->json('warnings'));
+    }
+
+    public function test_a_range_starting_on_a_backfilled_day_does_not_claim_exact_uv()
+    {
+        $productoId = $this->makeProduct(['nombre' => 'Empieza Backfill']);
+
+        $this->seedDay($productoId, '2026-11-23', 0, 0, 1);
+        $this->seedDay($productoId, '2026-11-24', 10, null, 0);
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('metric', 'pageviews')
+            ->assertJsonPath('uv_approximate', false)
+            ->assertJsonPath('totals.unique_visits', null)
+            ->assertJsonPath('series.0.unique_visits', null);
+
+        $this->assertContains('uv_unavailable', $response->json('warnings'));
+        $this->assertNotContains('uv_approximate', $response->json('warnings'));
+    }
+
+    public function test_a_fully_covered_range_has_no_coverage_warnings()
+    {
+        $productoId = $this->makeProduct(['nombre' => 'Cobertura Completa']);
+
+        $this->seedDay($productoId, '2026-11-24', 10, 2, 1);
+        $this->seedIdentity($productoId, '2026-11-24', 'completa-a');
+        $this->seedIdentity($productoId, '2026-11-24', 'completa-b');
+        $this->seedClick($productoId, '2026-11-24', 'completa-a');
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('metric', 'uv')
+            ->assertJsonPath('uv_approximate', false)
+            ->assertJsonPath('conversion_available', true)
+            ->assertJsonPath('totals.unique_visits', 2);
+
+        $this->assertSame([], $response->json('warnings'));
+    }
+
+    public function test_a_fully_backfilled_range_reports_uv_unavailable()
+    {
+        $productoId = $this->makeProduct(['nombre' => 'Todo Backfill']);
+
+        $this->seedDay($productoId, '2026-11-24', 10, null, 0);
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('metric', 'pageviews')
+            ->assertJsonPath('uv_approximate', false)
+            ->assertJsonPath('totals.unique_visits', null)
+            ->assertJsonPath('series.0.unique_visits', null);
+
+        $this->assertContains('uv_unavailable', $response->json('warnings'));
+    }
+
+    public function test_a_mixed_day_is_not_reported_as_exact()
+    {
+        $vivo = $this->makeProduct(['nombre' => 'Mixto Vivo']);
+        $backfill = $this->makeProduct(['nombre' => 'Mixto Backfill']);
+
+        $this->seedDay($vivo, '2026-11-24', 5, 2, 1);
+        $this->seedIdentity($vivo, '2026-11-24', 'mixto-a');
+        $this->seedIdentity($vivo, '2026-11-24', 'mixto-b');
+        $this->seedClick($vivo, '2026-11-24', 'mixto-a');
+        $this->seedDay($backfill, '2026-11-24', 10, null, 0);
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+            ->assertStatus(200);
+        $response->assertJsonPath('uv_approximate', true)
+            ->assertJsonPath('conversion_available', false)
+            ->assertJsonPath('series.0.unique_visits', null)
+            ->assertJsonPath('totals.unique_visits', 2);
+
+        $this->assertContains('uv_approximate', $response->json('warnings'));
+    }
+
     public function test_the_service_failure_returns_a_controlled_500()
     {
         $failing = new class(new AnalyticsTimeService()) extends PostMetricsService {

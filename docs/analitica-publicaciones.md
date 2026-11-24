@@ -46,8 +46,15 @@ Regla: **si el numero no es exacto, va `null` con warning; nunca un aproximado s
 
 `post_stats_daily.unique_visits` es el marcador de cobertura del dia:
 
-- `NULL: dia sin captura de identidad` (backfill historico). No hay UV y la cobertura no lo incluye.
+- `NULL: dia sin captura de identidad` (backfill historico). No aporta UV: si cae dentro
+  del rango, el UV del rango queda aproximado y ese dia va `null` en la serie.
 - `0` o mas: dia con captura viva. `0 es un valor real`: nadie visito ese producto ese dia.
+
+La cobertura de identidades es **contigua**: si dentro del rango hay cualquier dia con visits y
+`unique_visits` NULL (incluidos dias mixtos entre productos), `uv_approximate` pasa a `true`, ese
+dia devuelve `unique_visits: null`, la conversion principal no esta disponible y se emite
+`uv_approximate`. Si el rango **no tiene ningun dia cubierto**, la metrica efectiva es
+`pageviews`, el UV va `null` y se emite `uv_unavailable`.
 
 Un `click antes de la primera visita` del dia crea la fila con UV 0 y la visita posterior la
 incrementa a 1, asi que el dia queda cubierto. El UV del rango se calcula de

@@ -40,4 +40,13 @@ class DocsTest extends TestCase
         $this->assertStringContainsString('click antes de la primera visita', $doc);
         $this->assertStringNotContainsString('deja `post_stats_daily.unique_visits = NULL`', $doc);
     }
+
+    public function test_the_analytics_doc_describes_contiguous_coverage_gaps()
+    {
+        $doc = file_get_contents(base_path('docs/analitica-publicaciones.md'));
+
+        $this->assertStringContainsString('el UV del rango queda aproximado', $doc);
+        $this->assertStringContainsString('ningun dia cubierto', $doc);
+        $this->assertStringContainsString('uv_unavailable', $doc);
+    }
 }

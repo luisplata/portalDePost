@@ -49,13 +49,48 @@ class PostMetricsService
         $identitiesFrom = $coverage['identities_from'];
         $clicksFrom = $coverage['clicks_from'];
 
-        $identitiesFull = $identitiesFrom !== null && $identitiesFrom <= $from;
-        $identitiesPartial = ! $identitiesFull && $identitiesFrom !== null && $identitiesFrom <= $to;
-        $identitiesUnavailable = ! $identitiesFull && ! $identitiesPartial;
-
         $clicksFull = $clicksFrom !== null && $clicksFrom <= $from;
         $clicksPartial = ! $clicksFull && $clicksFrom !== null && $clicksFrom <= $to;
         $clicksUnavailable = ! $clicksFull && ! $clicksPartial;
+
+        // 2. Serie global del rango. `uv_nulls` detecta dias con visits y sin
+        // captura de identidad (backfill), aunque la captura haya empezado antes.
+        $seriesRows = DB::table('post_stats_daily')
+            ->whereBetween('date', [$from, $to])
+            ->groupBy('date')
+            ->select(
+                'date',
+                DB::raw('SUM(visits) as visits'),
+                DB::raw('SUM(unique_visits) as uv_daily'),
+                DB::raw('SUM(CASE WHEN unique_visits IS NULL THEN 1 ELSE 0 END) as uv_nulls'),
+                DB::raw('SUM(clicks) as clicks')
+            )
+            ->get()
+            ->keyBy(function ($row) {
+                return substr((string) $row->date, 0, 10);
+            });
+
+        // Cobertura no contigua: cualquier dia del rango con `unique_visits`
+        // NULL (incluidos los mixtos) invalida la exactitud del UV.
+        $gapDays = [];
+        $hasCoveredData = false;
+        foreach ($seriesRows as $date => $row) {
+            if ((int) $row->uv_nulls > 0) {
+                $gapDays[$date] = true;
+            }
+            if ($row->uv_daily !== null) {
+                $hasCoveredData = true;
+            }
+        }
+
+        $rangeHasRows = $seriesRows->isNotEmpty();
+        $identitiesUnavailable = $identitiesFrom === null
+            || $identitiesFrom > $to
+            || ($rangeHasRows && ! $hasCoveredData);
+        $identitiesFull = ! $identitiesUnavailable
+            && $identitiesFrom <= $from
+            && empty($gapDays);
+        $identitiesPartial = ! $identitiesUnavailable && ! $identitiesFull;
 
         $conversionAvailable = $identitiesFull && $clicksFull;
 
@@ -66,21 +101,6 @@ class PostMetricsService
 
         $uvBoundary = $identitiesFull ? $from : ($identitiesPartial ? $identitiesFrom : '9999-12-31');
         $clicksBoundary = $clicksFull ? $from : ($clicksPartial ? $clicksFrom : '9999-12-31');
-
-        // 2. Serie global del rango.
-        $seriesRows = DB::table('post_stats_daily')
-            ->whereBetween('date', [$from, $to])
-            ->groupBy('date')
-            ->select(
-                'date',
-                DB::raw('SUM(visits) as visits'),
-                DB::raw('SUM(unique_visits) as uv_daily'),
-                DB::raw('SUM(clicks) as clicks')
-            )
-            ->get()
-            ->keyBy(function ($row) {
-                return substr((string) $row->date, 0, 10);
-            });
 
         // 3. Universo + hechos por producto. LEFT JOIN: los sin datos van en 0.
         $universeQuery = DB::table('productos')
@@ -95,7 +115,7 @@ class PostMetricsService
                 'productos.nombre',
                 'productos.estado',
                 DB::raw('COALESCE(SUM(s.visits), 0) as visits'),
-                DB::raw('SUM(CASE WHEN s.date >= ? THEN COALESCE(s.unique_visits, 0) ELSE 0 END) as uv_daily'),
+                DB::raw('SUM(CASE WHEN s.date >= ? AND s.unique_visits IS NOT NULL THEN COALESCE(s.unique_visits, 0) ELSE 0 END) as uv_daily'),
                 DB::raw('COALESCE(SUM(s.clicks), 0) as clicks_total'),
                 DB::raw('SUM(CASE WHEN s.date >= ? THEN s.clicks ELSE 0 END) as clicks_window')
             )
@@ -168,7 +188,8 @@ class PostMetricsService
             $identitiesUnavailable,
             $clicksFrom,
             $clicksPartial,
-            $clicksUnavailable
+            $clicksUnavailable,
+            $gapDays
         );
 
         $rankingData = $this->buildRanking(
@@ -193,6 +214,7 @@ class PostMetricsService
 
         $totals = $this->buildTotals(
             $series,
+            $seriesRows,
             $rankingData,
             $uvExact,
             $clickers,
@@ -330,7 +352,8 @@ class PostMetricsService
         $identitiesUnavailable,
         $clicksFrom,
         $clicksPartial,
-        $clicksUnavailable
+        $clicksUnavailable,
+        array $gapDays
     ) {
         $series = [];
 
@@ -343,10 +366,10 @@ class PostMetricsService
             }
 
             $uniqueVisits = null;
-            if (! $identitiesUnavailable) {
-                if (! $identitiesPartial || $date >= $identitiesFrom) {
-                    $uniqueVisits = $row === null ? 0 : (int) $row->uv_daily;
-                }
+            if (! $identitiesUnavailable
+                && $date >= $identitiesFrom
+                && ! isset($gapDays[$date])) {
+                $uniqueVisits = $row === null ? 0 : (int) $row->uv_daily;
             }
 
             $clicks = null;
@@ -466,6 +489,7 @@ class PostMetricsService
      */
     private function buildTotals(
         array $series,
+        $seriesRows,
         array $ranking,
         array $uvExact,
         $clickers,
@@ -491,10 +515,12 @@ class PostMetricsService
             if ($identitiesFull) {
                 $uniqueVisits = array_sum($uvExact);
             } else {
+                // Aproximado: suma la parte capturada de los dias cubiertos y de
+                // los mixtos; los dias totalmente backfilleados aportan null.
                 $uniqueVisits = 0;
-                foreach ($series as $day) {
-                    if ($day['unique_visits'] !== null) {
-                        $uniqueVisits += (int) $day['unique_visits'];
+                foreach ($seriesRows as $row) {
+                    if ($row->uv_daily !== null) {
+                        $uniqueVisits += (int) $row->uv_daily;
                     }
                 }
             }
