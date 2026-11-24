@@ -140,16 +140,29 @@ class MigrationIdempotencyTest extends TestCase
     {
         $this->assertTrue(Schema::hasTable('ad_clicks'));
 
-        $this->artisan('migrate:rollback', ['--step' => 5, '--force' => true])
-            ->assertExitCode(0);
+        // El step se calcula desde la primera migracion de ads hasta la ultima
+        // migrada: nuevas migraciones aditivas (p. ej. analitica) corren despues
+        // y un numero fijo dejaria de cubrir el batch de ads.
+        $step = DB::table('migrations')
+            ->where('migration', '>=', '2026_11_24_000001_create_ad_placements_table')
+            ->count();
 
-        foreach (['ad_clicks', 'ad_stats_daily', 'ad_creatives', 'ad_placements'] as $table) {
-            $this->assertFalse(Schema::hasTable($table), "{$table} must be gone after rollback.");
+        try {
+            $this->artisan('migrate:rollback', ['--step' => $step, '--force' => true])
+                ->assertExitCode(0);
+
+            foreach (['ad_clicks', 'ad_stats_daily', 'ad_creatives', 'ad_placements'] as $table) {
+                $this->assertFalse(Schema::hasTable($table), "{$table} must be gone after rollback.");
+            }
+
+            $this->assertTrue(Schema::hasTable('config_publicities'));
+            $this->assertTrue(Schema::hasTable('publicities'));
+            $this->assertSame(1, DB::table('config_publicities')->where('key', 'game')->count());
+        } finally {
+            // DDL no vuelve atras con transacciones: se restaura el esquema para
+            // que las clases siguientes no dependan del orden de ejecucion.
+            $this->artisan('migrate', ['--force' => true])->assertExitCode(0);
         }
-
-        $this->assertTrue(Schema::hasTable('config_publicities'));
-        $this->assertTrue(Schema::hasTable('publicities'));
-        $this->assertSame(1, DB::table('config_publicities')->where('key', 'game')->count());
     }
 
     public function test_ad_tables_use_mysql_57_compatible_column_types()
