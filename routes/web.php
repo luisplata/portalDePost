@@ -69,9 +69,10 @@ Route::middleware('logeado')->group(function () {
         Route::get("placements", [AdPlacementController::class, "index"]);
         Route::put("placements/{key}", [AdPlacementController::class, "update"]);
 
-        // CRUD de creatividades (REQ-ADM-01, D-01, D-03). El listado nace en
-        // S2c: por eso el resource no expone index ni show.
-        Route::resource("publicidad", "AdCreativeController")->except(["index", "show"]);
+        // CRUD de creatividades (REQ-ADM-01, D-01, D-03). El listado con
+        // metricas (S2c) se declara antes del resource; show no se expone.
+        Route::get("publicidad", [AdCreativeController::class, "index"]);
+        Route::resource("publicidad", "AdCreativeController")->except(["show"]);
     });
     Route::resource("admin", "AdminController");
 });

@@ -57,7 +57,7 @@ class AdminCreativeTest extends TestCase
 
         $creative = AdCreative::where('campaign_key', 'game-home_sidebar')->firstOrFail();
 
-        $this->assertRedirectsToEdit($response, $creative);
+        $this->assertRedirectsToIndex($response);
         $this->assertSame('draft', $creative->status);
         $this->assertSame('Legacy sidebar', $creative->alt_text);
         $this->assertSame('Ver más', $creative->cta_label);
@@ -194,7 +194,7 @@ class AdminCreativeTest extends TestCase
 
         $response = $this->asAdmin()->delete('/admin/publicidad/'.$creative->id);
 
-        $this->assertRedirectsToEdit($response, $creative);
+        $this->assertRedirectsToIndex($response);
         $fresh = $creative->fresh();
         $this->assertSame('ended', $fresh->status);
         $this->assertSame(10, AdStatDaily::where('creative_id', $creative->id)->first()->impressions);
@@ -216,11 +216,11 @@ class AdminCreativeTest extends TestCase
         return $this->withSession(['admin' => (object) ['nombre' => 'tester']]);
     }
 
-    private function assertRedirectsToEdit($response, AdCreative $creative)
+    private function assertRedirectsToIndex($response)
     {
         $response->assertRedirect();
         $this->assertStringStartsWith(
-            url('admin/publicidad/'.$creative->id.'/edit'),
+            url('admin/publicidad?mensaje='),
             (string) $response->headers->get('Location')
         );
     }

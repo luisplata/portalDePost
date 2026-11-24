@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AdCreative;
 use App\AdPlacement;
 use App\Producto;
+use App\Services\AdMetricsService;
 use App\Services\AdService;
 use App\Http\Requests\AdCreativeRequest;
 
@@ -17,6 +18,38 @@ use App\Http\Requests\AdCreativeRequest;
  */
 class AdCreativeController extends Controller
 {
+    /**
+     * Listado con metricas de 30 dias en 2 queries: paginator con join a
+     * placements (orden) + una agregacion por id para todo el lote (REQ-ADM-06).
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $metricsService = app(AdMetricsService::class);
+        list($from, $to) = $metricsService->lastDays(30);
+
+        $creatives = AdCreative::query()
+            ->join('ad_placements', 'ad_placements.id', '=', 'ad_creatives.placement_id')
+            ->orderBy('ad_placements.name')
+            ->orderBy('ad_creatives.priority', 'desc')
+            ->select(
+                'ad_creatives.*',
+                'ad_placements.name as placement_name',
+                'ad_placements.key as placement_key',
+                'ad_placements.is_active as placement_is_active'
+            )
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('admin.Publicidad.index', [
+            'creatives' => $creatives,
+            'metrics' => $metricsService->summaryForCreatives($creatives->pluck('id')->all(), $from, $to),
+            'from' => $from,
+            'to' => $to,
+        ]);
+    }
+
     /**
      * @return \Illuminate\Http\Response
      */
@@ -35,7 +68,7 @@ class AdCreativeController extends Controller
 
         $this->forgetSlot($creative->placement_id);
 
-        return $this->backToEdit($creative, 'Creatividad creada');
+        return $this->listing('Creatividad creada');
     }
 
     /**
@@ -68,7 +101,7 @@ class AdCreativeController extends Controller
             $this->forgetSlot($publicidad->placement_id);
         }
 
-        return $this->backToEdit($publicidad, 'Creatividad actualizada');
+        return $this->listing('Creatividad actualizada');
     }
 
     /**
@@ -84,7 +117,7 @@ class AdCreativeController extends Controller
 
         $this->forgetSlot($publicidad->placement_id);
 
-        return $this->backToEdit($publicidad, 'Creatividad finalizada');
+        return $this->listing('Creatividad finalizada');
     }
 
     /**
@@ -114,16 +147,15 @@ class AdCreativeController extends Controller
     }
 
     /**
-     * S2c reemplazara este destino por el listado cuando exista.
+     * Vuelve al listado con el mensaje flash que lee el layout (REQ-ADM-05).
      *
-     * @param  \App\AdCreative  $creative
      * @param  string  $mensaje
      * @return \Illuminate\Http\Response
      */
-    private function backToEdit(AdCreative $creative, $mensaje)
+    private function listing($mensaje)
     {
         return redirect(
-            'admin/publicidad/'.$creative->id.'/edit?mensaje='.rawurlencode($mensaje).'&tipo=success'
+            'admin/publicidad?mensaje='.rawurlencode($mensaje).'&tipo=success'
         );
     }
 }
