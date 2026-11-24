@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdClickController;
+use App\Http\Controllers\AdPlacementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,11 @@ Route::middleware('logeado')->group(function () {
         Route::resource("producto", "ProductoController");
         Route::resource("stream", "StreamController");
         Route::resource("graficas", "GraficaController");
+
+        // Administracion de placements (REQ-PLC-02, REQ-PLC-04). `key` es
+        // inmutable (D-01) y no se lee del request: solo name/max_items/is_active.
+        Route::get("placements", [AdPlacementController::class, "index"]);
+        Route::put("placements/{key}", [AdPlacementController::class, "update"]);
     });
     Route::resource("admin", "AdminController");
 });
