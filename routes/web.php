@@ -4,6 +4,7 @@ use App\Http\Controllers\AdClickController;
 use App\Http\Controllers\AdCreativeController;
 use App\Http\Controllers\AdMetricsController;
 use App\Http\Controllers\AdPlacementController;
+use App\Http\Controllers\AnaliticaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,10 @@ Route::get("publicity/{key}", [AdClickController::class, "legacy"])
 Route::middleware('logeado')->group(function () {
     //para el admin
     Route::prefix('admin')->group(function () {
+
+        // Metricas de analitica de publicaciones (REQ-S3-06). Solo GET y antes
+        // de los resources para no chocar con ellos.
+        Route::get("analitica/metricas", [AnaliticaController::class, "metricas"]);
 
         Route::get("producto/upload", "ProductoController@Upload");
         Route::post("producto/uploadFile", "ProductoController@UploadFile")->name('admin.producto.uploadFile');
