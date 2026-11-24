@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdClickController;
+use App\Http\Controllers\AdCreativeController;
 use App\Http\Controllers\AdPlacementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -67,6 +68,10 @@ Route::middleware('logeado')->group(function () {
         // inmutable (D-01) y no se lee del request: solo name/max_items/is_active.
         Route::get("placements", [AdPlacementController::class, "index"]);
         Route::put("placements/{key}", [AdPlacementController::class, "update"]);
+
+        // CRUD de creatividades (REQ-ADM-01, D-01, D-03). El listado nace en
+        // S2c: por eso el resource no expone index ni show.
+        Route::resource("publicidad", "AdCreativeController")->except(["index", "show"]);
     });
     Route::resource("admin", "AdminController");
 });

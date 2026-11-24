@@ -5,6 +5,7 @@ namespace App\Services;
 use App\AdClick;
 use App\AdCreative;
 use App\AdPlacement;
+use App\Producto;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -335,6 +336,41 @@ class AdService
                 ]
             );
         });
+    }
+
+    /**
+     * Prellena campos vacios del formulario desde el producto elegido
+     * (REQ-CRT-04). Solo se usa en `create`; una vez guardada la creatividad
+     * el snapshot manda y el producto no se vuelve a leer.
+     *
+     * @param  array  $data
+     * @return array
+     */
+    public function prefillFromProducto(array $data)
+    {
+        if (empty($data['producto_id'])) {
+            return $data;
+        }
+
+        $producto = Producto::find($data['producto_id']);
+
+        if ($producto === null) {
+            return $data;
+        }
+
+        if (empty($data['target_url'])) {
+            $data['target_url'] = '/content/'.$producto->ConvertNameNormalToUrl();
+        }
+
+        if (empty($data['headline'])) {
+            $data['headline'] = $producto->nombre;
+        }
+
+        if (empty($data['image_url'])) {
+            $data['image_url'] = $producto->imagen;
+        }
+
+        return $data;
     }
 
     /**
