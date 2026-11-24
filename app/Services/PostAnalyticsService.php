@@ -26,6 +26,56 @@ class PostAnalyticsService
     }
 
     /**
+     * Registra una visita: pageview y, si corresponde, visitante unico del dia.
+     *
+     * @param  int|string  $productoId
+     * @param  string  $source  web|api
+     * @param  array|null  $context
+     * @return void
+     */
+    public function recordVisit($productoId, $source = 'web', array $context = null)
+    {
+        if (! $this->enabled()) {
+            return;
+        }
+
+        $context = $this->context($context);
+
+        if (! $this->shouldCount($source, $context)) {
+            return;
+        }
+
+        $date = null;
+
+        try {
+            $date = $this->time->today();
+            $identity = $this->identity($context['cookie'], $context['ip']);
+            $now = Carbon::now('UTC')->toDateTimeString();
+
+            DB::transaction(function () use ($productoId, $date, $identity, $now) {
+                $isNewIdentity = DB::affectingStatement(
+                    'INSERT INTO post_visit_identities (producto_id, date, identity, created_at) '
+                    .'VALUES (?, ?, ?, ?) '
+                    .'ON DUPLICATE KEY UPDATE identity = identity',
+                    [(int) $productoId, $date, $identity, $now]
+                ) > 0;
+
+                DB::affectingStatement(
+                    'INSERT INTO post_stats_daily '
+                    .'(producto_id, date, visits, unique_visits, clicks, created_at, updated_at) '
+                    .'VALUES (?, ?, 1, ?, 0, ?, ?) '
+                    .'ON DUPLICATE KEY UPDATE visits = visits + 1, '
+                    .'unique_visits = unique_visits + VALUES(unique_visits), '
+                    .'updated_at = VALUES(updated_at)',
+                    [(int) $productoId, $date, $isNewIdentity ? 1 : 0, $now, $now]
+                );
+            });
+        } catch (\Throwable $e) {
+            $this->logFailure('visit', $productoId, $e, $date);
+        }
+    }
+
+    /**
      * Identidad anonima: cookie valida o `ip:` + hash de la IP.
      *
      * @param  string|null  $cookie

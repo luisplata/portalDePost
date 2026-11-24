@@ -9,6 +9,16 @@ use App\LogVisit;
 
 class ProductoClientService
 {
+    /**
+     * @var PostAnalyticsService
+     */
+    protected $analytics;
+
+    public function __construct(PostAnalyticsService $analytics)
+    {
+        $this->analytics = $analytics;
+    }
+
     public function getTags()
     {
         $tags = [];
@@ -31,6 +41,7 @@ class ProductoClientService
 
         $this->registrarVisita($producto);
         $this->registrarLogVisita($producto);
+        $this->analytics->recordVisit($producto->id, 'web');
 
         return [
             "hot" => Producto::PostOfHot(),
@@ -56,6 +67,7 @@ class ProductoClientService
 
         $this->registrarVisita($producto);
         $this->registrarLogVisita($producto);
+        $this->analytics->recordVisit($producto->id, 'api');
 
         return $producto;
     }
