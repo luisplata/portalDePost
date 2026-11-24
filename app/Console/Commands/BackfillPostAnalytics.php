@@ -176,6 +176,9 @@ class BackfillPostAnalytics extends Command
 
         if ($hasLiveCapture) {
             $this->daysOmitted[$date] = true;
+
+            // REQ-S3-08 scenario 3: un dia con captura viva se omite entero.
+            return;
         }
 
         $now = Carbon::now('UTC')->toDateTimeString();

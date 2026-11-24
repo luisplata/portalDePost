@@ -97,6 +97,35 @@ class BackfillVisitsTest extends AnalyticsTestSupport
         $this->assertStringContainsString('dias omitidos: 1', Artisan::output());
     }
 
+    public function test_it_skips_the_whole_day_when_capture_is_live()
+    {
+        $vivo = $this->makeProduct(['nombre' => 'Backfill Vivo Dos']);
+        $historico = $this->makeProduct(['nombre' => 'Backfill Historico Dos']);
+
+        DB::table('post_stats_daily')->insert([
+            'producto_id' => $vivo,
+            'date' => '2026-11-09',
+            'visits' => 99,
+            'unique_visits' => 7,
+            'clicks' => 3,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->makeLogVisitAt($vivo, '2026-11-10 03:00:00');
+        $this->makeLogVisitAt($historico, '2026-11-10 03:00:00');
+
+        Artisan::call('analytics:backfill-visits', ['--from' => '2026-11-09', '--to' => '2026-11-09']);
+
+        $this->assertSame(0, DB::table('post_stats_daily')->where('producto_id', $historico)->count());
+
+        $vivoStats = DB::table('post_stats_daily')->where('producto_id', $vivo)->first();
+        $this->assertSame(99, (int) $vivoStats->visits);
+        $this->assertSame(7, (int) $vivoStats->unique_visits);
+
+        $this->assertStringContainsString('dias omitidos: 1', Artisan::output());
+    }
+
     public function test_it_succeeds_without_data_and_respects_the_range()
     {
         $productoId = $this->makeProduct(['nombre' => 'Backfill Rango']);
