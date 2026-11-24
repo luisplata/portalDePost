@@ -290,6 +290,85 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         $this->assertSame(2, $response->json('series.1.unique_visits'));
     }
 
+    public function test_the_payload_stays_under_512kb_with_365_days_and_fifty_rows()
+    {
+        Carbon::setTestNow('2026-11-25 02:00:00');
+
+        $conDatos = $this->makeProduct(['nombre' => 'Payload 365']);
+        $rows = [];
+
+        for ($i = 0; $i < 365; $i++) {
+            $date = Carbon::parse('2026-11-24')->subDays($i)->toDateString();
+            $rows[] = [
+                'producto_id' => $conDatos,
+                'date' => $date,
+                'visits' => 3,
+                'unique_visits' => 1,
+                'clicks' => $date === '2025-11-25' ? 1 : 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        DB::table('post_stats_daily')->insert($rows);
+
+        foreach (range(1, 49) as $i) {
+            $this->makeProduct(['nombre' => 'Payload Extra '.$i]);
+        }
+
+        $uri = '/admin/analitica/metricas?'.http_build_query([
+            'from' => '2025-11-25',
+            'to' => '2026-11-24',
+            'per_page' => 50,
+        ]);
+
+        $response = $this->asAdmin()->getJson($uri)->assertStatus(200);
+
+        $this->assertSame(365, count($response->json('series')));
+        $this->assertSame(50, $response->json('ranking.per_page'));
+        $this->assertSame(50, count($response->json('ranking.data')));
+        $this->assertLessThan(524288, strlen($response->getContent()));
+        $this->assertLessThanOrEqual(6, $this->countAnalyticsQueriesFor($uri));
+    }
+
+    public function test_the_endpoint_query_count_is_constant_with_ten_thousand_products()
+    {
+        $categoriaId = $this->makeCategoria();
+        $now = now()->toDateTimeString();
+        $chunk = [];
+
+        for ($i = 1; $i <= 10000; $i++) {
+            $chunk[] = [
+                'nombre' => 'Catalogo '.$i,
+                'imagen' => 'https://cdn.example/product.jpg',
+                'categorias_id' => $categoriaId,
+                'estado' => 1,
+                'NombreLink' => 'PCK 1',
+                'hotLink' => 'https://example.com/hot',
+                'publication_date' => '2026-11-01 00:00:00',
+                'isVideo' => '0',
+                'url_video' => '',
+                'tags' => 'alpha',
+                'published' => 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            if (count($chunk) === 1000) {
+                DB::table('productos')->insert($chunk);
+                $chunk = [];
+            }
+        }
+
+        $uri = '/admin/analitica/metricas?from=2026-11-24&to=2026-11-24&per_page=50';
+
+        $response = $this->asAdmin()->getJson($uri)->assertStatus(200);
+
+        $this->assertSame(10000, $response->json('ranking.total'));
+        $this->assertSame(50, count($response->json('ranking.data')));
+        $this->assertLessThanOrEqual(6, $this->countAnalyticsQueriesFor($uri));
+    }
+
     public function test_the_service_failure_returns_a_controlled_500()
     {
         $failing = new class(new AnalyticsTimeService()) extends PostMetricsService {
@@ -563,6 +642,15 @@ class MetricsEndpointTest extends AnalyticsTestSupport
      */
     private function countMetricQueries(): int
     {
+        return $this->countAnalyticsQueriesFor('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24');
+    }
+
+    /**
+     * Sentencias del servicio de metricas para una URL concreta. Excluye el
+     * middleware legacy de tracking anonimo.
+     */
+    private function countAnalyticsQueriesFor(string $uri): int
+    {
         $queries = [];
 
         DB::listen(function ($query) use (&$queries) {
@@ -571,12 +659,7 @@ class MetricsEndpointTest extends AnalyticsTestSupport
             }
         });
 
-        $this->asAdmin()
-            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
-            ->assertStatus(200);
-
-        $this->assertLessThanOrEqual(6, count($queries), implode("
-", $queries));
+        $this->asAdmin()->getJson($uri)->assertStatus(200);
 
         return count($queries);
     }
