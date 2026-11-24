@@ -125,4 +125,74 @@ class AdminPanelTest extends AnalyticsTestSupport
         $response->assertSee('value="2026-11-24"', false);
         $response->assertSee('value="uv" selected', false);
     }
+
+    public function test_the_panel_uses_local_chartjs_and_two_canvases()
+    {
+        $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);
+
+        $response->assertSee('vendors/Chart.js/dist/Chart.min.js', false);
+        $response->assertDontSee('cdnjs.cloudflare.com/ajax/libs/Chart.js', false);
+        $response->assertSee('id="analitica-visits-chart"', false);
+        $response->assertSee('id="analitica-uv-chart"', false);
+    }
+
+    public function test_charts_keep_gaps_for_null_days()
+    {
+        $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);
+
+        $response->assertSee('function gap(', false);
+        $response->assertSee('spanGaps: false', false);
+        $response->assertSee('unique_visits', false);
+    }
+
+    public function test_the_error_banner_and_retry_never_render_fake_zeros()
+    {
+        $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);
+
+        $response->assertSee('No se pudieron cargar las metricas');
+        $response->assertSee('id="analitica-error"', false);
+        $response->assertSee('id="analitica-retry"', false);
+        $response->assertSee('id="analitica-content"', false);
+        $response->assertSee('id="analitica-total-visits">&mdash;', false);
+        $response->assertSee('showError', false);
+    }
+
+    public function test_the_coverage_and_empty_texts_are_exact()
+    {
+        $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);
+
+        $response->assertSee('Sin datos en el rango');
+        $response->assertSee('UV disponible desde ', false);
+        $response->assertSee('Suma de unicos diarios', false);
+        $response->assertSee('Clicks disponibles desde ', false);
+        $response->assertSee('Conversion por visitante disponible desde ', false);
+        $response->assertSee('La captura de analitica empieza con este cambio', false);
+    }
+
+    public function test_the_legacy_block_stays_separate_from_the_range_metrics()
+    {
+        $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);
+
+        $response->assertSeeInOrder([
+            'id="analitica-ranking"',
+            'id="analitica-legacy"',
+        ], false);
+        $response->assertSee('id="analitica-legacy-visits"', false);
+    }
+
+    public function test_the_render_contract_matches_the_metrics_payload()
+    {
+        $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);
+
+        foreach ([
+            'data.totals.visits',
+            'data.totals.conversion_principal',
+            'data.ranking.data',
+            'data.ranking.total',
+            'data.legacy.visits',
+            'data.coverage.identities_from',
+        ] as $needle) {
+            $response->assertSee($needle, false);
+        }
+    }
 }

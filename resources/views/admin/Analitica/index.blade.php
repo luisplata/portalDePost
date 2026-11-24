@@ -65,66 +65,92 @@
                  'include_inactive' => $includeInactive ? 1 : 0,
              ]) }}"
              data-content-base="{{ url('content') }}/">
-            <div class="row">
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="x_panel" style="padding: 10px 15px;">
-                        <h2>Pageviews</h2>
-                        <p id="analitica-total-visits">&mdash;</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="x_panel" style="padding: 10px 15px;">
-                        <h2>Visitantes unicos</h2>
-                        <p id="analitica-total-uv">&mdash;</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="x_panel" style="padding: 10px 15px;">
-                        <h2>Clicks</h2>
-                        <p id="analitica-total-clicks">&mdash;</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="x_panel" style="padding: 10px 15px;">
-                        <h2>Conversion principal</h2>
-                        <p id="analitica-total-conversion">&mdash;</p>
-                    </div>
-                </div>
+
+            <div class="alert alert-danger" id="analitica-error" style="display: none;">
+                No se pudieron cargar las metricas
+                <button type="button" class="btn btn-default btn-xs" id="analitica-retry">Reintentar</button>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered" id="analitica-ranking">
-                    <thead>
-                        <tr>
-                            <th>Puesto</th>
-                            <th>Publicacion</th>
-                            <th id="analitica-uv-header">UV</th>
-                            <th>Pageviews</th>
-                            <th>Clicks</th>
-                            <th>Conversion principal</th>
-                            <th>Conversion por pageview</th>
-                            <th>Clicks por visitante</th>
-                        </tr>
-                    </thead>
-                    <tbody id="analitica-ranking-body"></tbody>
-                </table>
-            </div>
+            <div id="analitica-content">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="x_panel" style="padding: 10px 15px;">
+                            <h2>Pageviews</h2>
+                            <p id="analitica-total-visits">&mdash;</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="x_panel" style="padding: 10px 15px;">
+                            <h2>Visitantes unicos</h2>
+                            <p id="analitica-total-uv">&mdash;</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="x_panel" style="padding: 10px 15px;">
+                            <h2>Clicks</h2>
+                            <p id="analitica-total-clicks">&mdash;</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="x_panel" style="padding: 10px 15px;">
+                            <h2>Conversion principal</h2>
+                            <p id="analitica-total-conversion">&mdash;</p>
+                        </div>
+                    </div>
+                </div>
 
-            <nav>
-                <ul class="pagination" id="analitica-pagination"></ul>
-            </nav>
+                <p id="analitica-coverage" class="text-muted"></p>
+                <p id="analitica-empty" class="text-muted" style="display: none;">Sin datos en el rango</p>
 
-            <div class="x_panel" id="analitica-legacy" style="padding: 10px 15px;">
-                <h2>Acumulado historico</h2>
-                <p class="text-muted">
-                    desde siempre, sin dedupe ni filtro de bots. visit_posts cuenta pageviews.
-                    Este bloque no se suma a las metricas del rango.
-                </p>
-                <p>
-                    Visitas: <span id="analitica-legacy-visits">&mdash;</span> &middot;
-                    Clicks: <span id="analitica-legacy-clicks">&mdash;</span> &middot;
-                    Conversion por pageview: <span id="analitica-legacy-conversion">&mdash;</span>
-                </p>
+                <div class="row">
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <div class="x_panel" style="padding: 10px 15px;">
+                            <h2>Pageviews vs clicks</h2>
+                            <canvas id="analitica-visits-chart" height="140"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="x_panel" style="padding: 10px 15px;">
+                            <h2>UV por dia</h2>
+                            <canvas id="analitica-uv-chart" height="140"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered" id="analitica-ranking">
+                        <thead>
+                            <tr>
+                                <th>Puesto</th>
+                                <th>Publicacion</th>
+                                <th id="analitica-uv-header">UV</th>
+                                <th>Pageviews</th>
+                                <th>Clicks</th>
+                                <th>Conversion principal</th>
+                                <th>Conversion por pageview</th>
+                                <th>Clicks por visitante</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analitica-ranking-body"></tbody>
+                    </table>
+                </div>
+
+                <nav>
+                    <ul class="pagination" id="analitica-pagination"></ul>
+                </nav>
+
+                <div class="x_panel" id="analitica-legacy" style="padding: 10px 15px;">
+                    <h2>Acumulado historico</h2>
+                    <p class="text-muted">
+                        desde siempre, sin dedupe ni filtro de bots. visit_posts cuenta pageviews.
+                        Este bloque no se suma a las metricas del rango.
+                    </p>
+                    <p>
+                        Visitas: <span id="analitica-legacy-visits">&mdash;</span> &middot;
+                        Clicks: <span id="analitica-legacy-clicks">&mdash;</span> &middot;
+                        Conversion por pageview: <span id="analitica-legacy-conversion">&mdash;</span>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -132,7 +158,9 @@
 @endsection
 
 @section("scripts")
+<script src="{{ asset('vendors/Chart.js/dist/Chart.min.js') }}"></script>
 <script>
+@verbatim
 (function () {
     var panel = document.getElementById('analitica-panel');
 
@@ -142,6 +170,7 @@
 
     var base = panel.getAttribute('data-endpoint');
     var contentBase = panel.getAttribute('data-content-base');
+    var chartsRendered = false;
 
     function num(value) {
         return value === null || typeof value === 'undefined' ? 'sin dato' : value;
@@ -153,14 +182,28 @@
             : Number(value).toFixed(2) + ' %';
     }
 
+    function pctLabel(value) {
+        return value === null || typeof value === 'undefined' ? 'sin dato' : Number(value).toFixed(2);
+    }
+
     function esc(value) {
         var div = document.createElement('div');
         div.textContent = value === null || typeof value === 'undefined' ? '' : String(value);
         return div.innerHTML;
     }
 
-    function pctLabel(value) {
-        return value === null || typeof value === 'undefined' ? 'sin dato' : Number(value).toFixed(2);
+    function gap(value) {
+        return value === null || typeof value === 'undefined' ? null : value;
+    }
+
+    function maxDate(a, b) {
+        if (!a) {
+            return b;
+        }
+        if (!b) {
+            return a;
+        }
+        return a > b ? a : b;
     }
 
     function rowHtml(item, index, data) {
@@ -191,7 +234,111 @@
             + '<a href="#" data-page="' + (next || ranking.current_page) + '">Siguiente</a></li>';
     }
 
+    function renderCoverage(data) {
+        var notes = [];
+
+        if (data.metric === 'pageviews') {
+            if (data.coverage.identities_from) {
+                notes.push('UV disponible desde ' + data.coverage.identities_from);
+            } else {
+                notes.push('La captura de analitica empieza con este cambio');
+            }
+        }
+        if (data.uv_approximate) {
+            notes.push('Suma de unicos diarios (aproximado)');
+        }
+        if (data.coverage.clicks_from) {
+            notes.push('Clicks disponibles desde ' + data.coverage.clicks_from);
+        }
+
+        var conversionFrom = maxDate(data.coverage.identities_from, data.coverage.clicks_from);
+        if (conversionFrom) {
+            notes.push('Conversion por visitante disponible desde ' + conversionFrom);
+        }
+
+        document.getElementById('analitica-coverage').textContent = notes.join(' \u00b7 ');
+    }
+
+    function renderCharts(data) {
+        if (typeof Chart === 'undefined' || chartsRendered) {
+            return;
+        }
+
+        var labels = data.series.map(function (day) { return day.date; });
+
+        new Chart(document.getElementById('analitica-visits-chart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Pageviews',
+                        data: data.series.map(function (day) { return gap(day.visits); }),
+                        borderColor: '#26B99A',
+                        backgroundColor: 'rgba(38,185,154,0.15)',
+                        fill: false,
+                        borderWidth: 2,
+                        spanGaps: false
+                    },
+                    {
+                        label: 'Clicks',
+                        data: data.series.map(function (day) { return gap(day.clicks); }),
+                        borderColor: '#03586A',
+                        backgroundColor: 'rgba(3,88,106,0.15)',
+                        fill: false,
+                        borderWidth: 2,
+                        spanGaps: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                spanGaps: false,
+                scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
+            }
+        });
+
+        new Chart(document.getElementById('analitica-uv-chart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'UV por dia',
+                        data: data.series.map(function (day) { return gap(day.unique_visits); }),
+                        borderColor: '#8549ba',
+                        backgroundColor: 'rgba(133,73,186,0.15)',
+                        fill: false,
+                        borderWidth: 2,
+                        spanGaps: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                spanGaps: false,
+                scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
+            }
+        });
+
+        chartsRendered = true;
+    }
+
+    function showError() {
+        document.getElementById('analitica-error').style.display = 'block';
+        document.getElementById('analitica-content').style.display = 'none';
+    }
+
+    function hideError() {
+        document.getElementById('analitica-error').style.display = 'none';
+        document.getElementById('analitica-content').style.display = '';
+    }
+
     function render(data) {
+        hideError();
+
         document.getElementById('analitica-total-visits').textContent = num(data.totals.visits);
         document.getElementById('analitica-total-uv').textContent = num(data.totals.unique_visits);
         document.getElementById('analitica-total-clicks').textContent = num(data.totals.clicks);
@@ -207,6 +354,11 @@
             return rowHtml(item, index, data);
         }).join('');
 
+        var isEmpty = data.warnings.indexOf('no_data') !== -1 || data.ranking.total === 0;
+        document.getElementById('analitica-empty').style.display = isEmpty ? 'block' : 'none';
+
+        renderCoverage(data);
+        renderCharts(data);
         renderPagination(data.ranking);
     }
 
@@ -220,9 +372,7 @@
                 return response.json();
             })
             .then(render)
-            .catch(function () {
-                // El panel de error se agrega en S4b.
-            });
+            .catch(showError);
     }
 
     document.getElementById('analitica-pagination').addEventListener('click', function (event) {
@@ -236,7 +386,12 @@
         load(link.getAttribute('data-page'));
     });
 
+    document.getElementById('analitica-retry').addEventListener('click', function () {
+        load(1);
+    });
+
     load(1);
 })();
+@endverbatim
 </script>
 @endsection
