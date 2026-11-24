@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -262,6 +263,73 @@ class PostAnalyticsService
             'purpose' => $request->header('Purpose') ?: $request->header('Sec-Purpose'),
             'source' => null,
         ];
+    }
+
+    /**
+     * Borra eventos crudos mas viejos que la retencion, en lotes de 1000 y en
+     * UTC. No toca `post_stats_daily`.
+     *
+     * @param  int|string|null  $days
+     * @return array
+     */
+    public function purgeEvents($days = null)
+    {
+        $days = (int) ($days === null || $days === ''
+            ? config('analytics.retention_days', 90)
+            : $days);
+        $days = $days < 1 ? 1 : $days;
+
+        $cutoff = Carbon::now('UTC')->subDays($days);
+        $deleted = [];
+
+        foreach (['post_clicks', 'post_visit_identities'] as $table) {
+            $total = 0;
+
+            do {
+                $count = DB::table($table)
+                    ->where('created_at', '<', $cutoff)
+                    ->limit(1000)
+                    ->delete();
+                $total += $count;
+            } while ($count > 0);
+
+            $deleted[$table] = $total;
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Purga oportunista: como maximo una vez cada 24 h. Cualquier falla se
+     * loguea y nunca se propaga.
+     *
+     * @return int
+     */
+    public function purgeIfDue()
+    {
+        if (! config('analytics.opportunistic_purge', false)) {
+            return 0;
+        }
+
+        try {
+            if (Cache::get('analytics:purge:last') !== null) {
+                return 0;
+            }
+
+            $deleted = array_sum($this->purgeEvents());
+
+            Cache::put(
+                'analytics:purge:last',
+                Carbon::now('UTC')->toDateTimeString(),
+                Carbon::now('UTC')->addDay()
+            );
+
+            return $deleted;
+        } catch (\Throwable $e) {
+            Log::error('analytics:purge_failed', ['error' => $e->getMessage()]);
+
+            return 0;
+        }
     }
 
     /**

@@ -31,6 +31,10 @@ class Kernel extends ConsoleKernel
         // Retencion del detalle de clicks (REQ-PRV-02). Si el hosting no corre
         // el scheduler, el comando se ejecuta a mano sin efectos adversos.
         $schedule->command('ads:purge-clicks')->daily();
+
+        // Analitica de publicaciones: retencion de eventos crudos y chequeo de
+        // drift contra log_visits (REQ-S3-09, REQ-S3-10).
+        $schedule->command('analytics:purge-events')->daily();
     }
 
     /**

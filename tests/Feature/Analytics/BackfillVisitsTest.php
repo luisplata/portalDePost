@@ -16,6 +16,15 @@ class BackfillVisitsTest extends AnalyticsTestSupport
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // RefreshDatabase puede dejar un binding mockeado de OutputStyle en el
+        // contenedor; se elimina para capturar la salida real de los comandos.
+        $this->app->offsetUnset(\Illuminate\Console\OutputStyle::class);
+    }
+
     public function test_it_converts_utc_to_the_local_day_and_leaves_uv_null()
     {
         $productoId = $this->makeProduct(['nombre' => 'Backfill Uno']);
