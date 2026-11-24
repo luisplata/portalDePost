@@ -419,6 +419,37 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         $low->assertJsonPath('ranking.per_page', 1);
     }
 
+    public function test_the_ranking_orders_by_the_effective_metric_not_by_clicks()
+    {
+        // Producto sin datos con id menor: debe quedar al final igual.
+        $sinDatos = $this->makeProduct(['nombre' => 'Sin Datos Primero']);
+
+        $alta = $this->makeProduct(['nombre' => 'Metrica Alta']);
+        $this->seedDay($alta, '2026-11-24', 100, 10, 0);
+        foreach (range(1, 10) as $i) {
+            $this->seedIdentity($alta, '2026-11-24', 'alta-'.$i);
+        }
+
+        $baja = $this->makeProduct(['nombre' => 'Metrica Baja']);
+        $this->seedDay($baja, '2026-11-24', 10, 1, 5);
+        $this->seedIdentity($baja, '2026-11-24', 'baja-1');
+        foreach (range(1, 5) as $i) {
+            $this->seedClick($baja, '2026-11-24', 'baja-1');
+        }
+
+        foreach (['uv', 'pageviews'] as $metric) {
+            $ids = array_column(
+                $this->asAdmin()
+                    ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24&metric='.$metric)
+                    ->assertStatus(200)
+                    ->json('ranking.data'),
+                'producto_id'
+            );
+
+            $this->assertSame([$alta, $baja, $sinDatos], $ids, 'Orden incorrecto para metric='.$metric);
+        }
+    }
+
     private function seedDay(int $productoId, string $date, int $visits, $uniqueVisits, int $clicks)
     {
         DB::table('post_stats_daily')->insert([

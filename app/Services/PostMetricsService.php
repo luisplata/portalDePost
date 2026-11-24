@@ -437,9 +437,12 @@ class PostMetricsService
      */
     private function sortRanking(array $data, $metric)
     {
-        usort($data, function ($a, $b) use ($metric) {
-            $left = isset($a[$metric]) && $a[$metric] !== null ? $a[$metric] : -1;
-            $right = isset($b[$metric]) && $b[$metric] !== null ? $b[$metric] : -1;
+        // `metric` es uv|pageviews; las filas exponen unique_visits|visits.
+        $column = $metric === 'uv' ? 'unique_visits' : 'visits';
+
+        usort($data, function ($a, $b) use ($column) {
+            $left = isset($a[$column]) && $a[$column] !== null ? $a[$column] : -1;
+            $right = isset($b[$column]) && $b[$column] !== null ? $b[$column] : -1;
 
             if ($left !== $right) {
                 return $right <=> $left;
