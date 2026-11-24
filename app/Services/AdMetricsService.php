@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 
 /**
  * Agregacion de metricas de publicidad (REQ-ADM-06, REQ-MET-04).
@@ -85,5 +88,185 @@ class AdMetricsService
         }
 
         return $summary;
+    }
+
+    /**
+     * Rango local validado [from, to] en Y-m-d (REQ-MET-02).
+     *
+     * Defaults: hoy y hoy - 29 (30 dias inclusivos). Fecha invalida o rango
+     * invertido => InvalidArgumentException('invalid_range'). Un span mayor a
+     * 365 dias se recorta a los ultimos 365, sin error.
+     *
+     * @param  mixed  $from
+     * @param  mixed  $to
+     * @return array
+     */
+    public function range($from = null, $to = null)
+    {
+        $timezone = (string) config('ads.timezone', 'America/Bogota');
+        $today = Carbon::now($timezone);
+
+        $to = $this->parseDay($to, $today->toDateString());
+        $from = $this->parseDay($from, $today->copy()->subDays(29)->toDateString());
+
+        if ($from->greaterThan($to)) {
+            throw new InvalidArgumentException('invalid_range');
+        }
+
+        if ($from->diffInDays($to) > 364) {
+            $from = $to->copy()->subDays(364);
+        }
+
+        return [$from->toDateString(), $to->toDateString()];
+    }
+
+    /**
+     * Serie diaria con TODOS los dias del rango (REQ-MET-03).
+     *
+     * Una sola query agregada GROUP BY date; el relleno de dias sin datos se
+     * hace en PHP para no dejar huecos en las graficas.
+     *
+     * @param  string  $from  Y-m-d
+     * @param  string  $to  Y-m-d
+     * @return array
+     */
+    public function series($from, $to)
+    {
+        $rows = DB::table('ad_stats_daily')
+            ->whereBetween('date', [$from, $to])
+            ->groupBy('date')
+            ->select(
+                'date',
+                DB::raw('SUM(impressions) as impressions'),
+                DB::raw('SUM(clicks) as clicks')
+            )
+            ->get()
+            ->keyBy(function ($row) {
+                return substr((string) $row->date, 0, 10);
+            });
+
+        $series = [];
+        $cursor = Carbon::parse($from);
+        $end = Carbon::parse($to);
+
+        while ($cursor->lessThanOrEqualTo($end)) {
+            $date = $cursor->toDateString();
+            $row = $rows->get($date);
+            $impressions = $row === null ? 0 : (int) $row->impressions;
+            $clicks = $row === null ? 0 : (int) $row->clicks;
+
+            $series[] = [
+                'date' => $date,
+                'impressions' => $impressions,
+                'clicks' => $clicks,
+                'ctr' => $this->ctr($clicks, $impressions),
+            ];
+
+            $cursor->addDay();
+        }
+
+        return $series;
+    }
+
+    /**
+     * Totales del rango como suma de la serie (sin otra query).
+     *
+     * @param  array  $series
+     * @return array
+     */
+    public function totals(array $series)
+    {
+        $impressions = 0;
+        $clicks = 0;
+
+        foreach ($series as $day) {
+            $impressions += (int) $day['impressions'];
+            $clicks += (int) $day['clicks'];
+        }
+
+        return [
+            'impressions' => $impressions,
+            'clicks' => $clicks,
+            'ctr' => $this->ctr($clicks, $impressions),
+        ];
+    }
+
+    /**
+     * Borra ad_clicks mas viejo que la retencion, en lotes de 1000 y en UTC
+     * (REQ-PRV-02). No toca ad_stats_daily. Devuelve las filas borradas.
+     *
+     * @param  int|null  $days
+     * @return int
+     */
+    public function purge($days = null)
+    {
+        $days = (int) ($days === null || $days === '' ? config('ads.retention_days', 90) : $days);
+        $days = $days < 1 ? 1 : $days;
+        $cutoff = Carbon::now('UTC')->subDays($days);
+
+        $total = 0;
+
+        do {
+            $deleted = DB::table('ad_clicks')
+                ->where('created_at', '<', $cutoff)
+                ->limit(1000)
+                ->delete();
+            $total += $deleted;
+        } while ($deleted > 0);
+
+        return $total;
+    }
+
+    /**
+     * Purga oportunista: como maximo una vez cada 24 h (REQ-PRV-03).
+     * Cualquier falla se loguea y nunca se propaga a la respuesta.
+     *
+     * @return int
+     */
+    public function purgeIfDue()
+    {
+        if (Cache::get('ads:purge:last') !== null) {
+            return 0;
+        }
+
+        try {
+            $deleted = $this->purge();
+            Cache::put('ads:purge:last', Carbon::now('UTC')->toIso8601String(), Carbon::now()->addDay());
+
+            return $deleted;
+        } catch (\Throwable $e) {
+            Log::error('ads:purge-clicks oportunista fallo: '.$e->getMessage());
+
+            return 0;
+        }
+    }
+
+    /**
+     * @param  mixed  $value
+     * @param  string  $default  Y-m-d
+     * @return \Illuminate\Support\Carbon
+     */
+    private function parseDay($value, $default)
+    {
+        if ($value === null || $value === '') {
+            return Carbon::parse($default);
+        }
+
+        if (! is_string($value) || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            throw new InvalidArgumentException('invalid_range');
+        }
+
+        try {
+            $date = Carbon::createFromFormat('Y-m-d', $value);
+        } catch (\Throwable $e) {
+            throw new InvalidArgumentException('invalid_range');
+        }
+
+        // createFromFormat desborda fechas imposibles (2026-02-30 => marzo).
+        if ($date === false || $date->format('Y-m-d') !== $value) {
+            throw new InvalidArgumentException('invalid_range');
+        }
+
+        return $date;
     }
 }

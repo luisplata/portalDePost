@@ -86,5 +86,95 @@ $statusBadges = ["draft" => "default", "active" => "success", "paused" => "warni
             {{ $creatives->links("pagination::bootstrap-4") }}
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-8 col-sm-8 col-xs-12">
+            <div class="x_panel" style="padding: 10px 15px;">
+                <h2>Impresiones vs clicks <small id="ads-range">{{ $from }} a {{ $to }}</small></h2>
+                <p id="ads-impressions-empty" class="text-muted" style="display: none;">Sin datos en el rango</p>
+                <canvas id="ads-impressions-chart" height="120"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="x_panel" style="padding: 10px 15px;">
+                <h2>CTR por dia</h2>
+                <p id="ads-ctr-empty" class="text-muted" style="display: none;">Sin datos en el rango</p>
+                <canvas id="ads-ctr-chart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
 </section>
+@endsection
+
+@section("scripts")
+<script src="{{ asset('vendors/Chart.js/dist/Chart.min.js') }}"></script>
+<script>
+(function () {
+    var endpoint = "{{ url('admin/publicidad/metrics') }}";
+    var rangeLabel = document.getElementById("ads-range");
+    var impressionsEmpty = document.getElementById("ads-impressions-empty");
+    var ctrEmpty = document.getElementById("ads-ctr-empty");
+
+    function showEmpty() {
+        if (impressionsEmpty) { impressionsEmpty.style.display = "block"; }
+        if (ctrEmpty) { ctrEmpty.style.display = "block"; }
+    }
+
+    if (typeof Chart === "undefined" || !window.fetch) {
+        return;
+    }
+
+    fetch(endpoint, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+        .then(function (response) {
+            return response.ok ? response.json() : null;
+        })
+        .then(function (data) {
+            if (!data || !data.series || data.series.length === 0) {
+                showEmpty();
+                return;
+            }
+
+            var labels = data.series.map(function (day) { return day.date; });
+            var impressions = data.series.map(function (day) { return day.impressions; });
+            var clicks = data.series.map(function (day) { return day.clicks; });
+            var ctr = data.series.map(function (day) { return day.ctr; });
+
+            if (rangeLabel) { rangeLabel.textContent = data.from + " a " + data.to; }
+
+            new Chart(document.getElementById("ads-impressions-chart"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: "Impresiones", data: impressions, borderColor: "#26B99A", backgroundColor: "rgba(38,185,154,0.15)", fill: false, borderWidth: 2 },
+                        { label: "Clicks", data: clicks, borderColor: "#03586A", backgroundColor: "rgba(3,88,106,0.15)", fill: false, borderWidth: 2 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
+                }
+            });
+
+            new Chart(document.getElementById("ads-ctr-chart"), {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{ label: "CTR %", data: ctr, backgroundColor: "#26B99A" }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: { display: false },
+                    scales: { yAxes: [{ ticks: { beginAtZero: true, callback: function (value) { return value + "%"; } } }] }
+                }
+            });
+        })
+        .catch(function () {
+            // El fetch falla: la pagina (y el listado) siguen funcionando.
+            showEmpty();
+        });
+})();
+</script>
 @endsection

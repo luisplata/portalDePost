@@ -29,6 +29,10 @@ class AdCreativeController extends Controller
         $metricsService = app(AdMetricsService::class);
         list($from, $to) = $metricsService->lastDays(30);
 
+        // Purga oportunista de clicks vencidos, como maximo 1x/dia y sin
+        // propagar errores al listado (REQ-PRV-03).
+        $metricsService->purgeIfDue();
+
         $creatives = AdCreative::query()
             ->join('ad_placements', 'ad_placements.id', '=', 'ad_creatives.placement_id')
             ->orderBy('ad_placements.name')

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdClickController;
 use App\Http\Controllers\AdCreativeController;
+use App\Http\Controllers\AdMetricsController;
 use App\Http\Controllers\AdPlacementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -68,6 +69,10 @@ Route::middleware('logeado')->group(function () {
         // inmutable (D-01) y no se lee del request: solo name/max_items/is_active.
         Route::get("placements", [AdPlacementController::class, "index"]);
         Route::put("placements/{key}", [AdPlacementController::class, "update"]);
+
+        // Series diarias para las graficas del listado (REQ-MET-01, REQ-MET-02).
+        // Va antes del resource para no chocar con publicidad/{id}/edit.
+        Route::get("publicidad/metrics", [AdMetricsController::class, "show"]);
 
         // CRUD de creatividades (REQ-ADM-01, D-01, D-03). El listado con
         // metricas (S2c) se declara antes del resource; show no se expone.
