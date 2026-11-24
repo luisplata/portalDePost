@@ -60,4 +60,10 @@
             </div>
         </section>
     @endif
+
+    @once('ads-tracking-script')
+        <script src="{{ asset('js/ads.js') }}"
+                data-endpoint="{{ url('/api/ads/impression') }}"
+                defer></script>
+    @endonce
 @endif

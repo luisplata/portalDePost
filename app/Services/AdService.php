@@ -4,18 +4,22 @@ namespace App\Services;
 
 use App\AdCreative;
 use App\AdPlacement;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Seleccion y presentacion de publicidad (S1a-2).
+ * Seleccion, presentacion y tracking de publicidad.
  *
  * Responsabilidades de este slice:
  *  - resolucion deterministica del slot (REQ-SEL-01),
  *  - cache por slot con invalidacion explicita (REQ-SEL-02),
- *  - superficie publica minima + click_url por request (REQ-SEL-06, REQ-API-01).
+ *  - superficie publica minima + click_url por request (REQ-SEL-06, REQ-API-01),
+ *  - impresiones: servibilidad, dedupe diario y upsert atomico (S1b-1).
  *
- * El tracking (impresiones/clicks) llega en S1b; no vive aca todavia.
+ * El dia operativo de las metricas es el dia LOCAL de config('ads.timezone');
+ * el almacenamiento crudo (created_at) sigue en UTC (E-1 / D-11).
  */
 class AdService
 {
@@ -124,6 +128,149 @@ class AdService
 
             return $creative;
         }, $creatives);
+    }
+
+    /**
+     * Fecha local (config('ads.timezone')) del dia operativo.
+     *
+     * MySQL nunca calcula el dia: se resuelve en PHP para que el resultado sea
+     * deterministico y testeable con Carbon::setTestNow() (E-1).
+     *
+     * @return string  Y-m-d
+     */
+    public function today()
+    {
+        return Carbon::now($this->timezone())->toDateString();
+    }
+
+    /**
+     * Hash estable de la IP para privacidad y fallback de dedupe (D-05).
+     *
+     * @param  string|null  $ip
+     * @return string  64 hex en minuscula
+     */
+    public function ipHash($ip)
+    {
+        return hash('sha256', (string) $ip.'|'.(string) config('app.key'));
+    }
+
+    /**
+     * @param  string|null  $userAgent
+     * @return string
+     */
+    public function truncateUserAgent($userAgent)
+    {
+        return substr((string) $userAgent, 0, 255);
+    }
+
+    /**
+     * @param  string|null  $referer
+     * @return string
+     */
+    public function truncateReferer($referer)
+    {
+        return substr((string) $referer, 0, 255);
+    }
+
+    /**
+     * Reevalua en el servidor si la creatividad es servible en este instante.
+     *
+     * Una sola query: status active + placement activo + ventana vigente.
+     * Devuelve el par (creative_id, placement_id) o null.
+     *
+     * @param  string  $campaignKey
+     * @param  string  $placementKey
+     * @return object|null
+     */
+    public function isServable($campaignKey, $placementKey)
+    {
+        $now = now();
+
+        try {
+            return AdCreative::query()
+                ->join('ad_placements', 'ad_placements.id', '=', 'ad_creatives.placement_id')
+                ->where('ad_creatives.campaign_key', $campaignKey)
+                ->where('ad_placements.key', $placementKey)
+                ->where('ad_placements.is_active', 1)
+                ->where('ad_creatives.status', 'active')
+                ->where(function ($query) use ($now) {
+                    $query->whereNull('ad_creatives.starts_at')
+                        ->orWhere('ad_creatives.starts_at', '<=', $now);
+                })
+                ->where(function ($query) use ($now) {
+                    $query->whereNull('ad_creatives.ends_at')
+                        ->orWhere('ad_creatives.ends_at', '>=', $now);
+                })
+                ->select(
+                    'ad_creatives.id as creative_id',
+                    'ad_creatives.placement_id as placement_id'
+                )
+                ->first();
+        } catch (\Throwable $e) {
+            Log::error('ads: no se pudo evaluar la servibilidad', [
+                'campaign_key' => $campaignKey,
+                'placement_key' => $placementKey,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Registra una impresion con dedupe por (creative, placement, identidad, dia local).
+     *
+     * La identidad es el uuid valido recibido o, si falta o es invalido,
+     * `ip:` + ip_hash (D-05). El upsert es un unico statement atomico compatible
+     * con MySQL 5.7; la fecha se calcula en PHP (E-1).
+     *
+     * @param  int|string  $creativeId
+     * @param  int|string  $placementId
+     * @param  string|null  $uuid
+     * @param  string|null  $ip
+     * @return bool  true si conto, false si fue deduplicada
+     */
+    public function recordImpression($creativeId, $placementId, $uuid = null, $ip = null)
+    {
+        $identity = (is_string($uuid) && preg_match('/^[a-z0-9-]{8,64}$/', $uuid) === 1)
+            ? $uuid
+            : 'ip:'.$this->ipHash($ip);
+
+        $date = $this->today();
+        $cacheKey = 'ads:imp:'.$creativeId.':'.$placementId.':'.$identity.':'.$date;
+
+        $localNow = Carbon::now($this->timezone());
+        $expires = $localNow->copy()->endOfDay()->addHour();
+        $ttl = max(60, $expires->getTimestamp() - $localNow->getTimestamp());
+
+        if (! Cache::add($cacheKey, 1, $ttl)) {
+            return false;
+        }
+
+        $now = now();
+
+        DB::statement(
+            'INSERT INTO ad_stats_daily (creative_id, placement_id, `date`, impressions, clicks, created_at, updated_at) '
+            .'VALUES (?, ?, ?, 1, 0, ?, ?) '
+            .'ON DUPLICATE KEY UPDATE impressions = impressions + 1, updated_at = VALUES(updated_at)',
+            [
+                (int) $creativeId,
+                (int) $placementId,
+                $date,
+                $now->toDateTimeString(),
+                $now->toDateTimeString(),
+            ]
+        );
+
+        return true;
+    }
+
+    /**
+     * @return string
+     */
+    private function timezone()
+    {
+        return (string) config('ads.timezone', 'America/Bogota');
     }
 
     /**

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ProductoClientApiController;
 use App\Http\Controllers\Api\PPVApiController;
 use App\Http\Controllers\Api\ProductoDataController;
 use App\Http\Controllers\Api\IndexApiController;
+use App\Http\Controllers\Api\ImpressionController;
 use App\Http\Controllers\Api\PlacementController;
 
 /*
@@ -42,6 +43,11 @@ Route::get("publicity/image/{key}", [ConfigPublicity::class, "GetImage"]);
 
 // Publicidad: contrato publico de un slot (REQ-API-01). Solo lectura.
 Route::get('placements/{key}', [PlacementController::class, 'show']);
+
+// Publicidad: beacon de impresion (REQ-IMP-02). Sin CSRF ni sesion: el grupo
+// api no las aplica. Rate limit dedicado + verificacion de origen/UA.
+Route::post('ads/impression', [ImpressionController::class, 'store'])
+    ->middleware(['throttle:ads-tracking', 'ad.origin']);
 
 
 // UPDATE: PUBLISH ALL FEATURES TO API

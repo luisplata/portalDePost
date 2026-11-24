@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -23,7 +26,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Rate limit dedicado al tracking de publicidad (REQ-IMP-04).
+        // El valor se lee en cada request para respetar config/ads.php.
+        RateLimiter::for('ads-tracking', function (Request $request) {
+            return Limit::perMinute((int) config('ads.tracking_rate_limit', 120))
+                ->by($request->ip());
+        });
 
         parent::boot();
     }
