@@ -76,6 +76,81 @@ class PostAnalyticsService
     }
 
     /**
+     * Registra un click saliente: evento inmutable y contador diario.
+     *
+     * Un `hotLink` vacio no cuenta: evita el bucle de redirect preexistente.
+     * El evento guarda `date` local y `created_at` UTC.
+     *
+     * @param  int|string  $productoId
+     * @param  string|null  $hotLink
+     * @param  array|null  $context
+     * @return void
+     */
+    public function recordClick($productoId, $hotLink, array $context = null)
+    {
+        if (! $this->enabled()) {
+            return;
+        }
+
+        if (trim((string) $hotLink) === '') {
+            return;
+        }
+
+        $context = $this->context($context);
+        $source = $context['source'] ?: $this->sourceFromRequest();
+
+        if (! $this->shouldCount($source, $context)) {
+            return;
+        }
+
+        $date = null;
+
+        try {
+            $date = $this->time->today();
+            $identity = $this->identity($context['cookie'], $context['ip']);
+            $now = Carbon::now('UTC');
+            $nowString = $now->toDateTimeString();
+            $referer = $this->truncate($context['referer']);
+            $userAgent = $this->truncate($context['user_agent']);
+            $ipHash = $this->ipHash($context['ip']);
+
+            DB::transaction(function () use (
+                $productoId,
+                $date,
+                $identity,
+                $source,
+                $referer,
+                $userAgent,
+                $ipHash,
+                $now,
+                $nowString
+            ) {
+                DB::table('post_clicks')->insert([
+                    'producto_id' => (int) $productoId,
+                    'date' => $date,
+                    'identity' => $identity,
+                    'source' => $source,
+                    'referer' => $referer,
+                    'user_agent' => $userAgent,
+                    'ip_hash' => $ipHash,
+                    'created_at' => $now,
+                ]);
+
+                DB::affectingStatement(
+                    'INSERT INTO post_stats_daily '
+                    .'(producto_id, date, visits, unique_visits, clicks, created_at, updated_at) '
+                    .'VALUES (?, ?, 0, NULL, 1, ?, ?) '
+                    .'ON DUPLICATE KEY UPDATE clicks = clicks + 1, '
+                    .'updated_at = VALUES(updated_at)',
+                    [(int) $productoId, $date, $nowString, $nowString]
+                );
+            });
+        } catch (\Throwable $e) {
+            $this->logFailure('click', $productoId, $e, $date);
+        }
+    }
+
+    /**
      * Identidad anonima: cookie valida o `ip:` + hash de la IP.
      *
      * @param  string|null  $cookie
@@ -162,6 +237,7 @@ class PostAnalyticsService
                 'user_agent' => null,
                 'referer' => null,
                 'purpose' => null,
+                'source' => null,
             ], $context);
         }
 
@@ -174,6 +250,7 @@ class PostAnalyticsService
                 'user_agent' => null,
                 'referer' => null,
                 'purpose' => null,
+                'source' => null,
             ];
         }
 
@@ -183,7 +260,37 @@ class PostAnalyticsService
             'user_agent' => $request->header('User-Agent'),
             'referer' => $request->headers->get('referer'),
             'purpose' => $request->header('Purpose') ?: $request->header('Sec-Purpose'),
+            'source' => null,
         ];
+    }
+
+    /**
+     * Origen del click: el prefijo `api/` del path o `web` por defecto.
+     *
+     * @return string
+     */
+    protected function sourceFromRequest()
+    {
+        $request = request();
+
+        if (! $request) {
+            return 'web';
+        }
+
+        return strpos(ltrim($request->path(), '/'), 'api/') === 0 ? 'api' : 'web';
+    }
+
+    /**
+     * Trunca referer y UA a 255; vacio se guarda como null.
+     *
+     * @param  string|null  $value
+     * @return string|null
+     */
+    protected function truncate($value)
+    {
+        $value = (string) $value;
+
+        return $value === '' ? null : substr($value, 0, 255);
     }
 
     /**

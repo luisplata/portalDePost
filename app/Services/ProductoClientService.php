@@ -77,6 +77,7 @@ class ProductoClientService
     {
         $producto = Producto::findOrFail($id);
         $this->registrarHotlink($producto);
+        $this->analytics->recordClick($producto->id, $producto->hotLink);
         return $producto->hotLink;
     }
 
@@ -84,6 +85,7 @@ class ProductoClientService
     {
         $producto = Producto::where("nombre", $nombre)->firstOrFail();
         $this->registrarHotlink($producto);
+        $this->analytics->recordClick($producto->id, $producto->hotLink);
         return $producto->hotLink;
     }
 
