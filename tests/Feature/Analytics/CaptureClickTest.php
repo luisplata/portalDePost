@@ -61,7 +61,8 @@ class CaptureClickTest extends AnalyticsTestSupport
         $stats = DB::table('post_stats_daily')->where('producto_id', $productoId)->first();
         $this->assertSame(1, (int) $stats->clicks);
         $this->assertSame(0, (int) $stats->visits);
-        $this->assertNull($stats->unique_visits);
+        // Un dia con captura viva marca 0 UV real; NULL queda reservado al backfill.
+        $this->assertSame(0, (int) $stats->unique_visits);
 
         $this->assertSame(
             1,
@@ -165,6 +166,22 @@ class CaptureClickTest extends AnalyticsTestSupport
         $this->assertSame(255, strlen($click->referer));
         $this->assertSame(64, strlen($click->ip_hash));
         $this->assertNotSame('127.0.0.1', $click->ip_hash);
+    }
+
+    public function test_a_click_only_day_is_covered_with_zero_unique_visitors()
+    {
+        config(['analytics.enabled' => true]);
+
+        $productoId = $this->makeProduct(['nombre' => 'Solo Click']);
+
+        $this->get('/redirect/'.$productoId)->assertStatus(302);
+
+        $stats = DB::table('post_stats_daily')->where('producto_id', $productoId)->first();
+
+        // Un dia con captura viva siempre deja un marcador no nulo: 0 real.
+        $this->assertNotNull($stats->unique_visits);
+        $this->assertSame(0, (int) $stats->unique_visits);
+        $this->assertSame(0, DB::table('post_visit_identities')->where('producto_id', $productoId)->count());
     }
 
     public function test_bots_and_empty_agents_do_not_record_clicks()

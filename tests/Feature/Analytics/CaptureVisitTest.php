@@ -238,6 +238,29 @@ class CaptureVisitTest extends AnalyticsTestSupport
         $this->assertGreaterThan(0, DB::table('post_stats_daily')->where('producto_id', $productoId)->count());
     }
 
+    public function test_a_visit_after_a_click_recovers_the_daily_unique_visitor()
+    {
+        Carbon::setTestNow('2026-11-25 02:00:00');
+        config(['analytics.enabled' => true]);
+
+        $productoId = $this->makeProduct(['nombre' => 'Click Luego Visita']);
+        $uuid = '550e8400-e29b-41d4-a716-446655440000';
+
+        $this->withCookie('anonymous_user_id', $uuid)
+            ->get('/redirect/'.$productoId)
+            ->assertStatus(302);
+        $this->withCookie('anonymous_user_id', $uuid)
+            ->get('/content/Click-Luego-Visita')
+            ->assertStatus(200);
+
+        $stats = DB::table('post_stats_daily')->where('producto_id', $productoId)->first();
+
+        $this->assertSame(1, (int) $stats->visits);
+        $this->assertSame(1, (int) $stats->clicks);
+        $this->assertSame(1, (int) $stats->unique_visits);
+        $this->assertSame(1, DB::table('post_visit_identities')->where('producto_id', $productoId)->count());
+    }
+
     public function test_capture_failures_are_logged_and_do_not_break_the_page()
     {
         config(['analytics.enabled' => true]);

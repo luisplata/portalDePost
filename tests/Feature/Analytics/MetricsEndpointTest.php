@@ -220,6 +220,76 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         $this->assertContains('conversion_unavailable', $response->json('warnings'));
     }
 
+    public function test_click_before_visit_recovers_coverage_and_uv()
+    {
+        Carbon::setTestNow('2026-11-25 02:00:00');
+        config(['analytics.enabled' => true]);
+
+        $productoId = $this->makeProduct(['nombre' => 'Click First']);
+        $uuid = '550e8400-e29b-41d4-a716-446655440000';
+
+        $this->withCookie('anonymous_user_id', $uuid)->get('/redirect/'.$productoId)->assertStatus(302);
+        $this->withCookie('anonymous_user_id', $uuid)->get('/content/Click-First')->assertStatus(200);
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('metric', 'uv')
+            ->assertJsonPath('uv_approximate', false)
+            ->assertJsonPath('coverage.identities_from', '2026-11-24')
+            ->assertJsonPath('totals.unique_visits', 1)
+            ->assertJsonPath('totals.converted_visitors', 1)
+            ->assertJsonPath('conversion_available', true)
+            ->assertJsonPath('totals.conversion_principal', 100.0);
+
+        $this->assertNotContains('uv_unavailable', $response->json('warnings'));
+    }
+
+    public function test_a_click_only_day_is_covered_with_zero_uv()
+    {
+        Carbon::setTestNow('2026-11-25 02:00:00');
+        config(['analytics.enabled' => true]);
+
+        $productoId = $this->makeProduct(['nombre' => 'Solo Click']);
+
+        $this->get('/redirect/'.$productoId)->assertStatus(302);
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('metric', 'uv')
+            ->assertJsonPath('coverage.identities_from', '2026-11-24')
+            ->assertJsonPath('totals.unique_visits', 0)
+            ->assertJsonPath('totals.clicks', 1)
+            ->assertJsonPath('series.0.unique_visits', 0)
+            ->assertJsonPath('totals.conversion_principal', null);
+
+        $this->assertNotContains('uv_unavailable', $response->json('warnings'));
+    }
+
+    public function test_backfilled_days_without_identity_capture_stay_uncovered()
+    {
+        $productoId = $this->makeProduct(['nombre' => 'Backfill Sin Captura']);
+
+        $this->seedDay($productoId, '2026-11-23', 10, null, 0);
+        $this->seedDay($productoId, '2026-11-24', 5, 2, 0);
+        $this->seedIdentity($productoId, '2026-11-24', 'backfill-a');
+        $this->seedIdentity($productoId, '2026-11-24', 'backfill-b');
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-23&to=2026-11-24')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('coverage.identities_from', '2026-11-24')
+            ->assertJsonPath('uv_approximate', true)
+            ->assertJsonPath('totals.unique_visits', 2);
+
+        $this->assertNull($response->json('series.0.unique_visits'));
+        $this->assertSame(2, $response->json('series.1.unique_visits'));
+    }
+
     public function test_the_service_failure_returns_a_controlled_500()
     {
         $failing = new class(new AnalyticsTimeService()) extends PostMetricsService {

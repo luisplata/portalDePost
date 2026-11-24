@@ -66,7 +66,7 @@ class PostAnalyticsService
                     .'(producto_id, date, visits, unique_visits, clicks, created_at, updated_at) '
                     .'VALUES (?, ?, 1, ?, 0, ?, ?) '
                     .'ON DUPLICATE KEY UPDATE visits = visits + 1, '
-                    .'unique_visits = unique_visits + VALUES(unique_visits), '
+                    .'unique_visits = COALESCE(unique_visits, 0) + VALUES(unique_visits), '
                     .'updated_at = VALUES(updated_at)',
                     [(int) $productoId, $date, $isNewIdentity ? 1 : 0, $now, $now]
                 );
@@ -140,7 +140,7 @@ class PostAnalyticsService
                 DB::affectingStatement(
                     'INSERT INTO post_stats_daily '
                     .'(producto_id, date, visits, unique_visits, clicks, created_at, updated_at) '
-                    .'VALUES (?, ?, 0, NULL, 1, ?, ?) '
+                    .'VALUES (?, ?, 0, 0, 1, ?, ?) '
                     .'ON DUPLICATE KEY UPDATE clicks = clicks + 1, '
                     .'updated_at = VALUES(updated_at)',
                     [(int) $productoId, $date, $nowString, $nowString]
