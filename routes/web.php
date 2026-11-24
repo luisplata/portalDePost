@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\PublicityController;
+use App\Http\Controllers\AdClickController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +38,16 @@ Route::get("/logout", function () {
 });
 Route::post("/login", "LoginController@login");
 
-Route::get("publicity/{key}", [PublicityController::class, "redirect"]);
+// Publicidad: click atribuible (REQ-CLK-01, D-06) y alias legacy (REQ-CLK-04, D-07).
+// Van despues de content/PPV/search y antes del grupo admin. El where evita
+// capturar rutas con mayusculas, puntos o barras; admite `_` porque las
+// creatividades legacy sembradas usan keys como `game-home_sidebar`.
+Route::get("ads/{campaign_key}", [AdClickController::class, "redirect"])
+    ->where("campaign_key", "[a-z0-9]+([_-][a-z0-9]+)*")
+    ->middleware("throttle:ads-tracking");
+
+Route::get("publicity/{key}", [AdClickController::class, "legacy"])
+    ->middleware("throttle:ads-tracking");
 
 Route::middleware('logeado')->group(function () {
     //para el admin

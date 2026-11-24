@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\AdClick;
 use App\AdCreative;
 use App\AdPlacement;
 use Illuminate\Support\Carbon;
@@ -16,7 +17,8 @@ use Illuminate\Support\Facades\Log;
  *  - resolucion deterministica del slot (REQ-SEL-01),
  *  - cache por slot con invalidacion explicita (REQ-SEL-02),
  *  - superficie publica minima + click_url por request (REQ-SEL-06, REQ-API-01),
- *  - impresiones: servibilidad, dedupe diario y upsert atomico (S1b-1).
+ *  - impresiones: servibilidad, dedupe diario y upsert atomico (S1b-1),
+ *  - clicks: detalle + upsert atomico sin dedupe y destino seguro (S1b-2).
  *
  * El dia operativo de las metricas es el dia LOCAL de config('ads.timezone');
  * el almacenamiento crudo (created_at) sigue en UTC (E-1 / D-11).
@@ -263,6 +265,100 @@ class AdService
         );
 
         return true;
+    }
+
+    /**
+     * Registra un click: detalle en ad_clicks (UTC) + incremento del bucket
+     * diario local en la misma transaccion.
+     *
+     * A diferencia de la impresion NO hay dedupe: cada click es un evento
+     * (REQ-CLK-01..03). El uuid se guarda solo si cumple el formato esperado.
+     *
+     * @param  int|string  $creativeId
+     * @param  int|string  $placementId
+     * @param  string|null  $uuid
+     * @param  string|null  $ip
+     * @param  string|null  $referer
+     * @param  string|null  $userAgent
+     * @return void
+     */
+    public function recordClick(
+        $creativeId,
+        $placementId,
+        $uuid = null,
+        $ip = null,
+        $referer = null,
+        $userAgent = null
+    ) {
+        $validUuid = (is_string($uuid) && preg_match('/^[a-z0-9-]{8,64}$/', $uuid) === 1)
+            ? $uuid
+            : null;
+
+        $referer = $this->truncateReferer($referer);
+        $userAgent = $this->truncateUserAgent($userAgent);
+
+        $date = $this->today();
+        $now = now()->utc();
+        $nowString = $now->toDateTimeString();
+
+        DB::transaction(function () use (
+            $creativeId,
+            $placementId,
+            $validUuid,
+            $referer,
+            $userAgent,
+            $ip,
+            $date,
+            $now,
+            $nowString
+        ) {
+            $click = new AdClick();
+            $click->creative_id = (int) $creativeId;
+            $click->placement_id = (int) $placementId;
+            $click->anonymous_user_uuid = $validUuid;
+            $click->referer = $referer === '' ? null : $referer;
+            $click->ip_hash = $this->ipHash($ip);
+            $click->user_agent = $userAgent === '' ? null : $userAgent;
+            $click->created_at = $now;
+            $click->save();
+
+            DB::statement(
+                'INSERT INTO ad_stats_daily (creative_id, placement_id, `date`, impressions, clicks, created_at, updated_at) '
+                .'VALUES (?, ?, ?, 0, 1, ?, ?) '
+                .'ON DUPLICATE KEY UPDATE clicks = clicks + 1, updated_at = VALUES(updated_at)',
+                [
+                    (int) $creativeId,
+                    (int) $placementId,
+                    $date,
+                    $nowString,
+                    $nowString,
+                ]
+            );
+        });
+    }
+
+    /**
+     * Destino seguro para un click: http(s) absoluta o ruta interna.
+     *
+     * Cualquier otro valor (javascript:, //host, vacio, corrupto) cae a "/"
+     * como defensa en profundidad (REQ-CLK-01 S2).
+     *
+     * @param  string|null  $targetUrl
+     * @return string
+     */
+    public function safeTargetUrl($targetUrl)
+    {
+        $target = (string) $targetUrl;
+
+        if (preg_match('#^https?://#i', $target) === 1) {
+            return $target;
+        }
+
+        if (preg_match('#^/(?!/)#', $target) === 1) {
+            return $target;
+        }
+
+        return '/';
     }
 
     /**

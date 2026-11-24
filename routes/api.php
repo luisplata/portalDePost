@@ -1,6 +1,5 @@
 <?php
 
-use App\ConfigPublicity;
 use App\Http\Controllers\GraficaApiController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\PPV;
@@ -13,6 +12,7 @@ use App\Http\Controllers\Api\ProductoDataController;
 use App\Http\Controllers\Api\IndexApiController;
 use App\Http\Controllers\Api\ImpressionController;
 use App\Http\Controllers\Api\PlacementController;
+use App\Http\Controllers\Api\PublicityImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +39,9 @@ Route::get("infiniteScrollStream", function () {
 
 
 
-Route::get("publicity/image/{key}", [ConfigPublicity::class, "GetImage"]);
+// Compatibilidad de imagen legacy (REQ-CLK-05): mapea a image_url si la
+// creatividad existe; si no, conserva ConfigPublicity::GetImage.
+Route::get("publicity/image/{key}", [PublicityImageController::class, "show"]);
 
 // Publicidad: contrato publico de un slot (REQ-API-01). Solo lectura.
 Route::get('placements/{key}', [PlacementController::class, 'show']);
