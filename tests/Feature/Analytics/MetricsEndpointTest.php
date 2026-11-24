@@ -297,6 +297,128 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         );
     }
 
+    public function test_ranking_breaks_metric_ties_by_clicks_descending()
+    {
+        $menos = $this->makeProduct(['nombre' => 'Menos Clicks']);
+        $mas = $this->makeProduct(['nombre' => 'Mas Clicks']);
+
+        $this->seedDay($menos, '2026-11-24', 10, 2, 1);
+        $this->seedDay($mas, '2026-11-24', 10, 2, 5);
+        $this->seedIdentity($menos, '2026-11-24', 'menos-a');
+        $this->seedIdentity($menos, '2026-11-24', 'menos-b');
+        $this->seedIdentity($mas, '2026-11-24', 'mas-a');
+        $this->seedIdentity($mas, '2026-11-24', 'mas-b');
+        $this->seedClick($menos, '2026-11-24', 'menos-a');
+        foreach (range(1, 5) as $i) {
+            $this->seedClick($mas, '2026-11-24', 'mas-a');
+        }
+
+        $ids = array_column(
+            $this->asAdmin()
+                ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+                ->assertStatus(200)
+                ->json('ranking.data'),
+            'producto_id'
+        );
+
+        $this->assertSame([$mas, $menos], $ids);
+    }
+
+    public function test_include_inactive_extends_the_universe_to_every_product()
+    {
+        $activo = $this->makeProduct(['nombre' => 'Activo']);
+        $inactivo = $this->makeProduct(['nombre' => 'Inactivo', 'estado' => 0]);
+
+        $this->seedDay($activo, '2026-11-24', 10, 2, 1);
+        $this->seedIdentity($activo, '2026-11-24', 'activo-a');
+        $this->seedClick($activo, '2026-11-24', 'activo-a');
+
+        $defaultIds = array_column(
+            $this->asAdmin()
+                ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+                ->assertStatus(200)
+                ->json('ranking.data'),
+            'producto_id'
+        );
+        $this->assertContains($activo, $defaultIds);
+        $this->assertNotContains($inactivo, $defaultIds);
+
+        $all = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24&include_inactive=1')
+            ->assertStatus(200);
+
+        $this->assertContains($inactivo, array_column($all->json('ranking.data'), 'producto_id'));
+        $this->assertSame(2, $all->json('ranking.total'));
+    }
+
+    public function test_ranking_lists_the_whole_universe_with_zero_rows_last()
+    {
+        for ($i = 1; $i <= 3; $i++) {
+            $productoId = $this->makeProduct(['nombre' => 'Con Datos '.$i]);
+            $this->seedDay($productoId, '2026-11-24', 10 - $i, 2, 1);
+            $this->seedIdentity($productoId, '2026-11-24', 'ident-'.$i.'-a');
+            $this->seedIdentity($productoId, '2026-11-24', 'ident-'.$i.'-b');
+            $this->seedClick($productoId, '2026-11-24', 'ident-'.$i.'-a');
+        }
+
+        for ($i = 1; $i <= 17; $i++) {
+            $this->makeProduct(['nombre' => 'Sin Datos '.$i]);
+        }
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24&per_page=50')
+            ->assertStatus(200);
+
+        $this->assertSame(20, $response->json('ranking.total'));
+        $this->assertSame(50, $response->json('ranking.per_page'));
+        $this->assertCount(20, $response->json('ranking.data'));
+
+        $data = $response->json('ranking.data');
+        foreach (array_slice($data, 0, 3) as $row) {
+            $this->assertGreaterThan(0, $row['visits']);
+        }
+        foreach (array_slice($data, 3) as $row) {
+            $this->assertSame(0, $row['visits']);
+            $this->assertSame(0, $row['unique_visits']);
+            $this->assertSame(0, $row['clicks']);
+        }
+    }
+
+    public function test_pagination_reports_totals_and_an_out_of_range_page_is_empty()
+    {
+        for ($i = 1; $i <= 3; $i++) {
+            $productoId = $this->makeProduct(['nombre' => 'Pagina '.$i]);
+            $this->seedDay($productoId, '2026-11-24', 10, 2, 1);
+            $this->seedIdentity($productoId, '2026-11-24', 'pag-'.$i);
+            $this->seedClick($productoId, '2026-11-24', 'pag-'.$i);
+        }
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24&per_page=2&page=99')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('ranking.current_page', 99)
+            ->assertJsonPath('ranking.per_page', 2)
+            ->assertJsonPath('ranking.total', 3)
+            ->assertJsonPath('ranking.last_page', 2)
+            ->assertJsonPath('ranking.data', []);
+    }
+
+    public function test_per_page_out_of_range_is_clamped_to_the_effective_value()
+    {
+        $this->makeProduct(['nombre' => 'Per Page']);
+
+        $high = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24&per_page=999')
+            ->assertStatus(200);
+        $high->assertJsonPath('ranking.per_page', 50);
+
+        $low = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24&per_page=0')
+            ->assertStatus(200);
+        $low->assertJsonPath('ranking.per_page', 1);
+    }
+
     private function seedDay(int $productoId, string $date, int $visits, $uniqueVisits, int $clicks)
     {
         DB::table('post_stats_daily')->insert([

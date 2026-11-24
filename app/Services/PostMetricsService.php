@@ -40,6 +40,8 @@ class PostMetricsService
         $requestedMetric = isset($query['metric']) && $query['metric'] !== '' ? $query['metric'] : 'uv';
         $page = isset($query['page']) ? (int) $query['page'] : 1;
         $perPage = isset($query['per_page']) ? (int) $query['per_page'] : 10;
+        $includeInactive = isset($query['include_inactive'])
+            && (string) $query['include_inactive'] === '1';
 
         $coverage = $this->coverage();
 
@@ -81,13 +83,11 @@ class PostMetricsService
             });
 
         // 3. Universo + hechos por producto. LEFT JOIN: los sin datos van en 0.
-        $universe = DB::table('productos')
+        $universeQuery = DB::table('productos')
             ->leftJoin('post_stats_daily as s', function ($join) use ($from, $to) {
                 $join->on('s.producto_id', '=', 'productos.id')
                     ->whereBetween('s.date', [$from, $to]);
             })
-            ->where('productos.estado', 1)
-            ->where('productos.publication_date', '<', now())
             ->groupBy('productos.id', 'productos.nombre', 'productos.estado')
             ->orderBy('productos.id', 'asc')
             ->select(
@@ -99,8 +99,14 @@ class PostMetricsService
                 DB::raw('COALESCE(SUM(s.clicks), 0) as clicks_total'),
                 DB::raw('SUM(CASE WHEN s.date >= ? THEN s.clicks ELSE 0 END) as clicks_window')
             )
-            ->setBindings([$uvBoundary, $clicksBoundary], 'select')
-            ->get();
+            ->setBindings([$uvBoundary, $clicksBoundary], 'select');
+
+        if (! $includeInactive) {
+            $universeQuery->where('productos.estado', 1)
+                ->where('productos.publication_date', '<', now());
+        }
+
+        $universe = $universeQuery->get();
 
         // 4. UV-r exacto por producto (solo con cobertura completa de identidades).
         $uvExact = [];
@@ -427,7 +433,7 @@ class PostMetricsService
     }
 
     /**
-     * Orden del ranking (S3a): metrica efectiva descendente y producto_id.
+     * Orden del ranking: metrica efectiva, clicks y producto_id ascendente.
      */
     private function sortRanking(array $data, $metric)
     {
@@ -435,11 +441,18 @@ class PostMetricsService
             $left = isset($a[$metric]) && $a[$metric] !== null ? $a[$metric] : -1;
             $right = isset($b[$metric]) && $b[$metric] !== null ? $b[$metric] : -1;
 
-            if ($left === $right) {
-                return $a['producto_id'] <=> $b['producto_id'];
+            if ($left !== $right) {
+                return $right <=> $left;
             }
 
-            return $right <=> $left;
+            $leftClicks = $a['clicks'] === null ? -1 : $a['clicks'];
+            $rightClicks = $b['clicks'] === null ? -1 : $b['clicks'];
+
+            if ($leftClicks !== $rightClicks) {
+                return $rightClicks <=> $leftClicks;
+            }
+
+            return $a['producto_id'] <=> $b['producto_id'];
         });
 
         return $data;
