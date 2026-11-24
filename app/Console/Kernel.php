@@ -35,6 +35,7 @@ class Kernel extends ConsoleKernel
         // Analitica de publicaciones: retencion de eventos crudos y chequeo de
         // drift contra log_visits (REQ-S3-09, REQ-S3-10).
         $schedule->command('analytics:purge-events')->daily();
+        $schedule->command('analytics:check-drift --days=1')->daily();
     }
 
     /**
