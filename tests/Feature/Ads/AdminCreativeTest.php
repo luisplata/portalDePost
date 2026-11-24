@@ -70,6 +70,62 @@ class AdminCreativeTest extends TestCase
         $this->assertSame('2026-12-01 05:00:00', $creative->starts_at->toDateTimeString());
     }
 
+    public function test_producto_prefills_only_the_empty_snapshot_fields_on_create()
+    {
+        $productoId = $this->makeProduct('Pack Prefill Test', 'https://cdn.example/product-prefill.jpg');
+        $placementId = AdPlacement::where('key', 'home_sidebar')->value('id');
+
+        // Sin image_url/headline/target_url: los tres salen del producto (REQ-CRT-04 S1).
+        $response = $this->asAdmin()->post('/admin/publicidad', [
+            'campaign_key' => 'promo-prefill',
+            'name' => 'Promo prefill',
+            'placement_id' => $placementId,
+            'status' => 'draft',
+            'priority' => 0,
+            'producto_id' => $productoId,
+        ]);
+
+        $creative = AdCreative::where('campaign_key', 'promo-prefill')->firstOrFail();
+
+        $this->assertRedirectsToIndex($response);
+        $this->assertSame($productoId, $creative->producto_id);
+        $this->assertSame('https://cdn.example/product-prefill.jpg', $creative->image_url);
+        $this->assertSame('Pack Prefill Test', $creative->headline);
+        // alt_text tambien se deriva: default = headline ya prellenado.
+        $this->assertSame('Pack Prefill Test', $creative->alt_text);
+        $this->assertStringStartsWith('/content/', (string) $creative->target_url);
+        $this->assertSame('/content/Pack-Prefill-Test', $creative->target_url);
+
+        // Lo informado por el usuario manda: el prefill no pisa campos con valor.
+        $this->asAdmin()->post('/admin/publicidad', [
+            'campaign_key' => 'promo-prefill-explicit',
+            'name' => 'Promo explicita',
+            'placement_id' => $placementId,
+            'status' => 'draft',
+            'priority' => 0,
+            'producto_id' => $productoId,
+            'image_url' => 'https://cdn.example/explicit.jpg',
+            'headline' => 'Headline explicito',
+            'target_url' => 'https://example.com/explicito',
+        ])->assertRedirect();
+
+        $explicit = AdCreative::where('campaign_key', 'promo-prefill-explicit')->firstOrFail();
+
+        $this->assertSame('https://cdn.example/explicit.jpg', $explicit->image_url);
+        $this->assertSame('Headline explicito', $explicit->headline);
+        $this->assertSame('https://example.com/explicito', $explicit->target_url);
+    }
+
+    public function test_image_url_is_required_when_there_is_no_producto()
+    {
+        // REQ-CRT-01 S2: sin producto del que copiar, la imagen es obligatoria.
+        $this->asAdmin()->from('/admin/publicidad/create')
+            ->post('/admin/publicidad', $this->payload(['image_url' => '']))
+            ->assertSessionHasErrors('image_url');
+
+        $this->assertSame(0, AdCreative::count());
+    }
+
     public function test_datetime_local_is_stored_in_utc_and_shown_back_in_local_time()
     {
         $this->asAdmin()->post('/admin/publicidad', $this->payload([
@@ -240,6 +296,36 @@ class AdminCreativeTest extends TestCase
             'headline' => 'Promo headline',
             'target_url' => 'https://example.com/promo',
         ], $overrides);
+    }
+
+    /**
+     * Producto minimo para ejercitar el prefill de REQ-CRT-04.
+     */
+    private function makeProduct(string $nombre, string $imagen): int
+    {
+        $categoriaId = DB::table('categorias')->insertGetId([
+            'nombre' => 'Categoria de prueba',
+            'descripcion' => 'Categoria de prueba',
+            'padre' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return DB::table('productos')->insertGetId([
+            'nombre' => $nombre,
+            'imagen' => $imagen,
+            'categorias_id' => $categoriaId,
+            'estado' => 1,
+            'publication_date' => now()->subDay(),
+            'NombreLink' => 'PCK 1',
+            'hotLink' => 'https://example.com/hot',
+            'isVideo' => '0',
+            'url_video' => '',
+            'tags' => '',
+            'published' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     private function makeCreative(string $placementKey, string $campaignKey, array $overrides = []): AdCreative
