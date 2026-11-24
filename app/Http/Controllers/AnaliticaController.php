@@ -19,6 +19,55 @@ use InvalidArgumentException;
 class AnaliticaController extends Controller
 {
     /**
+     * Panel de analitica de publicaciones (REQ-S4-01, REQ-S4-03, REQ-S4-08).
+     *
+     * Solo normaliza filtros y renderiza: no consulta ningun almacen. Los datos
+     * llegan por un unico fetch al endpoint `admin/analitica/metricas`.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+    public function index(Request $request)
+    {
+        $time = app(AnalyticsTimeService::class);
+        $defaults = $time->range(null, null);
+
+        $from = $this->safeDate($request->query('from')) ?: $defaults['from'];
+        $to = $this->safeDate($request->query('to')) ?: $defaults['to'];
+
+        if ($from > $to) {
+            $from = $defaults['from'];
+            $to = $defaults['to'];
+        }
+
+        $range = $time->range($from, $to);
+
+        $metric = $request->query('metric');
+        if (! in_array($metric, ['uv', 'pageviews'], true)) {
+            $metric = 'uv';
+        }
+
+        $includeInactive = $request->query('include_inactive') === '1';
+        $today = $time->today();
+
+        $shortcuts = [];
+        foreach ([7, 30, 90] as $days) {
+            $shortcuts[$days] = [
+                'from' => Carbon::parse($today)->subDays($days - 1)->toDateString(),
+                'to' => $today,
+            ];
+        }
+
+        return view('admin.Analitica.index', [
+            'from' => $range['from'],
+            'to' => $range['to'],
+            'metric' => $metric,
+            'includeInactive' => $includeInactive,
+            'shortcuts' => $shortcuts,
+        ]);
+    }
+
+    /**
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -90,6 +139,21 @@ class AnaliticaController extends Controller
             'to' => $range['to'],
             'truncated' => $truncated,
         ];
+    }
+
+    /**
+     * Y-m-d real: 2026-02-30 y 2026-13-01 no son fechas validas.
+     *
+     * @param  mixed  $value
+     * @return string|null
+     */
+    private function safeDate($value)
+    {
+        try {
+            return $this->parseDate($value);
+        } catch (InvalidArgumentException $e) {
+            return null;
+        }
     }
 
     /**

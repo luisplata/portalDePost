@@ -57,8 +57,9 @@ Route::middleware('logeado')->group(function () {
     //para el admin
     Route::prefix('admin')->group(function () {
 
-        // Metricas de analitica de publicaciones (REQ-S3-06). Solo GET y antes
-        // de los resources para no chocar con ellos.
+        // Metricas de analitica de publicaciones (REQ-S3-06, REQ-S4-01). Solo
+        // GET y antes de los resources para no chocar con ellos.
+        Route::get("analitica", [AnaliticaController::class, "index"]);
         Route::get("analitica/metricas", [AnaliticaController::class, "metricas"]);
 
         Route::get("producto/upload", "ProductoController@Upload");
