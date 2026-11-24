@@ -91,7 +91,13 @@ class PublicRenderTest extends TestCase
         $response->assertSee('src="https://cdn.example/grid.jpg"', false);
         $response->assertSee('data-campaign-key="promo-grid"', false);
         $response->assertSee('data-placement="product_banner_grid"', false);
-        $response->assertDontSee('Banner Producto Reciente', false);
+
+        // La grilla no lista productos recientes. La asercion se acota a la
+        // seccion de la grilla porque, desde el ranking corregido, un producto
+        // sin visitas puede aparecer con cero en Hot/Popular.
+        $html = $response->getContent();
+        $this->assertSame(1, preg_match('/<section id="banner".*?<\/section>/s', $html, $grid));
+        $this->assertStringNotContainsString('Banner Producto Reciente', $grid[0]);
     }
 
     public function test_product_page_renders_nothing_in_the_grid_when_the_slot_is_empty()
