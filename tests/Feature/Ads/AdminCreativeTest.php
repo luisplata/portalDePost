@@ -44,7 +44,10 @@ class AdminCreativeTest extends TestCase
             ->assertSee('name="placement_id"', false)
             ->assertSee('name="starts_at"', false)
             ->assertSee('name="producto_id"', false)
-            ->assertSee('Home sidebar', false);
+            ->assertSee('Home sidebar', false)
+            ->assertSee('id="ad-preview-image"', false)
+            ->assertSee('id="ad-preview-headline"', false)
+            ->assertSee('id="ad-preview-error"', false);
     }
 
     public function test_store_persists_a_draft_and_accepts_legacy_underscore_keys()
