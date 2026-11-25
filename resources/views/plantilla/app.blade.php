@@ -61,6 +61,7 @@
                                             <ul class="nav child_menu" style="{{ request()->is('admin/canales*') || request()->is('admin/publicaciones*') ? 'display: block;' : '' }}">
                                                 <li class="{{ request()->is('admin/canales*') ? 'current-page' : '' }}"><a href="{{ url('admin/canales') }}">Canales</a></li>
                                                 <li class="{{ request()->is('admin/publicaciones') ? 'current-page' : '' }}"><a href="{{ url('admin/publicaciones') }}">Entregas</a></li>
+                                                <li class="{{ request()->is('admin/publicaciones/ajustes*') ? 'current-page' : '' }}"><a href="{{ url('admin/publicaciones/ajustes') }}">Ajustes</a></li>
                                             </ul>
                                         </li>
                                         <li><a href="{{ url('admin/stream') }}">Streams</a></li>

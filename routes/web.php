@@ -5,6 +5,7 @@ use App\Http\Controllers\AdCreativeController;
 use App\Http\Controllers\AdMetricsController;
 use App\Http\Controllers\AdPlacementController;
 use App\Http\Controllers\AnaliticaController;
+use App\Http\Controllers\AjustePublicacionController;
 use App\Http\Controllers\CanalController;
 use App\Http\Controllers\PublicacionController;
 use Illuminate\Http\Request;
@@ -74,6 +75,9 @@ Route::middleware('logeado')->group(function () {
         Route::post("canales/{id}/estado", [CanalController::class, "estado"])->where("id", "[0-9]+");
         Route::post("canales/{id}/probar", [CanalController::class, "probar"])->where("id", "[0-9]+");
         Route::delete("canales/{id}", [CanalController::class, "destroy"])->where("id", "[0-9]+");
+
+        Route::get("publicaciones/ajustes", [AjustePublicacionController::class, "edit"]);
+        Route::put("publicaciones/ajustes", [AjustePublicacionController::class, "update"]);
 
         Route::get("publicaciones", [PublicacionController::class, "index"]);
         Route::post("publicaciones/{id}/reintentar", [PublicacionController::class, "reintentar"])
