@@ -6,6 +6,7 @@ use App\Http\Controllers\AdMetricsController;
 use App\Http\Controllers\AdPlacementController;
 use App\Http\Controllers\AnaliticaController;
 use App\Http\Controllers\CanalController;
+use App\Http\Controllers\PublicacionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -73,6 +74,10 @@ Route::middleware('logeado')->group(function () {
         Route::post("canales/{id}/estado", [CanalController::class, "estado"])->where("id", "[0-9]+");
         Route::post("canales/{id}/probar", [CanalController::class, "probar"])->where("id", "[0-9]+");
         Route::delete("canales/{id}", [CanalController::class, "destroy"])->where("id", "[0-9]+");
+
+        Route::get("publicaciones", [PublicacionController::class, "index"]);
+        Route::post("publicaciones/{id}/reintentar", [PublicacionController::class, "reintentar"])
+            ->where("id", "[0-9]+");
 
         Route::get("producto/upload", "ProductoController@Upload");
         Route::post("producto/uploadFile", "ProductoController@UploadFile")->name('admin.producto.uploadFile');
