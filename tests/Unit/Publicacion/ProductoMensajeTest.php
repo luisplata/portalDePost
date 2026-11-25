@@ -43,6 +43,15 @@ class ProductoMensajeTest extends TestCase
         $this->assertStringEndsWith(ProductoMensaje::link($producto), $texto);
     }
 
+    public function test_texto_uses_the_provided_link_when_given()
+    {
+        $producto = $this->makeProducto(7, 'Nombre');
+
+        $texto = ProductoMensaje::texto($producto, 'https://app.test/redirect/7?x=1');
+
+        $this->assertStringEndsWith("\nhttps://app.test/redirect/7?x=1", $texto);
+    }
+
     public function test_discord_title_is_truncated_to_256_with_ellipsis()
     {
         $producto = $this->makeProducto(9, str_repeat('b', 1000));

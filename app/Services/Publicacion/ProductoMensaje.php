@@ -27,9 +27,9 @@ class ProductoMensaje
     /**
      * Caption de Telegram: nombre recortado, salto de linea y link intacto.
      */
-    public static function texto(Producto $producto): string
+    public static function texto(Producto $producto, string $link = null): string
     {
-        $link = self::link($producto);
+        $link = $link === null ? self::link($producto) : $link;
         $disponible = self::LIMITE_CAPTION - self::MARGEN - self::utf16($link) - 1;
 
         return self::recortar((string) $producto->nombre, max(1, $disponible))
