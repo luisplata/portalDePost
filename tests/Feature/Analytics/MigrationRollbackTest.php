@@ -28,8 +28,18 @@ class MigrationRollbackTest extends TestCase
         $this->assertTrue(Schema::hasTable('post_visit_identities'));
 
         try {
-            $this->artisan('migrate:rollback', ['--step' => 3, '--force' => true])
-                ->assertExitCode(0);
+            // `--step=3` ya no aisla analitica: publicaciones agrego tres
+            // migraciones posteriores. El rollback por path conserva el
+            // contrato original (solo las tablas de analitica) sin acoplarse
+            // al orden global de batches.
+            $this->artisan('migrate:rollback', [
+                '--path' => [
+                    'database/migrations/2026_11_25_000001_create_post_stats_daily_table.php',
+                    'database/migrations/2026_11_25_000002_create_post_clicks_table.php',
+                    'database/migrations/2026_11_25_000003_create_post_visit_identities_table.php',
+                ],
+                '--force' => true,
+            ])->assertExitCode(0);
 
             foreach (['post_stats_daily', 'post_clicks', 'post_visit_identities'] as $table) {
                 $this->assertFalse(Schema::hasTable($table), "{$table} must be gone after rollback.");
