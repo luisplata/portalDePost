@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
 
@@ -41,15 +42,57 @@ class ProductoController extends Controller {
      */
     public function index() {
         //
-        $products = \App\Producto::orderBy('publication_date', 'desc')->get();
+        $products = \App\Producto::with(['Visitas', 'LogVisitas'])->orderBy('publication_date', 'desc')->get();
         foreach ($products as $prod){
             $prod->Visitas();
             $prod->LogVisitas();
         }
         $datos = array(
-            "productos" => $products
+            "productos" => $products,
+            "redes" => $this->redesDeProductos($products)
         );
         return view("admin.producto.dashboard", $datos);
+    }
+
+    /**
+     * Estado por red de cada producto en una sola consulta (NFR-07).
+     */
+    private function redesDeProductos($productos)
+    {
+        $ids = $productos->pluck('id')->all();
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        $etiquetas = (array) config('publicaciones.etiquetas');
+        $estados = ['enviado' => 'ok', 'fallido' => 'fallo'];
+        $redes = [];
+
+        $filas = DB::table('publicacion_envios')
+            ->whereIn('producto_id', $ids)
+            ->orderBy('id')
+            ->get(['producto_id', 'canal_tipo', 'estado', 'error']);
+
+        foreach ($filas as $fila) {
+            $etiqueta = isset($etiquetas[$fila->canal_tipo]) ? $etiquetas[$fila->canal_tipo] : $fila->canal_tipo;
+
+            if (!isset($redes[$fila->producto_id])) {
+                $redes[$fila->producto_id] = ['partes' => [], 'error' => null];
+            }
+
+            $redes[$fila->producto_id]['partes'][] = $etiqueta.' '.($estados[$fila->estado] ?? $fila->estado);
+
+            if ($fila->error !== null && $fila->error !== '') {
+                $redes[$fila->producto_id]['error'] = $fila->error;
+            }
+        }
+
+        foreach ($redes as $id => $red) {
+            $redes[$id]['texto'] = implode(' / ', $red['partes']);
+        }
+
+        return $redes;
     }
 
     /**
