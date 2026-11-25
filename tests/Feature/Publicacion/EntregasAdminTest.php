@@ -127,7 +127,7 @@ class EntregasAdminTest extends PublicacionTestSupport
 
         $respuesta = $this->asAdmin()->post('/admin/publicaciones/'.$envio->id.'/reintentar');
 
-        $respuesta->assertSessionHas('error', 'El canal no esta operativo.');
+        $respuesta->assertSessionHas('error', 'El canal no esta disponible para enviar.');
         Http::assertNothingSent();
     }
 

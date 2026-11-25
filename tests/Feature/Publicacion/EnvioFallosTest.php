@@ -204,7 +204,7 @@ class EnvioFallosTest extends PublicacionTestSupport
         $resultado = $this->app->make(PublicacionService::class)->reintentar($envio);
 
         $this->assertFalse($resultado['ok']);
-        $this->assertSame('El canal no esta operativo.', $resultado['mensaje']);
+        $this->assertSame('El canal no esta disponible para enviar.', $resultado['mensaje']);
         Http::assertNothingSent();
     }
 

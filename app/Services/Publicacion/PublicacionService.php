@@ -155,7 +155,7 @@ class PublicacionService
             || $canal->estado !== 'ok'
             || $canal->deleted_at !== null
         ) {
-            return ['ok' => false, 'mensaje' => 'El canal no esta operativo.'];
+            return ['ok' => false, 'mensaje' => 'El canal no esta disponible para enviar.'];
         }
 
         $driver = $this->driverDe($canal->tipo);
