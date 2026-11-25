@@ -88,7 +88,8 @@ advierte un posible duplicado. Una entrega `pendiente` se rechaza.
 # Corrida real (agendada cada 15 minutos, sin solaparse)
 php artisan productos:procesar
 
-# Ensayo: cuenta lo que haria, no escribe ni llama APIs
+# Ensayo: no escribe nada ni llama APIs. Lista por canal el corte efectivo,
+# cuantas entregas sembraria y que enviaria por cada pendiente.
 php artisan productos:procesar --dry-run
 
 # Tope total de envíos de la corrida (limit=0 sale con codigo 1)
