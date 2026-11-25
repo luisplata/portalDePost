@@ -56,6 +56,12 @@
                                         <li><a href="{{ url('admin') }}">Administradores</a></li>
                                         <li><a href="{{ url('admin/categoria') }}">Categorias</a></li>
                                         <li><a href="{{ url('admin/producto') }}">Productos</a></li>
+                                        <li class="{{ request()->is('admin/canales*') ? 'current-page active' : '' }}">
+                                            <a>Publicaciones <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu" style="{{ request()->is('admin/canales*') ? 'display: block;' : '' }}">
+                                                <li class="{{ request()->is('admin/canales*') ? 'current-page' : '' }}"><a href="{{ url('admin/canales') }}">Canales</a></li>
+                                            </ul>
+                                        </li>
                                         <li><a href="{{ url('admin/stream') }}">Streams</a></li>
                                         <li class="{{ request()->is('admin/graficas*') || request()->is('admin/analitica*') ? 'current-page active' : '' }}">
                                             <a>Graficas <span class="fa fa-chevron-down"></span></a>
