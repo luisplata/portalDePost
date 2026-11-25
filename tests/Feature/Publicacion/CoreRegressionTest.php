@@ -58,14 +58,16 @@ class CoreRegressionTest extends PublicacionTestSupport
             ."2026-11-20 10:00:00,0,,alpha\n";
         $archivo = UploadedFile::fake()->createWithContent('productos.csv', $csv);
 
-        DB::table('categorias')->insert([
-            'id' => 1,
-            'nombre' => 'Categoria CSV',
-            'descripcion' => 'prueba',
-            'padre' => 0,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        if (!DB::table('categorias')->where('id', 1)->exists()) {
+            DB::table('categorias')->insert([
+                'id' => 1,
+                'nombre' => 'Categoria CSV',
+                'descripcion' => 'prueba',
+                'padre' => 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         $respuesta = $this->asAdmin()->post('/admin/producto/uploadFile', ['logo' => $archivo]);
 

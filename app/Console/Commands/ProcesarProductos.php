@@ -2,79 +2,93 @@
 
 namespace App\Console\Commands;
 
-use App\Auto;
-use App\Producto;
+use App\Services\Publicacion\PublicacionService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Disparador unico de la publicacion en redes (REQ-ENT-14, ENT-15, NFR-08,
+ * NFR-09).
+ *
+ * El antiguo n8n esta muerto: este comando ya no envia a `autos`, delega en
+ * PublicacionService. El lock de cache evita corridas concurrentes.
+ */
 class ProcesarProductos extends Command
 {
-    protected $signature = 'productos:procesar';
-    protected $description = 'Procesa los productos pendientes y los envía al webhook de n8n';
+    protected $signature = 'productos:procesar
+        {--dry-run : Cuenta lo que se haria sin escribir ni llamar APIs}
+        {--limit= : Tope total de envios de la corrida}';
+
+    protected $description = 'Procesa la publicacion pendiente en los canales configurados';
 
     public function handle()
     {
-        $productos = Producto::where('publication_date', '<=', now())
-            ->where('published', false)
-            ->get();
+        $limite = null;
+        $opcionLimite = $this->option('limit');
 
-        $allAutos = Auto::all();
+        if ($opcionLimite !== null) {
+            if (!is_numeric($opcionLimite) || (int) $opcionLimite < 1) {
+                $this->error('El limite debe ser un entero mayor a cero.');
 
-        $this->info("Procesando productos");
-        Log::info("Procesando productos: {$productos->count()} pendientes.");
-
-        foreach ($productos as $producto) {
-            $ok = true;
-
-            foreach ($allAutos as $auto) {
-                try {
-                    $response = null;
-
-                    switch ($auto->method) {
-                        case 'POST':
-                            $response = Http::timeout(5)->post($auto->webhook, $producto->toArray());
-                            break;
-
-                        case 'GET':
-                            $response = Http::timeout(5)->get($auto->webhook, $producto->toArray());
-                            break;
-                    }
-
-                    if (!$response || !$response->successful()) {
-                        $ok = false;
-                        $errorMsg = "Error HTTP enviando producto {$producto->id} a {$auto->webhook}: " . ($response ? $response->status() : 'sin respuesta');
-                        $this->error($errorMsg);
-                        Log::error($errorMsg);
-                    } else {
-                        $msg = "Producto {$producto->id} enviado a {$auto->webhook}.";
-                        $this->info($msg);
-                        Log::info($msg);
-                    }
-
-                } catch (\Exception $e) {
-                    $ok = false;
-                    $errorMsg = "No se pudo conectar a {$auto->webhook}: " . $e->getMessage();
-
-                    // Detectar cURL error 7 (no se puede conectar)
-                    if (strpos($e->getMessage(), 'cURL error 7') !== false) {
-                        $errorMsg .= " — Probablemente el puerto está bloqueado por firewall o el servidor no responde.";
-                    }
-
-                    $this->error($errorMsg);
-                    Log::error($errorMsg);
-                }
+                return 1;
             }
 
-            if ($ok) {
-                $producto->published = true;
-                $producto->save();
-                $msg = "Producto {$producto->id} marcado como publicado.";
-                $this->info($msg);
-                Log::info($msg);
-            }
+            $limite = (int) $opcionLimite;
         }
 
-        Log::info("Fin del procesamiento de productos.");
+        $lock = Cache::lock('publicaciones:corrida', (int) config('publicaciones.lock_ttl'));
+
+        if (!$lock->get()) {
+            Log::info('publicacion.corrida', ['motivo' => 'corrida_en_curso']);
+            $this->info('Corrida en curso; sin cambios.');
+
+            return 0;
+        }
+
+        try {
+            $resultado = app(PublicacionService::class)->corrida([
+                'dry_run' => (bool) $this->option('dry-run'),
+                'limite' => $limite,
+            ]);
+
+            $this->imprimir($resultado, (bool) $this->option('dry-run'));
+
+            return $resultado['exit'];
+        } finally {
+            $lock->release();
+        }
+    }
+
+    private function imprimir(array $resultado, bool $dryRun): void
+    {
+        switch ($resultado['estado']) {
+            case 'apagado':
+                $this->info('Publicaciones apagadas; sin cambios.');
+                break;
+
+            case 'corte_invalido':
+                $this->error('Falta una fecha de corte global valida; sin cambios.');
+                break;
+
+            case 'ajustes_no_disponibles':
+                $this->error('No se pudieron leer los ajustes; sin cambios.');
+                break;
+
+            case 'sin_canales':
+                $this->info('Sin canales operativos; sin cambios.');
+                break;
+
+            default:
+                $this->info(sprintf(
+                    '%s %d | %s %d | Fallidas %d | Inciertas %d',
+                    $dryRun ? 'Sembraria' : 'Sembradas',
+                    $resultado['sembradas'],
+                    $dryRun ? 'Enviaria' : 'Enviadas',
+                    $resultado['enviadas'],
+                    $resultado['fallidas'],
+                    $resultado['inciertas']
+                ));
+        }
     }
 }
