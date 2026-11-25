@@ -89,7 +89,13 @@ $avisos = ['incierto' => true, 'enviado' => true];
                     @endif
                 </td>
                 <td>
-                    {{ Form::open(["url" => "admin/publicaciones/".$envio->id."/reintentar", "method" => "POST", "style" => "display:inline"]) }}
+                    @php($confirmar = isset($avisos[$envio->estado])
+                        ? "return confirm('La entrega esta en estado ".$envio->estado."; reenviar puede crear un duplicado. ¿Continuar?')"
+                        : null)
+                    {{ Form::open(array_merge(
+                        ["url" => "admin/publicaciones/".$envio->id."/reintentar", "method" => "POST", "style" => "display:inline"],
+                        $confirmar ? ["onsubmit" => $confirmar] : []
+                    )) }}
                     <button type="submit" class="btn btn-default btn-xs">
                         <i class="fa fa-refresh"></i> Reintentar
                     </button>
