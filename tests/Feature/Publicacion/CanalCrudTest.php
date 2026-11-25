@@ -259,4 +259,27 @@ class CanalCrudTest extends PublicacionTestSupport
             'chat_id' => '-1001234567890',
         ], $overrides);
     }
+
+    public function test_editing_vigencia_audits_the_previous_and_new_values()
+    {
+        Log::spy();
+        $canal = $this->makeCanal('telegram', ['vigente_desde' => '2026-11-20 09:00:00']);
+
+        $this->asAdmin()
+            ->withSession(['admin' => (object) ['id' => 5, 'email' => 'admin@test.local', 'nombre' => 'tester']])
+            ->put('/admin/canales/'.$canal->id, [
+                'nombre' => $canal->nombre,
+                'token' => '',
+                'chat_id' => '',
+                'vigente_desde' => '2026-10-01T08:30',
+            ]);
+
+        Log::shouldHaveReceived('info')->withArgs(function ($mensaje, $contexto) {
+            return $mensaje === 'publicacion.auditoria'
+                && $contexto['accion'] === 'edicion'
+                && in_array('vigente_desde', $contexto['campos'], true)
+                && $contexto['antes']['vigente_desde'] === '2026-11-20 09:00:00'
+                && $contexto['despues']['vigente_desde'] === '2026-10-01 08:30:00';
+        })->once();
+    }
 }

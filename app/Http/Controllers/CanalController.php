@@ -79,6 +79,9 @@ class CanalController extends Controller
         $canal->nombre = (string) $request->input('nombre');
 
         $campos = ['nombre'];
+        $antesVigencia = $canal->vigente_desde
+            ? $canal->vigente_desde->toDateTimeString()
+            : null;
 
         $tipo = $canal->tipo;
         $credenciales = $canal->credenciales;
@@ -122,7 +125,19 @@ class CanalController extends Controller
             $campos[] = 'habilitado';
         }
 
-        AuditoriaPublicacion::registrar('canal', 'edicion', array_values(array_unique($campos)));
+        $despuesVigencia = $canal->vigente_desde
+            ? $canal->vigente_desde->toDateTimeString()
+            : null;
+
+        $cambioVigencia = $antesVigencia !== $despuesVigencia;
+
+        AuditoriaPublicacion::registrar(
+            'canal',
+            'edicion',
+            array_values(array_unique($campos)),
+            $cambioVigencia ? ['vigente_desde' => $antesVigencia] : [],
+            $cambioVigencia ? ['vigente_desde' => $despuesVigencia] : []
+        );
 
         return redirect('admin/canales')
             ->with('mensaje', 'Canal actualizado: '.$canal->nombre);
