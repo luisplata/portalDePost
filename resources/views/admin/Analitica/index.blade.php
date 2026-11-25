@@ -135,6 +135,8 @@
                     </table>
                 </div>
 
+                <p id="analitica-conversion-window" class="text-muted" style="display: none;"></p>
+
                 <nav>
                     <ul class="pagination" id="analitica-pagination"></ul>
                 </nav>
@@ -352,6 +354,16 @@
 
         var isEmpty = data.warnings.indexOf('no_data') !== -1 || data.ranking.total === 0;
         document.getElementById('analitica-empty').style.display = isEmpty ? 'block' : 'none';
+
+        var windowNote = document.getElementById('analitica-conversion-window');
+        if (data.conversion_window && data.conversion_window.partial) {
+            windowNote.textContent = 'Conversion por pageview calculada sobre '
+                + data.conversion_window.from + ' → ' + data.conversion_window.to
+                + ' (cobertura de clicks parcial)';
+            windowNote.style.display = 'block';
+        } else {
+            windowNote.style.display = 'none';
+        }
 
         renderCoverage(data);
         renderCharts(data);

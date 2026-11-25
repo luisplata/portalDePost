@@ -158,6 +158,9 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         $response->assertJsonPath('metric', 'uv')
             ->assertJsonPath('uv_approximate', false)
             ->assertJsonPath('conversion_available', true)
+            ->assertJsonPath('conversion_window.from', '2026-11-24')
+            ->assertJsonPath('conversion_window.to', '2026-11-24')
+            ->assertJsonPath('conversion_window.partial', false)
             ->assertJsonPath('totals.visits', 10)
             ->assertJsonPath('totals.unique_visits', 2)
             ->assertJsonPath('totals.unique_clickers', 1)
@@ -172,6 +175,7 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         $this->assertSame(50.0, $row['conversion_principal']);
         $this->assertSame(10.0, $row['conversion_by_pageview']);
         $this->assertSame(0.5, $row['clicks_per_visitor']);
+        $this->assertNotContains('conversion_window_partial', $response->json('warnings'));
     }
 
     public function test_partial_identity_coverage_is_approximate_and_never_claims_conversion()
@@ -198,7 +202,7 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         $this->assertSame(2, $response->json('series.2.unique_visits'));
     }
 
-    public function test_partial_click_coverage_nulls_uncovered_days_and_the_legacy_conversion()
+    public function test_partial_click_coverage_nulls_uncovered_days_but_computes_the_conversion_window()
     {
         $productoId = $this->makeProduct(['nombre' => 'Clicks Parciales']);
 
@@ -216,7 +220,9 @@ class MetricsEndpointTest extends AnalyticsTestSupport
         $this->assertNull($response->json('series.0.clicks'));
         $this->assertSame(2, $response->json('series.2.clicks'));
         $this->assertSame(2, $response->json('totals.clicks'));
-        $this->assertNull($response->json('totals.conversion_by_pageview'));
+        // Ventana 2026-11-24..2026-11-24: 2 clicks / 5 pageviews.
+        $this->assertSame(40.0, $response->json('totals.conversion_by_pageview'));
+        $this->assertContains('conversion_window_partial', $response->json('warnings'));
         $this->assertContains('conversion_unavailable', $response->json('warnings'));
     }
 
@@ -516,6 +522,7 @@ class MetricsEndpointTest extends AnalyticsTestSupport
 
         $this->assertSame([
             'conversion_available',
+            'conversion_window',
             'coverage',
             'from',
             'legacy',
@@ -702,6 +709,70 @@ class MetricsEndpointTest extends AnalyticsTestSupport
 
             $this->assertSame([$alta, $baja, $sinDatos], $ids, 'Orden incorrecto para metric='.$metric);
         }
+    }
+
+    public function test_partial_click_coverage_computes_conversion_on_the_covered_window()
+    {
+        $productoA = $this->makeProduct(['nombre' => 'Ventana A']);
+        $this->seedDay($productoA, '2026-11-01', 10, 2, 0);
+        $this->seedDay($productoA, '2026-11-24', 5, 2, 5);
+        $this->seedIdentity($productoA, '2026-11-01', 'ventana-a1');
+        $this->seedIdentity($productoA, '2026-11-01', 'ventana-a2');
+        $this->seedIdentity($productoA, '2026-11-24', 'ventana-a1');
+        $this->seedIdentity($productoA, '2026-11-24', 'ventana-a2');
+        foreach (range(1, 5) as $i) {
+            $this->seedClick($productoA, '2026-11-24', 'ventana-a1');
+        }
+
+        // Pageviews solo antes de la ventana: la conversion debe ser null.
+        $productoB = $this->makeProduct(['nombre' => 'Ventana B']);
+        $this->seedDay($productoB, '2026-11-01', 10, 2, 0);
+        $this->seedIdentity($productoB, '2026-11-01', 'ventana-b1');
+
+        // Pageviews y clicks solo dentro de la ventana.
+        $productoC = $this->makeProduct(['nombre' => 'Ventana C']);
+        $this->seedDay($productoC, '2026-11-24', 4, 2, 1);
+        $this->seedIdentity($productoC, '2026-11-24', 'ventana-c1');
+        $this->seedClick($productoC, '2026-11-24', 'ventana-c1');
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-10-26&to=2026-11-24&per_page=50')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('conversion_window.from', '2026-11-24')
+            ->assertJsonPath('conversion_window.to', '2026-11-24')
+            ->assertJsonPath('conversion_window.partial', true)
+            ->assertJsonPath('totals.conversion_by_pageview', 66.67)
+            ->assertJsonPath('totals.conversion_principal', null);
+
+        $this->assertContains('conversion_window_partial', $response->json('warnings'));
+
+        $rows = [];
+        foreach ($response->json('ranking.data') as $row) {
+            $rows[$row['producto_id']] = $row;
+        }
+
+        $this->assertSame(100.0, $rows[$productoA]['conversion_by_pageview']);        $this->assertNull($rows[$productoB]['conversion_by_pageview']);
+        $this->assertSame(25.0, $rows[$productoC]['conversion_by_pageview']);
+    }
+
+    public function test_clicks_unavailable_has_no_conversion_window()
+    {
+        $productoId = $this->makeProduct(['nombre' => 'Sin Clicks']);
+        $this->seedDay($productoId, '2026-11-24', 10, 2, 0);
+        $this->seedIdentity($productoId, '2026-11-24', 'sinclick-a');
+
+        $response = $this->asAdmin()
+            ->getJson('/admin/analitica/metricas?from=2026-11-24&to=2026-11-24')
+            ->assertStatus(200);
+
+        $response->assertJsonPath('conversion_window.from', null)
+            ->assertJsonPath('conversion_window.to', null)
+            ->assertJsonPath('conversion_window.partial', false)
+            ->assertJsonPath('totals.conversion_by_pageview', null);
+
+        $this->assertContains('clicks_unavailable', $response->json('warnings'));
+        $this->assertNotContains('conversion_window_partial', $response->json('warnings'));
     }
 
     private function seedDay(int $productoId, string $date, int $visits, $uniqueVisits, int $clicks)

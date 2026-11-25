@@ -49,4 +49,13 @@ class DocsTest extends TestCase
         $this->assertStringContainsString('ningun dia cubierto', $doc);
         $this->assertStringContainsString('uv_unavailable', $doc);
     }
+
+    public function test_the_analytics_doc_describes_the_conversion_window()
+    {
+        $doc = file_get_contents(base_path('docs/analitica-publicaciones.md'));
+
+        $this->assertStringContainsString('conversion_window', $doc);
+        $this->assertStringContainsString('cobertura de clicks parcial', $doc);
+        $this->assertStringContainsString('conversion_window_partial', $doc);
+    }
 }

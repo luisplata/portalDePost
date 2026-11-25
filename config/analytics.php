@@ -18,7 +18,7 @@ return [
 
     // Habilitador de la captura (visitas y clicks). La lectura del panel no se
     // apaga con esta perilla.
-    'enabled' => env('ANALYTICS_ENABLED', false),
+    'enabled' => filter_var(env('ANALYTICS_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
 
     // Zona horaria del dia operativo. `config('app.timezone')` sigue en UTC:
     // el crudo se guarda en UTC y solo el dia de negocio usa esta zona.

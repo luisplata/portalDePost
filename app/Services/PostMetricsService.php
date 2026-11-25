@@ -53,6 +53,14 @@ class PostMetricsService
         $clicksPartial = ! $clicksFull && $clicksFrom !== null && $clicksFrom <= $to;
         $clicksUnavailable = ! $clicksFull && ! $clicksPartial;
 
+        // Ventana real de la conversion por pageview: [max(from, clicks_from), to].
+        $conversionWindowFrom = $clicksFull ? $from : ($clicksPartial ? $clicksFrom : null);
+        $conversionWindow = [
+            'from' => $conversionWindowFrom,
+            'to' => $conversionWindowFrom === null ? null : $to,
+            'partial' => $clicksPartial,
+        ];
+
         // 2. Serie global del rango. `uv_nulls` detecta dias con visits y sin
         // captura de identidad (backfill), aunque la captura haya empezado antes.
         $seriesRows = DB::table('post_stats_daily')
@@ -117,9 +125,10 @@ class PostMetricsService
                 DB::raw('COALESCE(SUM(s.visits), 0) as visits'),
                 DB::raw('SUM(CASE WHEN s.date >= ? AND s.unique_visits IS NOT NULL THEN COALESCE(s.unique_visits, 0) ELSE 0 END) as uv_daily'),
                 DB::raw('COALESCE(SUM(s.clicks), 0) as clicks_total'),
-                DB::raw('SUM(CASE WHEN s.date >= ? THEN s.clicks ELSE 0 END) as clicks_window')
+                DB::raw('SUM(CASE WHEN s.date >= ? THEN s.clicks ELSE 0 END) as clicks_window'),
+                DB::raw('SUM(CASE WHEN s.date >= ? THEN s.visits ELSE 0 END) as visits_window')
             )
-            ->setBindings([$uvBoundary, $clicksBoundary], 'select');
+            ->setBindings([$uvBoundary, $clicksBoundary, $clicksBoundary], 'select');
 
         if (! $includeInactive) {
             $universeQuery->where('productos.estado', 1)
@@ -223,7 +232,8 @@ class PostMetricsService
             $identitiesFull,
             $clicksUnavailable,
             $clicksFull,
-            $conversionAvailable
+            $conversionAvailable,
+            $conversionWindow
         );
 
         $legacyVisits = (int) $legacyRow->visits;
@@ -237,6 +247,7 @@ class PostMetricsService
             'coverage' => $coverage,
             'uv_approximate' => $identitiesPartial,
             'conversion_available' => $conversionAvailable,
+            'conversion_window' => $conversionWindow,
             'series' => $series,
             'totals' => $totals,
             'legacy' => [
@@ -258,6 +269,7 @@ class PostMetricsService
                 $identitiesPartial,
                 $clicksUnavailable,
                 $conversionAvailable,
+                $conversionWindow['partial'],
                 ! empty($query['range_truncated'])
             ),
         ];
@@ -445,9 +457,9 @@ class PostMetricsService
                 'conversion_principal' => $conversionAvailable
                     ? $this->conversionPrincipal($convertedVisitors, $uniqueVisits)
                     : null,
-                'conversion_by_pageview' => $clicksFull
-                    ? $this->conversionByPageview($clicks, $visits)
-                    : null,
+                'conversion_by_pageview' => $clicksUnavailable
+                    ? null
+                    : $this->conversionByPageview($clicks, (int) $row->visits_window),
                 'clicks_per_visitor' => $this->clicksPerVisitor($clicks, $uniqueVisits),
             ];
         }
@@ -498,7 +510,8 @@ class PostMetricsService
         $identitiesFull,
         $clicksUnavailable,
         $clicksFull,
-        $conversionAvailable
+        $conversionAvailable,
+        array $conversionWindow
     ) {
         $visits = null;
         if ($visitsFrom !== null && $visitsFrom <= end($series)['date']) {
@@ -547,6 +560,16 @@ class PostMetricsService
             }
         }
 
+        $visitsWindow = null;
+        if ($conversionWindow['from'] !== null) {
+            $visitsWindow = 0;
+            foreach ($series as $day) {
+                if ($day['date'] >= $conversionWindow['from'] && $day['visits'] !== null) {
+                    $visitsWindow += (int) $day['visits'];
+                }
+            }
+        }
+
         return [
             'visits' => $visits,
             'unique_visits' => $uniqueVisits,
@@ -556,9 +579,7 @@ class PostMetricsService
             'conversion_principal' => $conversionAvailable
                 ? $this->conversionPrincipal($convertedVisitors, $uniqueVisits)
                 : null,
-            'conversion_by_pageview' => $clicksFull
-                ? $this->conversionByPageview($clicks, $visits)
-                : null,
+            'conversion_by_pageview' => $this->conversionByPageview($clicks, $visitsWindow),
             'clicks_per_visitor' => $this->clicksPerVisitor($clicks, $uniqueVisits),
         ];
     }
@@ -572,6 +593,7 @@ class PostMetricsService
         $identitiesPartial,
         $clicksUnavailable,
         $conversionAvailable,
+        $conversionWindowPartial,
         $rangeTruncated
     ) {
         $warnings = [];
@@ -587,6 +609,9 @@ class PostMetricsService
         }
         if ($clicksUnavailable) {
             $warnings[] = 'clicks_unavailable';
+        }
+        if ($conversionWindowPartial) {
+            $warnings[] = 'conversion_window_partial';
         }
         if (! $conversionAvailable) {
             $warnings[] = 'conversion_unavailable';

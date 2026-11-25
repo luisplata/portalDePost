@@ -207,6 +207,15 @@ class AdminPanelTest extends AnalyticsTestSupport
         );
     }
 
+    public function test_the_conversion_window_note_is_rendered_for_partial_coverage()
+    {
+        $view = file_get_contents(resource_path('views/admin/Analitica/index.blade.php'));
+
+        $this->assertStringContainsString("Conversion por pageview calculada sobre '", $view);
+        $this->assertStringContainsString('(cobertura de clicks parcial)', $view);
+        $this->assertStringContainsString('data.conversion_window.partial', $view);
+    }
+
     public function test_the_render_contract_matches_the_metrics_payload()
     {
         $response = $this->asAdmin()->get('/admin/analitica')->assertStatus(200);
@@ -214,6 +223,7 @@ class AdminPanelTest extends AnalyticsTestSupport
         foreach ([
             'data.totals.visits',
             'data.totals.conversion_principal',
+            'data.conversion_window.from',
             'data.ranking.data',
             'data.ranking.total',
             'data.legacy.visits',

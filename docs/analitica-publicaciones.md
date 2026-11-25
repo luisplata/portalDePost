@@ -20,11 +20,32 @@ Datos: `GET /admin/analitica/metricas` (sesion `logeado`, solo GET).
 | UC-r | Identidades distintas que clickearon en el rango | `COUNT(DISTINCT identity)` de clicks |
 | CV | Identidades que visitaron **y** clickearon el mismo producto | Interseccion por producto |
 | Conversion principal | Visitantes unicos del rango que clickearon | `CV / UV-r * 100` (nunca > 100) |
-| Conversion por pageview | Comparable con el numero legado | `clicks / visits * 100` (puede superar 100) |
+| Conversion por pageview | Clicks sobre pageviews de la **ventana de conversion** | `clicks / visits * 100` (puede superar 100) |
 | Clicks por visitante | Intensidad de click | `clicks / UV-r` |
 
 Dia operativo: `America/Bogota` (UTC-5 fijo). El crudo se guarda en UTC y `date` es fecha local.
 `config('app.timezone')` sigue en UTC y no se toca.
+
+### Ventana de conversion
+
+Los clicks se capturan desde `coverage.clicks_from`. Para no devolver `null` en todo el panel
+cuando el rango pedido empieza antes, la conversion por pageview se calcula sobre la ventana
+realmente cubierta:
+
+```
+conversion_window = { from: max(from, clicks_from), to: to, partial: clicks_from > from }
+```
+
+- Por fila y en `totals`, `conversion_by_pageview = clicks / visits * 100` **de esa ventana**.
+  Si `visits` de la ventana es 0, el valor es `null` (no 0% ni division por cero).
+- Con cobertura completa (`partial: false`) la ventana es el rango pedido y el resultado no cambia.
+- `conversion_principal` **no se aproxima**: sigue `null` si la cobertura de identidades no es
+  completa.
+- `legacy.conversion_by_pageview` sigue siendo all-time y no se ve afectado.
+- Se emite el warning `conversion_window_partial` cuando `partial` es true.
+- El panel muestra bajo la tabla: "Conversion por pageview calculada sobre {from} → {to}
+  (cobertura de clicks parcial)".
+
 
 ---
 
