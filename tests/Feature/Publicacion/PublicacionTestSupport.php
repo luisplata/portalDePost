@@ -17,6 +17,16 @@ use Tests\Unit\Publicacion\EsperaFalsa;
  */
 abstract class PublicacionTestSupport extends TestCase
 {
+    /**
+     * Sesion de admin que acepta el middleware `logeado`.
+     *
+     * @return $this
+     */
+    protected function asAdmin()
+    {
+        return $this->withSession(['admin' => (object) ['nombre' => 'tester']]);
+    }
+
     protected function makeAjustes(array $overrides = []): void
     {
         $valores = array_merge([

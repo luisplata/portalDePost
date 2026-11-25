@@ -61,4 +61,8 @@ class Producto extends Model
     {
         return $this->hasMany(LogVisit::class);
     }
+    public function envios()
+    {
+        return $this->hasMany(PublicacionEnvio::class, 'producto_id');
+    }
 }

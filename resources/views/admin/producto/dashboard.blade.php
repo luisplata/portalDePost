@@ -10,7 +10,7 @@
     <thead>
       <tr>
         <th scope="col">Nombre</th>
-        <th scope="col">Es publicado?</th>
+        <th scope="col">Visible en la web?</th>
         <th scope="col">Fecha de publicacion</th>
         <th scope="col">Visitas</th>
         <th scope="col">Clicks</th>

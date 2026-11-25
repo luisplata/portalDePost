@@ -80,6 +80,35 @@ class EnvioModelTest extends TestCase
         $this->assertNotNull($fresh->canal->deleted_at);
     }
 
+    public function test_producto_exposes_envios_relation()
+    {
+        $productoId = $this->insertProducto();
+        $canal = PublicacionCanal::create([
+            'tipo' => 'telegram',
+            'nombre' => 'Telegram relacion',
+            'habilitado' => 1,
+            'vigente_desde' => now(),
+            'credenciales' => ['token' => '123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw', 'chat_id' => '-1001234567890'],
+            'estado' => 'ok',
+        ]);
+        $this->makeEnvio($productoId, $canal->id);
+
+        $producto = \App\Producto::find($productoId);
+
+        $this->assertSame(1, $producto->envios()->count());
+    }
+
+    private function makeEnvio(int $productoId, int $canalId): void
+    {
+        PublicacionEnvio::create([
+            'producto_id' => $productoId,
+            'publicacion_canal_id' => $canalId,
+            'canal_tipo' => 'telegram',
+            'estado' => PublicacionEnvio::PENDIENTE,
+            'intentos' => 0,
+        ]);
+    }
+
     private function insertProducto(): int
     {
         return DB::table('productos')->insertGetId([
