@@ -6,8 +6,10 @@ use App\Services\Publicacion\Espera;
 use App\Services\Publicacion\PublicacionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use App\PublicacionCanal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Carbon;
 use Tests\Feature\Publicacion\PublicacionTestSupport;
 
 /**
@@ -17,6 +19,8 @@ use Tests\Feature\Publicacion\PublicacionTestSupport;
 class ComandoTest extends PublicacionTestSupport
 {
     use RefreshDatabase;
+
+    private const TOKEN = '123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw';
 
     public function test_dry_run_writes_nothing_and_calls_no_api()
     {
@@ -118,5 +122,84 @@ class ComandoTest extends PublicacionTestSupport
         $lock = Cache::lock('publicaciones:corrida', 1800);
         $this->assertTrue($lock->get(), 'El lock debe quedar libre tras la excepcion.');
         $lock->release();
+    }
+
+    public function test_dry_run_does_not_write_anything()
+    {
+        Http::fake();
+        $this->makeAjustes();
+        $this->makeCanal('telegram');
+        PublicacionCanal::create([
+            'tipo' => 'mastodon',
+            'nombre' => 'Sin driver',
+            'habilitado' => 1,
+            'vigente_desde' => now()->subDay(),
+            'credenciales' => ['token' => 'x', 'chat_id' => 'y'],
+            'estado' => 'ok',
+        ]);
+        $ilegible = PublicacionCanal::create([
+            'tipo' => 'telegram',
+            'nombre' => 'Clave ajena',
+            'habilitado' => 1,
+            'vigente_desde' => now()->subDay(),
+            'credenciales' => ['token' => self::TOKEN, 'chat_id' => '-1'],
+            'estado' => 'ok',
+        ]);
+        $otraClave = new \Illuminate\Encryption\Encrypter(random_bytes(32), 'AES-256-CBC');
+        DB::table('publicacion_canales')->where('id', $ilegible->id)->update([
+            'credenciales' => $otraClave->encrypt(json_encode(['token' => self::TOKEN, 'chat_id' => '-1'])),
+        ]);
+        $this->makeProducto();
+        $this->fakeEspera();
+
+        $antes = $this->snapshot();
+
+        $this->artisan('productos:procesar', ['--dry-run' => true])->assertExitCode(0);
+
+        $this->assertSame($antes, $this->snapshot());
+        Http::assertNothingSent();
+    }
+
+    public function test_dry_run_lists_the_effective_cutoff_and_pending_deliveries()
+    {
+        Carbon::setTestNow('2026-11-25 10:00:00');
+        Http::fake();
+        $this->makeAjustes(['publicaciones_desde' => '2026-11-10 00:00:00']);
+        $canal = $this->makeCanal('telegram', [
+            'nombre' => 'Canal plan',
+            'vigente_desde' => '2026-11-15 00:00:00',
+        ]);
+        $this->fakeEspera();
+
+        foreach ([0, 1] as $i) {
+            $this->makeProducto([
+                'created_at' => now()->subDays(2),
+                'publication_date' => now()->subHours(2),
+            ]);
+        }
+
+        $pendiente = $this->makeProducto([
+            'created_at' => now()->subDays(2),
+            'publication_date' => now()->subHours(3),
+        ]);
+        $this->makeEnvio($pendiente, $canal->id);
+
+        \Illuminate\Support\Facades\Artisan::call('productos:procesar', ['--dry-run' => true]);
+        $salida = \Illuminate\Support\Facades\Artisan::output();
+
+        $this->assertStringContainsString('Canal plan', $salida);
+        $this->assertStringContainsString('corte efectivo 2026-11-15 00:00:00', $salida);
+        $this->assertStringContainsString('sembraria 2', $salida);
+        $this->assertStringContainsString('/redirect/'.$pendiente, $salida);
+    }
+
+    private function snapshot(): array
+    {
+        return [
+            'canales' => json_encode(DB::table('publicacion_canales')->orderBy('id')->get()),
+            'envios' => json_encode(DB::table('publicacion_envios')->orderBy('id')->get()),
+            'productos' => json_encode(DB::table('productos')->orderBy('id')->get(['id', 'published'])),
+            'ajustes' => json_encode(DB::table('publicacion_ajustes')->orderBy('clave')->get()),
+        ];
     }
 }

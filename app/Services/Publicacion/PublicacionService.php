@@ -78,21 +78,43 @@ class PublicacionService
 
         $resumen = ['sembradas' => 0, 'enviadas' => 0, 'fallidas' => 0, 'inciertas' => 0];
         $tocados = [];
+        $plan = [];
 
         foreach ($canales as $canal) {
+            $entrada = [
+                'canal_id' => $canal->id,
+                'nombre' => $canal->nombre,
+                'corte' => $this->corteEfectivo($canal, $desde)->toDateTimeString(),
+                'sembraria' => 0,
+                'enviaria' => 0,
+                'envios' => [],
+                'nota' => null,
+            ];
+
             if (!$this->tieneDriver($canal)) {
-                $this->marcarTipoDesconocido($canal);
+                if ($dryRun) {
+                    $entrada['nota'] = 'sin driver';
+                    $plan[$canal->id] = $entrada;
+                } else {
+                    $this->marcarTipoDesconocido($canal);
+                }
+
                 continue;
             }
 
             $ids = $this->sembrarCanal($canal, $desde, $dryRun);
             $resumen['sembradas'] += count($ids);
             $tocados = array_merge($tocados, $ids);
+
+            if ($dryRun) {
+                $entrada['sembraria'] = count($ids);
+                $plan[$canal->id] = $entrada;
+            }
         }
 
         $tocados = array_merge(
             $tocados,
-            $this->enviarPendientes($canales, $dryRun, $limite, $resumen)
+            $this->enviarPendientes($canales, $dryRun, $limite, $resumen, $plan)
         );
 
         if (!$dryRun) {
@@ -107,6 +129,10 @@ class PublicacionService
             'fallidas' => $resumen['fallidas'],
             'inciertas' => $resumen['inciertas'],
         ]);
+
+        if ($dryRun) {
+            $resumen['plan'] = array_values($plan);
+        }
 
         return $this->resultado('ok', 0, $inicio, null, $resumen);
     }
@@ -213,19 +239,7 @@ class PublicacionService
      */
     private function sembrarCanal(PublicacionCanal $canal, Carbon $desde, bool $dryRun): array
     {
-        $corte = $canal->vigente_desde->greaterThan($desde) ? $canal->vigente_desde : $desde;
-
-        $tieneEntregas = DB::table('publicacion_envios')
-            ->where('publicacion_canal_id', $canal->id)
-            ->exists();
-
-        if (!$tieneEntregas) {
-            $ventana = now()->subDays((int) config('publicaciones.ventana_sembrado_dias'));
-
-            if ($ventana->greaterThan($corte)) {
-                $corte = $ventana;
-            }
-        }
+        $corte = $this->corteEfectivo($canal, $desde);
 
         if (now()->lessThan($corte)) {
             return [];
@@ -274,11 +288,30 @@ class PublicacionService
         }, $candidatos);
     }
 
+    private function corteEfectivo(PublicacionCanal $canal, Carbon $desde): Carbon
+    {
+        $corte = $canal->vigente_desde->greaterThan($desde) ? $canal->vigente_desde : $desde;
+
+        $tieneEntregas = DB::table('publicacion_envios')
+            ->where('publicacion_canal_id', $canal->id)
+            ->exists();
+
+        if (!$tieneEntregas) {
+            $ventana = now()->subDays((int) config('publicaciones.ventana_sembrado_dias'));
+
+            if ($ventana->greaterThan($corte)) {
+                $corte = $ventana;
+            }
+        }
+
+        return $corte;
+    }
+
     /**
      * @param  \Illuminate\Support\Collection  $canales
      * @return int[] ids de productos intentados
      */
-    private function enviarPendientes($canales, bool $dryRun, $limite, array &$resumen): array
+    private function enviarPendientes($canales, bool $dryRun, $limite, array &$resumen, array &$plan = []): array
     {
         $tocados = [];
         $despachados = 0;
@@ -292,6 +325,14 @@ class PublicacionService
             $credenciales = Secretos::descifrar($canal);
 
             if ($credenciales === null) {
+                if ($dryRun) {
+                    if (isset($plan[$canal->id])) {
+                        $plan[$canal->id]['nota'] = 'credenciales ilegibles';
+                    }
+
+                    continue;
+                }
+
                 $this->marcarCredencialInvalida($canal);
                 continue;
             }
@@ -308,6 +349,18 @@ class PublicacionService
             if ($dryRun) {
                 $despachados += count($pendientes);
                 $resumen['enviadas'] += count($pendientes);
+
+                if (isset($plan[$canal->id])) {
+                    $plan[$canal->id]['enviaria'] = count($pendientes);
+
+                    foreach ($pendientes as $envio) {
+                        $plan[$canal->id]['envios'][] = [
+                            'producto_id' => (int) $envio->producto_id,
+                            'link' => url('/redirect/'.$envio->producto_id),
+                        ];
+                    }
+                }
+
                 continue;
             }
 

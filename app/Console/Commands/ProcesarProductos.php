@@ -80,6 +80,29 @@ class ProcesarProductos extends Command
                 break;
 
             default:
+                if ($dryRun && !empty($resultado['plan'])) {
+                    foreach ($resultado['plan'] as $canal) {
+                        $this->info(sprintf(
+                            'Canal %s: corte efectivo %s; sembraria %d',
+                            $canal['nombre'],
+                            $canal['corte'],
+                            $canal['sembraria']
+                        ));
+
+                        if (!empty($canal['nota'])) {
+                            $this->line('  Nota: '.$canal['nota']);
+                        }
+
+                        foreach ($canal['envios'] as $envio) {
+                            $this->line(sprintf(
+                                '  Enviaria producto #%d -> %s',
+                                $envio['producto_id'],
+                                $envio['link']
+                            ));
+                        }
+                    }
+                }
+
                 $this->info(sprintf(
                     '%s %d | %s %d | Fallidas %d | Inciertas %d',
                     $dryRun ? 'Sembraria' : 'Sembradas',
