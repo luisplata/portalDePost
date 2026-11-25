@@ -30,6 +30,24 @@ class Secretos
     }
 
     /**
+     * Mascara de presentacion de las credenciales del canal.
+     */
+    public static function mascaraCanal(PublicacionCanal $canal): string
+    {
+        $credenciales = self::descifrar($canal);
+
+        if ($credenciales === null) {
+            return '****';
+        }
+
+        $valor = isset($credenciales['token'])
+            ? $credenciales['token']
+            : (isset($credenciales['webhook_url']) ? $credenciales['webhook_url'] : '');
+
+        return self::mascara((string) $valor);
+    }
+
+    /**
      * Mascara de presentacion: conserva la parte no secreta.
      *
      * Telegram: hasta el primer ':'. Discord: hasta el ultimo '/'.
