@@ -32,10 +32,35 @@ class PublicacionCanal extends Model
     protected $casts = [
         'habilitado' => 'boolean',
         'vigente_desde' => 'datetime',
+        'credenciales' => 'encrypted:array',
         'config' => 'array',
         'estado_verificado_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    /**
+     * Canales que pueden sembrar y enviar: habilitados, en ok y no eliminados.
+     */
+    public function scopeOperativos($query)
+    {
+        return $query->where('habilitado', 1)
+            ->where('estado', 'ok')
+            ->whereNull('deleted_at');
+    }
+
+    /**
+     * Cambia la habilitacion. Solo la transicion 0 -> 1 mueve la vigencia:
+     * rehabilitar no reenvia el periodo apagado (REQ-CAN-04).
+     */
+    public function aplicarHabilitado(bool $habilitado): void
+    {
+        if (!$this->habilitado && $habilitado) {
+            $this->vigente_desde = now();
+        }
+
+        $this->habilitado = $habilitado;
+        $this->save();
+    }
 
     public function envios()
     {
