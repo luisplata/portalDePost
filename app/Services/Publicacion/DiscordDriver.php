@@ -46,6 +46,10 @@ class DiscordDriver implements CanalDriver
 
         if (ProductoMensaje::imagenValida($producto->imagen)) {
             $embed['image'] = ['url' => $producto->imagen];
+
+            if (strlen(json_encode($embed)) > 6000) {
+                unset($embed['image']);
+            }
         }
 
         try {

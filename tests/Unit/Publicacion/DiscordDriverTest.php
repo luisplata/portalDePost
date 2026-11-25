@@ -159,4 +159,27 @@ class DiscordDriverTest extends TestCase
 
         return $producto;
     }
+
+    public function test_a_very_long_image_url_is_omitted_to_fit_the_embed_limit()
+    {
+        Http::fake(['discord.com/*' => Http::response('', 204)]);
+
+        $producto = $this->makeProducto([
+            'imagen' => 'https://cdn.example/'.str_repeat('a', 7000),
+        ]);
+
+        $resultado = (new DiscordDriver())->enviar(
+            $producto,
+            $this->credenciales(),
+            ProductoMensaje::link($producto)
+        );
+
+        $this->assertSame(ResultadoEntrega::ENTREGADO, $resultado->resultado);
+        Http::assertSent(function ($request) {
+            $embed = $request->data()['embeds'][0];
+
+            return !array_key_exists('image', $embed)
+                && strlen(json_encode($embed)) <= 6000;
+        });
+    }
 }
