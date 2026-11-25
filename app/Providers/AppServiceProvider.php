@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use App\Services\Publicacion\Espera;
+use App\Services\Publicacion\EsperaReal;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(Espera::class, EsperaReal::class);
     }
 }
