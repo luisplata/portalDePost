@@ -9,8 +9,10 @@ use Illuminate\Http\Request;
  * Validaciones anti-abuso del beacon de impresion (REQ-IMP-03).
  *
  * - Metodo POST.
- * - Misma-origen: host de Origin o, en su defecto, de Referer contra el host
- *   de la app. Sin Origin ni Referer => 403.
+ * - Origen permitido: host de Origin o, en su defecto, de Referer contra el
+ *   host de la app o contra config('ads.allowed_origins'). El front y la API
+ *   viven en dominios distintos, por eso la lista explicita. Sin Origin ni
+ *   Referer => 403.
  * - User-Agent no vacio y que no matchee config('ads.bot_ua_regex') => 403.
  *
  * Nunca responde por existencia de creatividad: eso es 204 silencioso en el
@@ -36,13 +38,13 @@ class VerifyAdOrigin
         if ($origin !== '') {
             $sourceHost = parse_url($origin, PHP_URL_HOST);
 
-            if (! is_string($sourceHost) || strcasecmp($sourceHost, $host) !== 0) {
+            if (! $this->isAllowedHost($sourceHost, $host)) {
                 return response()->json(['error' => 'forbidden'], 403);
             }
         } elseif ($referer !== '') {
             $sourceHost = parse_url($referer, PHP_URL_HOST);
 
-            if (! is_string($sourceHost) || strcasecmp($sourceHost, $host) !== 0) {
+            if (! $this->isAllowedHost($sourceHost, $host)) {
                 return response()->json(['error' => 'forbidden'], 403);
             }
         } else {
@@ -65,5 +67,35 @@ class VerifyAdOrigin
         }
 
         return $next($request);
+    }
+
+    /**
+     * Acepta el host de la API y los hosts de front declarados en
+     * config('ads.allowed_origins'). La comparacion es por host exacto: un
+     * subdominio no listado no hereda el permiso.
+     *
+     * @param  mixed  $sourceHost
+     * @param  string  $requestHost
+     * @return bool
+     */
+    protected function isAllowedHost($sourceHost, string $requestHost): bool
+    {
+        if (! is_string($sourceHost) || $sourceHost === '') {
+            return false;
+        }
+
+        if (strcasecmp($sourceHost, $requestHost) === 0) {
+            return true;
+        }
+
+        $allowed = (array) config('ads.allowed_origins', []);
+
+        foreach ($allowed as $candidate) {
+            if (is_string($candidate) && $candidate !== '' && strcasecmp($sourceHost, $candidate) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
