@@ -56,4 +56,10 @@ jobs:
           php artisan key:generate --force
 
       - name: Tests
+        # phpunit.xml apunta a `db` (hostname del docker-compose local). En
+        # Actions el service container se alcanza por localhost:3306. Como el
+        # <env> de phpunit.xml no fuerza, esta variable tiene precedencia.
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
         run: vendor/bin/phpunit --colors=never

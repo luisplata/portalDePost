@@ -1,5 +1,5 @@
-* text=auto
-*.css linguist-vendored
-*.scss linguist-vendored
-*.js linguist-vendored
-CHANGELOG.md export-ignore
+# Normalizacion de finales de linea: estos archivos se ejecutan en Linux
+*.sh   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.php  text eol=lf
