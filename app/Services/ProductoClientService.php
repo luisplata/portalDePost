@@ -9,6 +9,16 @@ use App\LogVisit;
 
 class ProductoClientService
 {
+    /**
+     * @var PostAnalyticsService
+     */
+    protected $analytics;
+
+    public function __construct(PostAnalyticsService $analytics)
+    {
+        $this->analytics = $analytics;
+    }
+
     public function getTags()
     {
         $tags = [];
@@ -31,9 +41,9 @@ class ProductoClientService
 
         $this->registrarVisita($producto);
         $this->registrarLogVisita($producto);
+        $this->analytics->recordVisit($producto->id, 'web');
 
         return [
-            "banners" => Producto::PostOfBanner(),
             "hot" => Producto::PostOfHot(),
             "popular" => Producto::PostOfPopular(),
             "packs" => Producto::PostOfPacks(),
@@ -57,6 +67,7 @@ class ProductoClientService
 
         $this->registrarVisita($producto);
         $this->registrarLogVisita($producto);
+        $this->analytics->recordVisit($producto->id, 'api');
 
         return $producto;
     }
@@ -66,6 +77,7 @@ class ProductoClientService
     {
         $producto = Producto::findOrFail($id);
         $this->registrarHotlink($producto);
+        $this->analytics->recordClick($producto->id, $producto->hotLink);
         return $producto->hotLink;
     }
 
@@ -73,6 +85,7 @@ class ProductoClientService
     {
         $producto = Producto::where("nombre", $nombre)->firstOrFail();
         $this->registrarHotlink($producto);
+        $this->analytics->recordClick($producto->id, $producto->hotLink);
         return $producto->hotLink;
     }
 

@@ -1,0 +1,191 @@
+{
+    "api/hot": {
+        "type": "array",
+        "item_keys": [
+            "NombreLink",
+            "hotLink",
+            "id",
+            "idoAlPack",
+            "imagen",
+            "isVideo",
+            "nombre",
+            "producto_id",
+            "published",
+            "tags",
+            "url_video",
+            "visita"
+        ]
+    },
+    "api/popular": {
+        "type": "array",
+        "item_keys": [
+            "NombreLink",
+            "hotLink",
+            "id",
+            "idoAlPack",
+            "imagen",
+            "isVideo",
+            "nombre",
+            "producto_id",
+            "published",
+            "tags",
+            "url_video",
+            "visita"
+        ]
+    },
+    "api/banners": {
+        "type": "array",
+        "item_keys": [
+            "NombreLink",
+            "hotLink",
+            "id",
+            "imagen",
+            "isVideo",
+            "nombre",
+            "published",
+            "tags",
+            "url_video"
+        ]
+    },
+    "api/packs": {
+        "type": "object",
+        "keys": [
+            "current_page",
+            "data",
+            "first_page_url",
+            "from",
+            "last_page",
+            "last_page_url",
+            "links",
+            "next_page_url",
+            "path",
+            "per_page",
+            "prev_page_url",
+            "to",
+            "total"
+        ],
+        "data_item_keys": [
+            "NombreLink",
+            "hotLink",
+            "id",
+            "imagen",
+            "isVideo",
+            "nombre",
+            "published",
+            "tags",
+            "url_video"
+        ]
+    },
+    "api/home": {
+        "type": "object",
+        "keys": [
+            "banners",
+            "hot",
+            "other",
+            "packs",
+            "popular"
+        ],
+        "nested": {
+            "banners": {
+                "type": "array",
+                "item_keys": [
+                    "NombreLink",
+                    "hotLink",
+                    "id",
+                    "imagen",
+                    "isVideo",
+                    "nombre",
+                    "published",
+                    "tags",
+                    "url_video"
+                ]
+            },
+            "hot": {
+                "type": "array",
+                "item_keys": [
+                    "NombreLink",
+                    "hotLink",
+                    "id",
+                    "idoAlPack",
+                    "imagen",
+                    "isVideo",
+                    "nombre",
+                    "producto_id",
+                    "published",
+                    "tags",
+                    "url_video",
+                    "visita"
+                ]
+            },
+            "popular": {
+                "type": "array",
+                "item_keys": [
+                    "NombreLink",
+                    "hotLink",
+                    "id",
+                    "idoAlPack",
+                    "imagen",
+                    "isVideo",
+                    "nombre",
+                    "producto_id",
+                    "published",
+                    "tags",
+                    "url_video",
+                    "visita"
+                ]
+            },
+            "packs": {
+                "type": "object",
+                "keys": [
+                    "current_page",
+                    "data",
+                    "first_page_url",
+                    "from",
+                    "last_page",
+                    "last_page_url",
+                    "links",
+                    "next_page_url",
+                    "path",
+                    "per_page",
+                    "prev_page_url",
+                    "to",
+                    "total"
+                ],
+                "data_item_keys": [
+                    "NombreLink",
+                    "hotLink",
+                    "id",
+                    "imagen",
+                    "isVideo",
+                    "nombre",
+                    "published",
+                    "tags",
+                    "url_video"
+                ]
+            },
+            "other": {
+                "type": "array",
+                "item_type": "string"
+            }
+        }
+    },
+    "api/tags": {
+        "type": "array",
+        "item_type": "string"
+    },
+    "api/model/{id}": {
+        "type": "object",
+        "keys": [
+            "NombreLink",
+            "hotLink",
+            "id",
+            "imagen",
+            "isVideo",
+            "nombre",
+            "published",
+            "tags",
+            "url_video",
+            "visitas"
+        ]
+    }
+}

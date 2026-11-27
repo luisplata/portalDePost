@@ -14,3 +14,7 @@ yarn-error.log
 .env
 /nbproject/private/
 /.composer
+/.atl
+/.phpunit.result.cache
+/.config
+*.csv

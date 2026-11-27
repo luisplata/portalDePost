@@ -10,7 +10,8 @@
     <thead>
       <tr>
         <th scope="col">Nombre</th>
-        <th scope="col">Es publicado?</th>
+        <th scope="col">Visible en la web?</th>
+        <th scope="col">Redes</th>
         <th scope="col">Fecha de publicacion</th>
         <th scope="col">Visitas</th>
         <th scope="col">Clicks</th>
@@ -23,6 +24,14 @@
             <tr>
                 <th>{{$producto->nombre}}</th>
                 <td>{{strtotime($producto->publication_date) <= strtotime(date("Y-m-d H:i:s"))?"Si":"No"}}</td>
+                <td>
+                    @php($red = isset($redes[$producto->id]) ? $redes[$producto->id] : null)
+                    @if($red)
+                    <span title="{{ $red['error'] ?? '' }}">{{ $red['texto'] }}</span>
+                    @else
+                    -
+                    @endif
+                </td>
                 <td>{{$producto->publication_date}}</td>
                 @if($producto->Visitas == null)
                     <td>0</td>

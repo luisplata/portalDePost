@@ -56,8 +56,23 @@
                                         <li><a href="{{ url('admin') }}">Administradores</a></li>
                                         <li><a href="{{ url('admin/categoria') }}">Categorias</a></li>
                                         <li><a href="{{ url('admin/producto') }}">Productos</a></li>
+                                        <li class="{{ request()->is('admin/canales*') || request()->is('admin/publicaciones*') ? 'current-page active' : '' }}">
+                                            <a>Publicaciones <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu" style="{{ request()->is('admin/canales*') || request()->is('admin/publicaciones*') ? 'display: block;' : '' }}">
+                                                <li class="{{ request()->is('admin/canales*') ? 'current-page' : '' }}"><a href="{{ url('admin/canales') }}">Canales</a></li>
+                                                <li class="{{ request()->is('admin/publicaciones') ? 'current-page' : '' }}"><a href="{{ url('admin/publicaciones') }}">Entregas</a></li>
+                                                <li class="{{ request()->is('admin/publicaciones/ajustes*') ? 'current-page' : '' }}"><a href="{{ url('admin/publicaciones/ajustes') }}">Ajustes</a></li>
+                                            </ul>
+                                        </li>
                                         <li><a href="{{ url('admin/stream') }}">Streams</a></li>
-                                        <li><a href="{{ url('admin/graficas') }}">Graficas</a></li>
+                                        <li class="{{ request()->is('admin/graficas*') || request()->is('admin/analitica*') ? 'current-page active' : '' }}">
+                                            <a>Graficas <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu" style="{{ request()->is('admin/graficas*') || request()->is('admin/analitica*') ? 'display: block;' : '' }}">
+                                                <li class="{{ request()->is('admin/graficas*') ? 'current-page' : '' }}"><a href="{{ url('admin/graficas') }}">Visitas y conversion</a></li>
+                                                <li class="{{ request()->is('admin/analitica*') ? 'current-page' : '' }}"><a href="{{ url('admin/analitica') }}">Analitica de publicaciones</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="{{ url('admin/publicidad') }}">Publicidad</a></li>
                                     </ul>
                                 </li>
                             </ul>

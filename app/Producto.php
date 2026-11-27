@@ -17,11 +17,11 @@ class Producto extends Model
     }
     public static function PostOfHot()
     {
-        return Producto::where('publication_date', '<', date("Y-m-d H:i:s"))->join('visit_posts', 'visit_posts.producto_id', '=', 'productos.id')->orderByRaw('(visit_posts.idoAlPack / visit_posts.visita)*100 desc')->limit(3)->get();
+        return app(\App\Services\PostRankingService::class)->hot();
     }
     public static function PostOfPopular()
     {
-        return Producto::where('publication_date', '<', date("Y-m-d H:i:s"))->join('visit_posts', 'visit_posts.producto_id', '=', 'productos.id')->orderBy('visit_posts.visita', 'desc')->limit(3)->get();
+        return app(\App\Services\PostRankingService::class)->popular();
     }
     public static function PostOfPacks()
     {
@@ -60,5 +60,9 @@ class Producto extends Model
     public function LogVisitas()
     {
         return $this->hasMany(LogVisit::class);
+    }
+    public function envios()
+    {
+        return $this->hasMany(PublicacionEnvio::class, 'producto_id');
     }
 }
