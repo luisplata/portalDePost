@@ -60,7 +60,14 @@ if ! git fetch --prune origin --tags >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! COMMIT=$(git rev-parse --verify --quiet "$REF^{commit}"); then
+# Un nombre de rama tiene que resolverse contra el remoto, no contra la rama
+# local del servidor (que queda congelada en el ultimo deploy). Para un sha o
+# un tag, origin/<ref> no existe y se usa la ref tal cual.
+if git rev-parse --verify --quiet "origin/$REF^{commit}" >/dev/null 2>&1; then
+  COMMIT=$(git rev-parse "origin/$REF^{commit}")
+elif COMMIT=$(git rev-parse --verify --quiet "$REF^{commit}"); then
+  :
+else
   echo "ERROR: ref inexistente: $REF"
   exit 1
 fi
