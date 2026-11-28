@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Suite de tests
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: mysql:5.7.22
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: laravel_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PHP 8.0
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: mbstring, fileinfo, pdo_mysql, tokenizer, dom, libxml, json, openssl, curl, bcmath
+          coverage: none
+
+      - name: Cache de Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Instalar dependencias
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Preparar entorno
+        run: |
+          cp .env.example .env
+          php artisan key:generate --force
+
+      - name: Tests
+        # phpunit.xml apunta a `db` (hostname del docker-compose local). En
+        # Actions el service container se alcanza por localhost:3306. Como el
+        # <env> de phpunit.xml no fuerza, esta variable tiene precedencia.
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+        run: vendor/bin/phpunit --colors=never

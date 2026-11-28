@@ -151,6 +151,35 @@ class ImpressionTest extends TestCase
         $this->assertSame(0, $this->impressionsFor($creative));
     }
 
+    public function test_front_origin_on_another_domain_is_accepted()
+    {
+        // El front (onlysfree.com) y la API (admin.onlysfree.com) viven en
+        // dominios distintos: el beacon tiene que pasar por config('ads.allowed_origins').
+        $creative = $this->makeCreative('home_sidebar', ['campaign_key' => 'imp-front']);
+
+        $response = $this->postImpression(
+            ['creative' => 'imp-front', 'placement' => 'home_sidebar', 'uuid' => 'abababab-1111-2222-3333-444444444444'],
+            ['Origin' => 'https://onlysfree.com']
+        );
+
+        $response->assertStatus(204);
+        $this->assertSame(1, $this->impressionsFor($creative));
+    }
+
+    public function test_unlisted_subdomain_is_rejected()
+    {
+        // La lista es por host exacto: un subdominio no listado no hereda el permiso.
+        $creative = $this->makeCreative('home_sidebar', ['campaign_key' => 'imp-sub']);
+
+        $response = $this->postImpression(
+            ['creative' => 'imp-sub', 'placement' => 'home_sidebar', 'uuid' => 'acacacac-1111-2222-3333-444444444444'],
+            ['Origin' => 'https://evil.onlysfree.com']
+        );
+
+        $response->assertStatus(403);
+        $this->assertSame(0, $this->impressionsFor($creative));
+    }
+
     public function test_requests_without_origin_or_referer_are_rejected()
     {
         $creative = $this->makeCreative('home_sidebar', ['campaign_key' => 'imp-noorigin']);

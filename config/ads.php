@@ -55,4 +55,13 @@ return [
     // User-Agents que no cuentan como impresion (REQ-IMP-03).
     'bot_ua_regex' => '/bot|crawl|spider|slurp|bingpreview|headless|python|curl|wget|go-http|okhttp/i',
 
+    // Hosts del front autorizados a enviar el beacon. El front y la API viven
+    // en dominios distintos (onlysfree.com / admin.onlysfree.com), asi que la
+    // comparacion contra el host de la API sola no alcanza. El host de la API
+    // siempre se acepta, ademas de estos.
+    'allowed_origins' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('ADS_ALLOWED_ORIGINS', 'onlysfree.com,www.onlysfree.com,ai.onlysfree.com'))
+    ))),
+
 ];
