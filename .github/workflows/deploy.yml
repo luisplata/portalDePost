@@ -50,8 +50,14 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           TARGET_REF: ${{ github.event.inputs.ref || github.sha }}
         run: |
-          ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes \
-            "$SSH_USER@$SSH_HOST" "bash -s -- qa $TARGET_REF" < bin/deploy.sh
+          # El script se toma de la ref que se despliega, no de la rama donde
+          # corre el workflow: un dispatch manual corre desde main y necesita
+          # el deploy.sh del codigo que va al servidor.
+          git fetch --depth=1 origin "$TARGET_REF"
+          SCRIPT=$(git show FETCH_HEAD:bin/deploy.sh)
+          printf '%s\n' "$SCRIPT" | ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "$SSH_USER@$SSH_HOST" "bash -s -- qa $TARGET_REF"
 
   pdn:
     name: Deploy PDN
@@ -80,5 +86,8 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           TARGET_REF: ${{ github.event.inputs.ref || github.ref_name }}
         run: |
-          ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes \
-            "$SSH_USER@$SSH_HOST" "bash -s -- pdn $TARGET_REF" < bin/deploy.sh
+          git fetch --depth=1 origin "$TARGET_REF"
+          SCRIPT=$(git show FETCH_HEAD:bin/deploy.sh)
+          printf '%s\n' "$SCRIPT" | ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "$SSH_USER@$SSH_HOST" "bash -s -- pdn $TARGET_REF"
